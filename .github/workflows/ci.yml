@@ -29,5 +29,5 @@ jobs:
       - name: Build
         run: echo $GITHUB_EVENT_NAME && make build
 
-      # - name: Test
-      #   run: make test
+      - name: Test
+        run: make test
