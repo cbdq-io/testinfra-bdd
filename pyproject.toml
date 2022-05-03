@@ -1,5 +1,6 @@
 [build-system]
 requires = [
+    "pytest-bdd>=5.00<=6.0.0",
     "setuptools>=42",
     "urllib3>=1.26.0",
     "wheel"
