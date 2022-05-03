@@ -1,4 +1,4 @@
-all: lint build test
+all: lint test build
 
 build:
 	PYTHONPATH=. python3 -m build
