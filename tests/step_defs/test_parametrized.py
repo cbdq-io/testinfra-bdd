@@ -3,7 +3,6 @@ import pytest
 
 from pytest_bdd import (
     given,
-    parsers,
     scenario
 )
 
@@ -28,7 +27,7 @@ def test_parametrized_url(url):
     """Parametrized URL."""
 
 
-@given(parsers.parse('the Testinfra URL parameter is {url}'), target_fixture='testinfra_bdd_host')
+@given('the Testinfra URL parameter is url', target_fixture='testinfra_bdd_host')
 def parametrized_url(url):
     """
     Provide an alternative "Given" step for a parametrized test.

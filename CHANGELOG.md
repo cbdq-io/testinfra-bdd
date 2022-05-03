@@ -3,6 +3,14 @@
 
 ## 0.0.2
 
+### New
+
+* Add guidance on contributing. [Ben Dalling]
+
+* Add code of conduct guidelines. [Ben Dalling]
+
+* Implement "Given" Steps (fixes #1). [Ben Dalling]
+
 ### Fix
 
 * Sort out YAML lint issues. [Ben Dalling]
