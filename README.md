@@ -2,7 +2,10 @@
 
 [![CI](https://github.com/locp/testinfra-bdd/actions/workflows/ci.yml/badge.svg)](https://github.com/locp/testinfra-bdd/actions/workflows/ci.yml)
 
-An interface between pytest-bdd and pytest-testinfra.
+An interface between
+[pytest-bdd](https://pytest-bdd.readthedocs.io/en/latest/)
+and
+[pytest-testinfra](https://testinfra.readthedocs.io/en/latest/index.html).
 
 ## Defining a Scenario
 
@@ -140,3 +143,14 @@ This example shows all the possible combinations:
 
 If the host is anything other than Debian 11 (bullseye) running on x86_64
 architecture, the tests will be skipped.
+
+## "Then" Steps
+
+### Check a Command Exists on the Path
+
+In this example, the test will pass if the command called "java" is found
+on the path of the host being tested:
+
+```gherkin
+
+```
