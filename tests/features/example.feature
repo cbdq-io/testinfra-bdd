@@ -18,6 +18,6 @@ Feature: Example of Testinfra BDD
     Given the host with URL "docker://java11" is ready
     When the command is "java -version"
     Then the command stderr contains "Corretto-11"
-    And the command stderr matches regex "openjdk version \"11\."
+    And the command stderr matches regex "openjdk version \"11\\W[0-9]"
     And the command stdout is empty
     And the command return code is 0
