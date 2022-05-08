@@ -143,7 +143,7 @@ def get_stream_from_command(command, stream_name):
     elif stream_name == 'stderr':
         return command.stderr
 
-    raise ValueError(f'Unknown stream name "{stream_name}"')
+    raise ValueError(f'Unknown stream name "{stream_name}".')
 
 
 def is_host_ready(host, timeout=0):
