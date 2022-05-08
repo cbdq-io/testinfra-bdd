@@ -72,10 +72,17 @@ def text_is_passed_as_a_dict_to_get_host_from_fixture():
     pass
 
 
-@when('a resource called "foo" is requested')
-def a_resource_called_foo_is_requested():
+@when(parsers.parse('a resource of type {resource_type} {resource_name} is requested'))
+def a_resource_called_foo_is_requested(resource_type, resource_name, testinfra_bdd_host):
     """a resource called "foo" is requested."""
-    pass
+    host = get_host_from_fixture(testinfra_bdd_host)
+    exception_message = None
+    try:
+        testinfra_bdd_host[resource_type] = get_resource_from_host(host, resource_type, resource_name)
+    except ValueError as ex:
+        exception_message = str(ex)
+
+    testinfra_bdd_host['exception_message'] = exception_message
 
 
 @when(parsers.parse('"{property_name}" is requested from the host'))
@@ -136,15 +143,9 @@ def status_should_be_status(status, testinfra_bdd_host):
     assert actual_status == expected_status
 
 
-@then('the ValueError exception will be \'Unknown resource type "foo".\'')
-def the_valueerror_exception_will_be_unknown_resource_type_foo(testinfra_bdd_host):
+@then(parsers.parse('the ValueError exception will be "{expected_exception_message}"'))
+def the_valueerror_exception_will_be_unknown_resource_type_foo(expected_exception_message, testinfra_bdd_host):
     """the ValueError exception will be 'Unknown resource type "foo".'."""
-    host = get_host_from_fixture(testinfra_bdd_host)
-
-    try:
-        get_resource_from_host(host, 'foo', 'foo')
-        exception_message = ''
-    except ValueError as ex:
-        exception_message = str(ex)
-
-    assert exception_message == 'Unknown resource type "foo".'
+    actual_exception_message = testinfra_bdd_host['exception_message']
+    message = f'Expected "{expected_exception_message}" as the exception message but got "{actual_exception_message}".'
+    assert actual_exception_message == expected_exception_message, message

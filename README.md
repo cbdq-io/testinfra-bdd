@@ -12,17 +12,13 @@ and
 Given a directory structure of:
 
 ```shell
-(root) --+
-         |
-         |- tests +
-                  |
-                  +- features +
-                  |           |
-                  |           + example.feature
-                  |
-                  +- step_defs +
-                               |
-                               + test_example.py
+"."
+
+└── "tests"
+    ├── "features"
+    │   ├── "example.feature"
+    └── "step_defs"
+        └── "test_example.py"
 ```
 
 The file `tests/features/example.feature` could look something like:
@@ -31,10 +27,17 @@ The file `tests/features/example.feature` could look something like:
 Feature: Example of Testinfra BDD
   Give an example of all the possible Given, When and Then steps.
 
+  Scenario: Start NTP Service
+    Given the host with URL "docker://sut" is ready within 10 seconds
+    When the command is "service ntp start"
+    Then the command return code is 0
+
   Scenario: System Under Test
     Given the host with URL "docker://sut" is ready within 10 seconds
     When the system property type is not "linux" skip tests
-    When the command is "ntpq -np"
+    And the command is "ntpq -np"
+    Then the command return code is 0
+    And the command stdout contains "remote"
 
   Scenario: Skip Tests if Host is Windoze
     Given the host with URL "docker://sut" is ready within 10 seconds
@@ -42,7 +45,7 @@ Feature: Example of Testinfra BDD
 
   Scenario: Check Java is Installed in the Path
     Given the host with URL "docker://java11" is ready within 10 seconds
-    Then the command java exists in path
+    Then the command "java" exists in path
 
   Scenario: Check Java 11 is Installed
     Given the host with URL "docker://java11" is ready
@@ -51,6 +54,16 @@ Feature: Example of Testinfra BDD
     And the command stderr matches regex "openjdk version \"11\\W[0-9]"
     And the command stdout is empty
     And the command return code is 0
+
+  Scenario Outline: Check a Service Status
+    Given the host with URL "docker://sut" is ready
+    When the service is <service_name>
+    Then the service <status> enabled
+    And the service <status> running
+    Examples:
+      | service_name | status |
+      | ntp          | is     |
+      | named        | is not |
 ```
 
 and `tests/step_defs/test_example.py` contains the following:
@@ -72,6 +85,11 @@ from pytest_bdd import scenario
 pytest_plugins = ['testinfra_bdd']
 
 
+@scenario('../features/example.feature', 'Start NTP Service')
+def test_start_ntp_service():
+    """Start NTP Service."""
+
+
 @scenario('../features/example.feature', 'Check Java 11 is Installed')
 def test_check_java_11_is_installed():
     """Check Java 11 is Installed."""
@@ -90,6 +108,11 @@ def test_skip_tests_if_host_is_windoze():
 @scenario('../features/example.feature', 'System Under Test')
 def test_system_under_test():
     """System Under Test."""
+
+
+@scenario('../features/example.feature', 'Check a Service Status')
+def test_check_a_service_status():
+    """Check a Service Status."""
 ```
 ## "Given" Steps
 
@@ -222,4 +245,22 @@ Then command stderr matches regex "openjdk version \"11\\W[0-9]"
 Check a stream (standard output) is empty:
 ```gherkin
 Then the command stdout is empty
+```
+
+### Check the Status of a Service
+
+Check that a service (ntp) is running and enabled:
+
+```gherkin
+When the service is ntp
+Then the service is running
+And the service is enabled
+```
+
+Check that a service (named) is not running and is disabled:
+
+```gherkin
+When the service is named
+Then the service is not running
+And the service is not enabled
 ```

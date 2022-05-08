@@ -37,3 +37,8 @@ def test_skip_tests_if_host_is_windoze():
 @scenario('../features/example.feature', 'System Under Test')
 def test_system_under_test():
     """System Under Test."""
+
+
+@scenario('../features/example.feature', 'Check a Service Status')
+def test_check_a_service_status():
+    """Check a Service Status."""

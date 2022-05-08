@@ -28,3 +28,13 @@ Feature: Example of Testinfra BDD
     And the command stderr matches regex "openjdk version \"11\\W[0-9]"
     And the command stdout is empty
     And the command return code is 0
+
+  Scenario Outline: Check a Service Status
+    Given the host with URL "docker://sut" is ready
+    When the service is <service_name>
+    Then the service <status> enabled
+    And the service <status> running
+    Examples:
+      | service_name | status |
+      | ntp          | is     |
+      | named        | is not |
