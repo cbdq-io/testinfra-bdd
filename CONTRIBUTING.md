@@ -53,4 +53,15 @@ make changelog
 
 Now commit these changes in a way that we don't have excessive messages
 in the changelog:
+```shell
+git add .
+git commit -m "chg: doc: Release ${RELEASE} \!minor"
+```
 
+Now finish the release in Git Flow:
+```shell
+git flow finish -m "v${RELEASE}" -p
+```
+
+When all the CI jobs have completed, create the new release at
+https://github.com/locp/testinfra-bdd/releases
