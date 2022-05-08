@@ -1,12 +1,30 @@
 Feature: Example of Testinfra BDD
-  Give an example of the possible Given, When and Then steps.
+  Give an example of all the possible Given, When and Then steps.
+
+  Scenario: Start NTP Service
+    Given the host with URL "docker://sut" is ready within 10 seconds
+    When the command is "service ntp start"
+    Then the command return code is 0
 
   Scenario: System Under Test
-    Given Testinfra URL is docker://sut
-    When Testinfra host is ready within 10 seconds
-    And Testinfra host is ready
-    And Testinfra host type is linux or skip tests
-    And Testinfra host distribution is debian or skip tests
-    And Testinfra host release is 11 or skip tests
-    And Testinfra host codename is bullseye or skip tests
-    And Testinfra host arch is x86_64 or skip tests
+    Given the host with URL "docker://sut" is ready within 10 seconds
+    When the system property type is not "linux" skip tests
+    And the command is "ntpq -np"
+    Then the command return code is 0
+    And the command stdout contains "remote"
+
+  Scenario: Skip Tests if Host is Windoze
+    Given the host with URL "docker://sut" is ready within 10 seconds
+    When the system property type is not Windoze skip tests
+
+  Scenario: Check Java is Installed in the Path
+    Given the host with URL "docker://java11" is ready within 10 seconds
+    Then the command "java" exists in path
+
+  Scenario: Check Java 11 is Installed
+    Given the host with URL "docker://java11" is ready
+    When the command is "java -version"
+    Then the command stderr contains "Corretto-11"
+    And the command stderr matches regex "openjdk version \"11\\W[0-9]"
+    And the command stdout is empty
+    And the command return code is 0
