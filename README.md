@@ -264,3 +264,26 @@ When the service is named
 Then the service is not running
 And the service is not enabled
 ```
+
+### Check the Installation Status of a Package
+
+Check that a package (ntp) is installed:
+
+```gherkin
+When the package is ntp
+Then the package is installed
+```
+
+This same check can also be written as:
+
+```gherkin
+When the package is ntp
+Then the package is present
+```
+
+To assert that a package (named) is absent:
+
+```gherkin
+When the package is named
+Then the package is absent
+```

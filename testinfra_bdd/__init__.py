@@ -340,3 +340,39 @@ def the_service_is_running(testinfra_bdd_host):
     host = get_host_from_fixture(testinfra_bdd_host)
     message = f'Expected {service.name} on host {host.backend.hostname} to be running.'
     assert service.is_running, message
+
+
+@then(parsers.parse('the package is {expected_status}'))
+def the_package_status_is(expected_status, testinfra_bdd_host):
+    """
+    Check the status of a package (installed/absent).
+
+    Parameters
+    ----------
+    expected_status : str
+        Can be absent, installed or present.
+    testinfra_bdd_host : dict
+        The test fixture.
+
+    Raises
+    ------
+    AssertError
+        When the package is not in the expected state.
+    """
+    status_lookup = {
+        'absent': False,
+        'installed': True,
+        'present': True
+    }
+    expected_to_be_installed = status_lookup[expected_status]
+    pkg = get_resource_from_fixture(testinfra_bdd_host, 'package')
+    host = get_host_from_fixture(testinfra_bdd_host)
+    actual_status = pkg.is_installed
+
+    if expected_to_be_installed:
+        message = f'Expected {pkg.name} to be {expected_status} on {host.backend.hostname} but it is absent.'
+
+    if actual_status:
+        message = f'Expected {pkg.name} to be absent on {host.backend.hostname} but it is installed ({pkg.version}).'
+
+    assert actual_status == expected_to_be_installed, message
