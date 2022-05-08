@@ -59,7 +59,8 @@ def get_host_property(host, property_name):
         'distribution': host.system_info.distribution,
         'release': host.system_info.release,
         'codename': host.system_info.codename,
-        'arch': host.system_info.arch
+        'arch': host.system_info.arch,
+        'hostname': host.backend.get_hostname()
     }
 
     try:

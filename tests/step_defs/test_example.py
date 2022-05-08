@@ -14,6 +14,11 @@ from pytest_bdd import scenario
 pytest_plugins = ['testinfra_bdd']
 
 
+@scenario('../features/example.feature', 'Start NTP Service')
+def test_start_ntp_service():
+    """Start NTP Service."""
+
+
 @scenario('../features/example.feature', 'Check Java 11 is Installed')
 def test_check_java_11_is_installed():
     """Check Java 11 is Installed."""

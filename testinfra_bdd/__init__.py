@@ -135,6 +135,7 @@ def skip_tests_if_system_info_does_not_match(property_name, expected_value, test
         pytest.skip(f'System {property_name} is {actual_value} which is not {expected_value}.')
 
 
+@then(parsers.parse('the command "{command}" exists in path'))
 @then(parsers.parse('the command {command} exists in path'))
 def check_command_exists_in_path(command, testinfra_bdd_host):
     """
@@ -153,7 +154,7 @@ def check_command_exists_in_path(command, testinfra_bdd_host):
         When the command is not found on the path.
     """
     host = get_host_from_fixture(testinfra_bdd_host)
-    message = f'Unable to find the command {command} on the path.'
+    message = f'Unable to find the command "{command}" on the path.'
     assert host.exists(command), message
 
 
