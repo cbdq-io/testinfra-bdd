@@ -114,6 +114,8 @@ def get_resource_from_host(host, resource_type, resource_name):
     """
     if resource_type == 'command':
         return host.run(resource_name)
+    elif resource_type == 'service':
+        return host.service(resource_name)
 
     raise ValueError(f'Unknown resource type "{resource_type}".')
 

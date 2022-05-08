@@ -256,3 +256,87 @@ def command_stream_is_empty(stream_name, testinfra_bdd_host):
     cmd = get_resource_from_fixture(testinfra_bdd_host, 'command')
     stream = get_stream_from_command(cmd, stream_name)
     assert not stream, f'Expected {stream_name} to be empty ("{stream}").'
+
+
+@then('the service is not enabled')
+def the_service_is_not_enabled(testinfra_bdd_host):
+    """
+    Check that the service is not enabled.
+
+    Parameters
+    ----------
+    testinfra_bdd_host : dict
+        The test fixture.
+
+    Raises
+    ------
+    AssertError
+        When the service is enabled.
+    """
+    service = get_resource_from_fixture(testinfra_bdd_host, 'service')
+    host = get_host_from_fixture(testinfra_bdd_host)
+    message = f'Expected {service.name} on host {host.backend.hostname} to be disabled, but it is enabled.'
+    assert not service.is_enabled, message
+
+
+@then('the service is enabled')
+def the_service_is_enabled(testinfra_bdd_host):
+    """
+    Check that the service is enabled.
+
+    Parameters
+    ----------
+    testinfra_bdd_host : dict
+        The test fixture.
+
+    Raises
+    ------
+    AssertError
+        When the service is not enabled.
+    """
+    service = get_resource_from_fixture(testinfra_bdd_host, 'service')
+    host = get_host_from_fixture(testinfra_bdd_host)
+    message = f'Expected {service.name} on host {host.backend.hostname} to be enabled, but it is disabled.'
+    assert service.is_enabled, message
+
+
+@then('the service is not running')
+def the_service_is_not_running(testinfra_bdd_host):
+    """
+    Check that the service is not running.
+
+    Parameters
+    ----------
+    testinfra_bdd_host : dict
+        The test fixture.
+
+    Raises
+    ------
+    AssertError
+        When the service is running.
+    """
+    service = get_resource_from_fixture(testinfra_bdd_host, 'service')
+    host = get_host_from_fixture(testinfra_bdd_host)
+    message = f'Expected {service.name} on host {host.backend.hostname} to not be running.'
+    assert not service.is_running, message
+
+
+@then('the service is running')
+def the_service_is_running(testinfra_bdd_host):
+    """
+    Check that the service is running.
+
+    Parameters
+    ----------
+    testinfra_bdd_host : dict
+        The test fixture.
+
+    Raises
+    ------
+    AssertError
+        When the service is not running.
+    """
+    service = get_resource_from_fixture(testinfra_bdd_host, 'service')
+    host = get_host_from_fixture(testinfra_bdd_host)
+    message = f'Expected {service.name} on host {host.backend.hostname} to be running.'
+    assert service.is_running, message

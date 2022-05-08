@@ -22,10 +22,13 @@ Feature: Test the utility functions
       | type          | OK     |
       | foo           | NOK    |
 
-  Scenario: Request for Invalid Resource Should Fail
+  Scenario Outline: Request for Invalid Resource Should Fail
     Given the host with URL "docker://sut" is ready
-    When a resource called "foo" is requested
-    Then the ValueError exception will be 'Unknown resource type "foo".'
+    When a resource of type <type> called <name> is requested
+    Then the ValueError exception will be "<exception_message>"
+    Examples:
+      | type    | name | exception_message            |
+      | foo     | foo  | Unknown resource type "foo". |
 
   Scenario: Unknown stream name for a command
     Given the host with URL "docker://sut" is ready
