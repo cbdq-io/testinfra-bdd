@@ -2,7 +2,10 @@
 
 [![CI](https://github.com/locp/testinfra-bdd/actions/workflows/ci.yml/badge.svg)](https://github.com/locp/testinfra-bdd/actions/workflows/ci.yml)
 
-An interface between pytest-bdd and pytest-testinfra.
+An interface between
+[pytest-bdd](https://pytest-bdd.readthedocs.io/en/latest/)
+and
+[pytest-testinfra](https://testinfra.readthedocs.io/en/latest/index.html).
 
 ## Defining a Scenario
 
@@ -26,21 +29,62 @@ The file `tests/features/example.feature` could look something like:
 
 ```gherkin
 Feature: Example of Testinfra BDD
-  Give an example of the possible Given, When and Then steps.
+  Give an example of all the possible Given, When and Then steps.
 
   Scenario: System Under Test
-    Given Testinfra URL is docker://sut
-    When Testinfra host is ready within 10 seconds
+    Given the host with URL "docker://sut" is ready within 10 seconds
+    When the system property type is not "linux" skip tests
+    When the command is "ntpq -np"
+
+  Scenario: Skip Tests if Host is Windoze
+    Given the host with URL "docker://sut" is ready within 10 seconds
+    When the system property type is not Windoze skip tests
+
+  Scenario: Check Java is Installed in the Path
+    Given the host with URL "docker://java11" is ready within 10 seconds
+    Then the command java exists in path
+
+  Scenario: Check Java 11 is Installed
+    Given the host with URL "docker://java11" is ready
+    When the command is "java -version"
+    Then the command stderr contains "Corretto-11"
+    And the command stderr matches regex "openjdk version \"11\\W[0-9]"
+    And the command stdout is empty
+    And the command return code is 0
 ```
 
 and `tests/step_defs/test_example.py` contains the following:
 
 ```python
+"""
+Examples of step definitions for Testinfra BDD feature tests.
+
+Notes
+-----
+The user must define their scenarios in a way similar to below.  However, the
+scenarios can be empty.
+"""
+
 from pytest_bdd import scenario
 
 # Ensure that the PyTest fixtures provided in testinfra-bdd are available to
 # your test suite.
 pytest_plugins = ['testinfra_bdd']
+
+
+@scenario('../features/example.feature', 'Check Java 11 is Installed')
+def test_check_java_11_is_installed():
+    """Check Java 11 is Installed."""
+
+
+@scenario('../features/example.feature', 'Check Java is Installed in the Path')
+def test_check_java_is_installed_in_the_path():
+    """Check Java is Installed in the Path."""
+
+
+@scenario('../features/example.feature', 'Skip Tests if Host is Windoze')
+def test_skip_tests_if_host_is_windoze():
+    """Skip Tests if Host is Windoze."""
 
 
 @scenario('../features/example.feature', 'System Under Test')
@@ -52,67 +96,70 @@ def test_system_under_test():
 Given steps require that the URL of the system to be tested (SUT) is provided.
 This URL should comply to the connection string for the [Testinfra connection
 string](https://testinfra.readthedocs.io/en/latest/backends.html) (e.g.
-docker://my-host).
+docker://my-host).  Please note that the URL _must_ be enclosed in double
+quotes.
 
-Example:
+Examples:
 
-To connect to a Docker container called sut:
+To connect to a Docker container called sut (fail if the target host is
+not ready):
 ```gherkin
-Given Testinfra URL is docker://sut
+Given the host with URL "docker://java11" is ready
 ```
+
+To connect to a Docker container called sut but give it 60 seconds to become
+ready, use the following:
+
+```gherkin
+Given the host with URL "docker://sut" is ready within 60 seconds
+```
+
+If the host does not become available after 60 seconds, fail the tests.
 
 ### Writing a customized "Given" Step
 
 It may be that you may want to create a customized "Given" step.  An example
 could be that the hosts to be tested may be parametrized.  The "Given" step
 must return a target fixture called "testinfra_bdd_host" so that the rest of
-the Testinfra BDD fixtures will function.  An example of a parametrized
-feature file can be seen at
-[tests/features/parametrized.feature](tests/features/parametrized.feature)
-and the
-associated step definitions can be seen in
-[tests/features/parametrized.feature](tests/features/parametrized.feature).
+the Testinfra BDD fixtures will function.  This fixture is a `dict` and
+_must_contain keys called `host` and `url`.
+
+The "Given" step should also ascertain that the target host is ready (one
+can use the `is_host_ready` function for that).
+
+An example is:
+
+```python
+import testinfra
+
+from pytest_bdd import given
+from testinfra_bdd import is_host_ready
+
+@given('my host is ready', target_fixture='testinfra_bdd_host')
+def my_host_is_ready():
+    """
+    Specify that the target host is a docker container called
+    "my-host" and wait up to 60 seconds for the host to be ready.
+    """
+    url = 'docker://my-host'
+    host = testinfra.get_host(url)
+    assert is_host_ready(host, 60), 'My host is not ready.'
+    
+    return {
+        'url': url,
+        'host': testinfra.get_host(url)
+    }
+
+...
+```
 
 ## "When" Steps
 
-When steps require that a "Given" step has been executed beforehand.
+When steps require that a "Given" step has been executed beforehand.  They
+allow the user to either skip tests if the host does not match an expected
+profile.  They also allow the user to specify which resource or is to be
+tested.
 
-Use the "When" steps to ascertain if the host is ready to have tests
-executed against it or to ensure that the profile of the host being
-tested matches expectations.  If they don't match, one can skip tests.
-
-Whether a host is ready is ascertained by making a call to the SystemInfo
-module of Testinfra to get the type (e.g. 'linux') of the system.  If this
-fails for any reason, then it is assumed that the host is not ready.
-
-### Check if the Host is Ready or Fail
-
-In this example if the host is not ready, the tests will be marked
-as failed:
-
-```gherkin
-When Testinfra host is ready
-```
-
-In this example if the host is not ready within 300 seconds (five minutes)
-the tests will be marked as failed:
-
-```gherkin
-When Testinfra host is ready within 300 seconds
-```
-
-In this example, if the host is not ready, skip the tests:
-
-```gherkin
-When Testinfra host is ready or skip tests
-```
-
-In this example if the host is not ready within 300 seconds (five minutes)
-skip the tests:
-
-```gherkin
-When Testinfra host is ready within 300 seconds or skip tests
-```
 
 ### Skip Tests if Host Profile Does Not Match
 
@@ -125,18 +172,54 @@ can be achieved by comparing against the following configurations:
 - The OS release (e.g. 11).
 - The OS codename if relevant (e.g. bullseye).
 - The host architecture (e.g. x86_64).
+- The hostname (e.g. sut)
 
-Please note that to be able to get these values, the host must be ready.
-This example shows all the possible combinations:
-
+Example:
 ```gherkin
-    When Testinfra host is ready within 10 seconds
-    And Testinfra host type is linux or skip tests
-    And Testinfra host distribution is debian or skip tests
-    And Testinfra host release is 11 or skip tests
-    And Testinfra host codename is bullseye or skip tests
-    And Testinfra host arch is x86_64 or skip tests
+  Scenario: Skip Tests if Host is Windoze
+    Given the host with URL "docker://sut" is ready within 10 seconds
+    When the system property type is not Windoze skip tests
 ```
 
-If the host is anything other than Debian 11 (bullseye) running on x86_64
-architecture, the tests will be skipped.
+## "Then" Steps
+
+### Check a Command Exists on the Path
+
+In this example, the test will pass if the command called "java" is found
+on the path of the host being tested:
+
+```gherkin
+  Scenario: Check Java is Installed in the Path
+    Given the host with URL "docker://java11" is ready within 10 seconds
+    Then the command java exists in path
+```
+
+### Check a Command Return Code
+
+```gherkin
+  Scenario: Start NTP Service
+    Given the host with URL "docker://sut" is ready within 10 seconds
+    When the command is "service ntp start"
+    Then the command return code is 0
+```
+
+### Check the Output of a Command
+There are two output streams for a command.  The stream called stdout is
+for standard output and stderr is for the standard error.
+
+There following methods are available:
+
+Check for a string in the standard error:
+```gherkin
+Then the command stderr contains "Corretto-11"
+```
+
+Check for a regular expression in the standard error:
+```gherkin
+Then command stderr matches regex "openjdk version \"11\\W[0-9]"
+```
+
+Check a stream (standard output) is empty:
+```gherkin
+Then the command stdout is empty
+```

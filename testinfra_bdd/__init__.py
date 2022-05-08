@@ -4,14 +4,25 @@ An interface between pytest-bdd and pytest-testinfra.
 For documentation and examples, please go to
 https://github.com/locp/testinfra-bdd
 """
+import re
+
 import pytest
 import testinfra
-import time
 
 from pytest_bdd import (
     given,
     when,
+    then,
     parsers
+)
+
+from testinfra_bdd.utils import (
+    get_host_from_fixture,
+    get_host_property,
+    get_resource_from_fixture,
+    get_resource_from_host,
+    get_stream_from_command,
+    is_host_ready
 )
 
 """The version of the module.
@@ -19,205 +30,229 @@ from pytest_bdd import (
 This is used by setuptools and by gitchangelog to identify the name of the name
 of the release.
 """
-__version__ = '0.0.2'
+__version__ = '0.1.0'
 
 
-def get_host_from_fixture(testinfra_bdd_host):
+@given(parsers.parse('the host with URL "{hostspec}" is ready'), target_fixture='testinfra_bdd_host')
+def the_host_is_ready(hostspec):
     """
-    Return a Testinfra host object from the fixture.
+    Ensure that the host is ready within the specified number of seconds.
+
+    If the host does not become ready within the specified number of seconds,
+    fail the tests.
 
     Parameters
     ----------
-    testinfra_bdd_host : dict
-        The dictionary must contain a key called "testinfra_host_url" which
-        contains the URL of the host to connect to.
-
-    Returns
-    -------
-    testinfra.host.Host
-        A host object for connecting to the specified URL.
-    """
-    url = testinfra_bdd_host['testinfra_host_url']
-    host = testinfra.get_host(url)
-    return host
-
-
-def is_host_ready(host, timeout=0):
-    """
-    Check if a host is ready within a specified time.
-
-    Will poll the host every second until timeout number of seconds have
-    expired.  If this host has not responded within that time, the host
-    is assumed to not be ready.
-
-    Parameters
-    ----------
-    host : testinfra.host.Host
-        The host that should be checked for its readiness.
-    timeout : int,optional
-        The time in seconds to wait for the host to become ready.  The
-        default is zero.
-
-    Returns
-    -------
-    bool
-        True if the host is responding to the host.system_info.type request.
-        False if it doesn't.
-    """
-    is_ready = False
-    now = time.time()
-    deadline = now + timeout
-
-    while now <= deadline and not is_ready:
-        try:
-            host.system_info.type
-            is_ready = True
-        except AssertionError:
-            if now < deadline:
-                time.sleep(1)
-
-        now = time.time()
-
-    return is_ready
-
-
-@given(parsers.parse('Testinfra URL is {url}'), target_fixture='testinfra_bdd_host')
-def testinfra_url_is_url(url):
-    """
-    Testinfra URL is <url>.
-
-    Parameters
-    ----------
-    url : str
+    hostspec : str
         The URL of the System Under Test (SUT).  Must comply to the Testinfra
         URL patterns.  See
         https://testinfra.readthedocs.io/en/latest/backends.html
 
-    Returns
-    -------
-    dict
-        A dictionary containing an element called testinfra_host_url which is
-        set to the provided URL.
+    Raises
+    ------
+    AssertError
+        If the host is not ready.
     """
+    host = testinfra.get_host(hostspec)
+
+    message = f'The host {hostspec} is not ready.'
+    assert is_host_ready(host), message
     return {
-        'testinfra_host_url': url
+        'host': host,
+        'url': hostspec
     }
 
 
-@when(parsers.parse('Testinfra host arch is {expected_arch} or skip tests'))
-def testinfra_host_arch_is_x86_64_or_skip_tests(expected_arch, testinfra_bdd_host):
-    """Testinfra host arch is x86_64 or skip tests."""
-    host = get_host_from_fixture(testinfra_bdd_host)
-    actual_arch = host.system_info.arch
-    message = f'Host arch ({actual_arch}) does not match {expected_arch}.'
-
-    if actual_arch != expected_arch:
-        pytest.skip(message)
-
-
-@when(parsers.parse('Testinfra host codename is {expected_codename} or skip tests'))
-def testinfra_host_codename_is_bullseye_or_skip_tests(expected_codename, testinfra_bdd_host):
-    """Testinfra host codename is bullseye or skip tests."""
-    host = get_host_from_fixture(testinfra_bdd_host)
-    actual_codename = host.system_info.codename
-    message = f'Host codename ({actual_codename}) does not match {expected_codename}.'
-
-    if actual_codename != expected_codename:
-        pytest.skip(message)
-
-
-@when(parsers.parse('Testinfra host distribution is {expected_distribution} or skip tests'))
-def testinfra_host_distribution_is_debian_or_skip_tests(expected_distribution, testinfra_bdd_host):
-    """Testinfra host distribution is debian or skip tests."""
-    host = get_host_from_fixture(testinfra_bdd_host)
-    actual_distribution = host.system_info.distribution
-    message = f'Host distribution ({actual_distribution}) does not match {expected_distribution}.'
-
-    if actual_distribution != expected_distribution:
-        pytest.skip(message)
-
-
-@when('Testinfra host is ready')
-def testinfra_host_is_ready(testinfra_bdd_host):
+@given(parsers.parse('the host with URL "{hostspec}" is ready within {seconds:d} seconds'),
+       target_fixture='testinfra_bdd_host')
+def the_host_is_ready_with_a_number_of_seconds(hostspec, seconds):
     """
-    Testinfra host is ready.
+    Ensure that the host is ready within the specified number of seconds.
 
-    Check if a host is available now.  If not, don't wait and mark the tests
-    as failed.
+    If the host does not become ready within the specified number of seconds,
+    fail the tests.
 
     Parameters
     ----------
-    testinfra_bdd_host : dict
-        The dictionary must contain a key called "testinfra_host_url" which
-        contains the URL of the host to connect to.
+    hostspec : str
+        The URL of the System Under Test (SUT).  Must comply to the Testinfra
+        URL patterns.  See
+        https://testinfra.readthedocs.io/en/latest/backends.html
+    seconds : int
+        The number of seconds that the host is expected to become ready in.
+
+    Raises
+    ------
+    AssertError
+        If the host does not become ready within the specified number of seconds.
     """
-    url = testinfra_bdd_host['testinfra_host_url']
-    host = get_host_from_fixture(testinfra_bdd_host)
-    is_ready = is_host_ready(host)
-    message = f'Host {url} is not become ready.'
-    assert is_ready, message
+    host = testinfra.get_host(hostspec)
+
+    message = f'The host {hostspec} is not ready within {seconds} seconds.'
+    assert is_host_ready(host, seconds), message
+    return {
+        'host': host,
+        'url': hostspec
+    }
 
 
-@when('Testinfra host is ready or skip tests')
-def testinfra_host_is_ready_or_skip_tests(testinfra_bdd_host):
+@when(parsers.parse('the {resource_type} is "{resource_name}"'))
+@when(parsers.parse('the {resource_type} is {resource_name}'))
+def the_resource_type_is(resource_type, resource_name, testinfra_bdd_host):
     """
-    Testinfra host is ready or skip tests.
-
-    Check if a host is available now.  If not, don't wait, just skip the
-    tests.
+    Get a resource of a specified type from the system under test.
 
     Parameters
     ----------
+    resource_type : str
+        The type of the resource.
+    resource_name : str
+        The name of the resource.
     testinfra_bdd_host : dict
-        The dictionary must contain a key called "testinfra_host_url" which
-        contains the URL of the host to connect to.
+        The test fixture.
     """
-    url = testinfra_bdd_host['testinfra_host_url']
     host = get_host_from_fixture(testinfra_bdd_host)
-    is_ready = is_host_ready(host)
-
-    if not is_ready:
-        pytest.skip(f'Host {url} is not ready.')
+    testinfra_bdd_host[resource_type] = get_resource_from_host(host, resource_type, resource_name)
 
 
-@when(parsers.parse('Testinfra host is ready within {seconds:d} seconds'))
-def testinfra_host_is_ready_within_10_seconds(seconds, testinfra_bdd_host):
-    """Testinfra host is ready within <seconds> seconds."""
-    url = testinfra_bdd_host['testinfra_host_url']
+@when(parsers.parse('the system property {property_name} is not "{expected_value}" skip tests'))
+@when(parsers.parse('the system property {property_name} is not {expected_value} skip tests'))
+def skip_tests_if_system_info_does_not_match(property_name, expected_value, testinfra_bdd_host):
+    """
+    Skip tests if a system property does not patch the expected value.
+
+    Parameters
+    ----------
+    property_name : str
+    expected_value : str
+    testinfra_bdd_host : dict
+        The test fixture.
+    """
     host = get_host_from_fixture(testinfra_bdd_host)
-    is_ready = is_host_ready(host, seconds)
-    message = f'Host {url} did not become ready within {seconds} seconds.'
-    assert is_ready, message
+    actual_value = get_host_property(host, property_name)
+
+    if actual_value != expected_value:
+        pytest.skip(f'System {property_name} is {actual_value} which is not {expected_value}.')
 
 
-@when(parsers.parse('Testinfra host is ready within {seconds:d} seconds or skip tests'))
-def testinfra_host_is_ready_within_seconds_seconds_or_skip_tests(seconds, testinfra_bdd_host):
-    """Testinfra host is ready within <seconds> seconds or skip tests."""
-    url = testinfra_bdd_host['testinfra_host_url']
+@then(parsers.parse('the command "{command}" exists in path'))
+@then(parsers.parse('the command {command} exists in path'))
+def check_command_exists_in_path(command, testinfra_bdd_host):
+    """
+    Assert that a specified command is present on the host path.
+
+    Parameters
+    ----------
+    command : str
+        The name of the command to check for.
+    testinfra_bdd_host : dict
+        The test fixture.
+
+    Raises
+    ------
+    AssertError
+        When the command is not found on the path.
+    """
     host = get_host_from_fixture(testinfra_bdd_host)
-    is_ready = is_host_ready(host, seconds)
-
-    if not is_ready:
-        pytest.skip(f'Host {url} is not ready.')
+    message = f'Unable to find the command "{command}" on the path.'
+    assert host.exists(command), message
 
 
-@when(parsers.parse('Testinfra host release is {expected_release} or skip tests'))
-def testinfra_host_release_is_102_or_skip_tests(expected_release, testinfra_bdd_host):
-    """Testinfra host release is <expected_release> or skip tests."""
-    host = get_host_from_fixture(testinfra_bdd_host)
-    actual_release = host.system_info.release
-    message = f'Host release ({actual_release}) does not match {expected_release}.'
+@then(parsers.parse('the command {stream_name} contains "{text}"'))
+def check_command_stream_contains(stream_name, text, testinfra_bdd_host):
+    """
+    Check that the stdout or stderr stream contains a string.
 
-    if actual_release != expected_release:
-        pytest.skip(message)
+    Parameters
+    ----------
+    stream_name : str
+        The name of the stream to check.  Must be "stdout" or "stderr".
+    text : str
+        The text to search for.
+    testinfra_bdd_host : dict
+        The test fixture.
+
+    Raises
+    ------
+    AssertError
+        When the specified stream does not contain the expected text.
+    """
+    cmd = get_resource_from_fixture(testinfra_bdd_host, 'command')
+    stream = get_stream_from_command(cmd, stream_name)
+    message = f'The string "{text}" was not found in the {stream_name} ("{stream}") of the command.'
+    assert text in stream, message
 
 
-@when(parsers.parse('Testinfra host type is {expected_type} or skip tests'))
-def testinfra_host_type_is_linux_or_skip_tests(expected_type, testinfra_bdd_host):
-    """Testinfra host type is linux or skip tests."""
-    host = get_host_from_fixture(testinfra_bdd_host)
-    actual_type = host.system_info.type
-    message = f'Host type ({actual_type}) does not match {expected_type}.'
+@then(parsers.parse('the command {stream_name} matches regex "{pattern}"'))
+def check_command_stream_matches_regex(stream_name, pattern, testinfra_bdd_host):
+    """
+    Check that the stdout or stderr stream matches a regular expression pattern.
 
-    if actual_type != expected_type:
-        pytest.skip(message)
+    Parameters
+    ----------
+    stream_name : str
+        The name of the stream to be checked.  Must be stdout or stderr.
+    pattern : str
+        The pattern to search for in the stream.
+    testinfra_bdd_host : dict
+        The test fixture.
+
+    Raises
+    ------
+    AssertError
+        When the specified stream does not match the pattern.
+    ValueError
+        When the stream name is not recognized.
+    """
+    cmd = get_resource_from_fixture(testinfra_bdd_host, 'command')
+    stream = get_stream_from_command(cmd, stream_name)
+    message = f'The regex "{pattern}" does not match the {stream_name} "{stream}".'
+    # The parsers.parse function escapes the parsed string.  We need to clean it up before using it.
+    pattern = pattern.encode('utf-8').decode('unicode_escape')
+    prog = re.compile(pattern)
+    assert prog.match(stream) is not None, message
+
+
+@then(parsers.parse('the command return code is {expected_return_code:d}'))
+def check_command_return_code(expected_return_code, testinfra_bdd_host):
+    """
+    Check that the expected return code from a command matches the actual return code.
+
+    Parameters
+    ----------
+    expected_return_code : int
+        The expected return code (e.g. zero/0).
+    testinfra_bdd_host : dict
+        The test fixture.
+
+    Raises
+    ------
+    AssertError
+        When the actual return code does not match the expected return code.
+    """
+    cmd = get_resource_from_fixture(testinfra_bdd_host, 'command')
+    actual_return_code = cmd.rc
+    message = f'Expected a return code of {expected_return_code} but got {actual_return_code}.'
+    assert expected_return_code == actual_return_code, message
+
+
+@then(parsers.parse('the command {stream_name} is empty'))
+def command_stream_is_empty(stream_name, testinfra_bdd_host):
+    """
+    Check that the specified command stream is empty.
+
+    Parameters
+    ----------
+    stream_name : str
+        The name of the stream to be checked.  Must be stdout or stderr.
+    testinfra_bdd_host : dict
+        The test fixture.
+
+    Raises
+    ------
+    AssertError
+        When the specified stream does not match the pattern.
+    """
+    cmd = get_resource_from_fixture(testinfra_bdd_host, 'command')
+    stream = get_stream_from_command(cmd, stream_name)
+    assert not stream, f'Expected {stream_name} to be empty ("{stream}").'
