@@ -5,6 +5,8 @@
 
 ### New
 
+* Add checks for files. [Ben Dalling]
+
 * Add checks for packages. [Ben Dalling]
 
 * Add service checks. [Ben Dalling]
