@@ -1,6 +1,8 @@
 # testinfra-bdd
 
 [![CI](https://github.com/locp/testinfra-bdd/actions/workflows/ci.yml/badge.svg)](https://github.com/locp/testinfra-bdd/actions/workflows/ci.yml)
+[![Total alerts](https://img.shields.io/lgtm/alerts/g/locp/testinfra-bdd.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/locp/testinfra-bdd/alerts/)
+[![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/locp/testinfra-bdd.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/locp/testinfra-bdd/context:python)
 
 An interface between
 [pytest-bdd](https://pytest-bdd.readthedocs.io/en/latest/)
@@ -36,8 +38,18 @@ Feature: Example of Testinfra BDD
     Given the host with URL "docker://sut" is ready within 10 seconds
     When the system property type is not "linux" skip tests
     And the command is "ntpq -np"
+    And the package is ntp
+    And the file is /etc/ntp.conf
     Then the command return code is 0
     And the command stdout contains "remote"
+    And the package is installed
+    And the file is present
+    And the file type is file
+    And the file owner is ntp
+    And the file group is ntp
+    And the file contents contains "debian.pool.ntp"
+    And the file contents contains the regex ".*pool [0-9].debian.pool.ntp.org iburst"
+    And the file mode is 0o544
 
   Scenario: Skip Tests if Host is Windoze
     Given the host with URL "docker://sut" is ready within 10 seconds
@@ -50,20 +62,27 @@ Feature: Example of Testinfra BDD
   Scenario: Check Java 11 is Installed
     Given the host with URL "docker://java11" is ready
     When the command is "java -version"
+    And the package is java-11-amazon-corretto-devel
     Then the command stderr contains "Corretto-11"
     And the command stderr matches regex "openjdk version \"11\\W[0-9]"
     And the command stdout is empty
     And the command return code is 0
+    And the package is installed
 
   Scenario Outline: Check a Service Status
     Given the host with URL "docker://sut" is ready
     When the service is <service_name>
+    And the package is <package_name>
+    And the file is <file_name>
     Then the service <status> enabled
     And the service <status> running
+    And the package is <package_status>
+    And the file is <file_status>
     Examples:
-      | service_name | status |
-      | ntp          | is     |
-      | named        | is not |
+      | service_name | status | package_name | package_status | file_name       | file_status |
+      | ntp          | is     | ntp          | installed      | /etc/ntp.conf   | present     |
+      | named        | is not | named        | absent         | /etc/named.conf | absent      |
+
 ```
 
 and `tests/step_defs/test_example.py` contains the following:
@@ -286,4 +305,65 @@ To assert that a package (named) is absent:
 ```gherkin
 When the package is named
 Then the package is absent
+```
+
+### Checking the Status of a File
+
+Check if a file is present on the host:
+
+```gherkin
+When file is /etc/ntp.conf
+Then the file is present
+```
+
+Check if a file is absent on the host:
+
+```gherkin
+When file is /etc/ntp.conf
+Then the file is absent
+```
+
+Check the file type (the file type must be one of file, directory, pipe, socket
+or symlink):
+
+```gherkin
+When file is /etc/ntp.conf
+Then the file type is file
+```
+
+Check the name of the owner of a file:
+
+```gherkin
+When file is /etc/ntp.conf
+Then the file owner is ntp
+```
+
+Check the name of the group of a file:
+
+```gherkin
+When file is /etc/ntp.conf
+Then the file group is ntp
+```
+
+Search for a string in the contents of the file (the text to search for must be
+enclosed in double quotes):
+
+```gherkin
+When file is /etc/ntp.conf
+Then the file contents contains "debian.pool.ntp"
+```
+
+Search for a regular expression in the contents of the file (the regex must
+be enclosed in double quotes):
+
+```gherkin
+When file is /etc/ntp.conf
+Then the file contents contains the regex ".*pool [0-9].debian.pool.ntp.org iburst"
+```
+
+Check the permissions of a file (the permissions must be specified as Octal):
+
+```gherkin
+When file is /etc/ntp.conf
+Then the file mode is 0o544
 ```

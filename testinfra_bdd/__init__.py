@@ -376,3 +376,189 @@ def the_package_status_is(expected_status, testinfra_bdd_host):
         message = f'Expected {pkg.name} to be absent on {host.backend.hostname} but it is installed ({pkg.version}).'
 
     assert actual_status == expected_to_be_installed, message
+
+
+@then(parsers.parse('the file contents contains "{text}"'))
+def the_file_contents_contains_text(text, testinfra_bdd_host):
+    """
+    Check if the file contains a string.
+
+    Parameters
+    ----------
+    text : str
+        The string to search for in the file content.
+    testinfra_bdd_host : dict
+        The test fixture.
+
+    Raises
+    ------
+    AssertError
+        When the file does not contain the string.
+    """
+    file = get_resource_from_fixture(testinfra_bdd_host, 'file')
+    host = get_host_from_fixture(testinfra_bdd_host)
+    assert file.contains(text), f'The file {host.backend.hostname}:{file.path} does not contain "{text}".'
+
+
+@then(parsers.parse('the file contents contains the regex "{pattern}"'))
+def the_file_contents_matches_the_regex(pattern, testinfra_bdd_host):
+    """
+    Check if the file contains matches a regex pattern.
+
+    Parameters
+    ----------
+    pattern : str
+        The regular expression to match against the file content.
+    testinfra_bdd_host : dict
+        The test fixture.
+
+    Raises
+    ------
+    AssertError
+        When the regex does not match the file content.
+    """
+    file = get_resource_from_fixture(testinfra_bdd_host, 'file')
+    host = get_host_from_fixture(testinfra_bdd_host)
+    file_name = f'{host.backend.hostname}:{file.path}'
+    message = f'The regex "{pattern}" does not match the content of {file_name} ("{file.content_string}").'
+    # The parsers.parse function escapes the parsed string.  We need to clean it up before using it.
+    pattern = pattern.encode('utf-8').decode('unicode_escape')
+    assert re.search(pattern, file.content_string) is not None, message
+
+
+@then(parsers.parse('the file group is {expected_group_name}'))
+def the_file_group_is_ntp(expected_group_name, testinfra_bdd_host):
+    """
+    Check if the file group name is as expected.
+
+    Parameters
+    ----------
+    expected_group_name : str
+        The name one expects the group name to match.
+    testinfra_bdd_host : dict
+        The test fixture.
+
+    Raises
+    ------
+    AssertError
+        When the expected group name does not match the actual group name.
+    """
+    file = get_resource_from_fixture(testinfra_bdd_host, 'file')
+    host = get_host_from_fixture(testinfra_bdd_host)
+    actual_group_name = file.group
+    message = f'Expected the group name for {host.backend.hostname}:{file.path} to be {expected_group_name} '
+    message += f'but it is {actual_group_name}.'
+    assert expected_group_name == actual_group_name, message
+
+
+@then(parsers.parse('the file is {expected_status}'))
+def the_file_status(expected_status, testinfra_bdd_host):
+    """
+    Check if the file is present or absent.
+
+    Parameters
+    ----------
+    expected_status : str
+        Should be present or absent.
+    testinfra_bdd_host : dict
+        The test fixture.
+
+    Raises
+    ------
+    AssertError
+        When the expected status does not match the actual status.
+    """
+    status_lookup = {
+        'absent': False,
+        'present': True
+    }
+    is_expected_to_exist = status_lookup[expected_status]
+    host = get_host_from_fixture(testinfra_bdd_host)
+    file = get_resource_from_fixture(testinfra_bdd_host, 'file')
+
+    if is_expected_to_exist:
+        message = f'The file {file.path} is expected to exist on {host.backend.hostname} but is absent.'
+    else:
+        message = f'The file {file.path} is expected to be absent on {host.backend.hostname} but is present.'
+
+    assert is_expected_to_exist == file.exists, message
+
+
+@then(parsers.parse('the file mode is {expected_file_mode}'))
+def the_file_mode_is_0o544(expected_file_mode, testinfra_bdd_host):
+    """
+    Check that the expected file mode matches the actual file mode.
+
+    Parameters
+    ----------
+    expected_file_mode : str
+        Must be an octal string representing the expected file mode.
+    testinfra_bdd_host : dict
+        The test fixture.
+
+    Raises
+    ------
+    AssertError
+        When the expected mode does not match the actual mode.
+    """
+    file = get_resource_from_fixture(testinfra_bdd_host, 'file')
+    actual_file_mode = '0o%o' % file.mode
+    host = get_host_from_fixture(testinfra_bdd_host)
+    message = f'Expected the mode for {host.backend.hostname}:{file.path} to be {expected_file_mode} '
+    message += f'not {actual_file_mode}.'
+    assert expected_file_mode == actual_file_mode, message
+
+
+@then(parsers.parse('the file owner is {expected_username}'))
+def the_file_owner_is_ntp(expected_username, testinfra_bdd_host):
+    """
+    Check the expected username of the owner matches the actual username.
+
+    Parameters
+    ----------
+    expected_username : str
+        The expected username.
+    testinfra_bdd_host : dict
+        The test fixture.
+
+    Raises
+    ------
+    AssertError
+        When the expected username does not match the actual username.
+    """
+    file = get_resource_from_fixture(testinfra_bdd_host, 'file')
+    host = get_host_from_fixture(testinfra_bdd_host)
+    actual_username = file.user
+    message = f'Expected {host.backend.hostname}:{file.path} to be owned by {expected_username}, '
+    message += f'not by {actual_username}.'
+    assert expected_username == actual_username, message
+
+
+@then(parsers.parse('the file type is {expected_file_type}'))
+def the_file_type_is_file(expected_file_type, testinfra_bdd_host):
+    """
+    Check that the expected file type matches the actual file type.
+
+    Parameters
+    ----------
+    expected_file_type : str
+        The expected file type.  Can be one of file, directory, pipe, socket or symlink.
+    testinfra_bdd_host : dict
+        The test fixture.
+
+    Raises
+    ------
+    AssertError
+        When the expected file type does not match the actual file type.
+    """
+    file = get_resource_from_fixture(testinfra_bdd_host, 'file')
+    host = get_host_from_fixture(testinfra_bdd_host)
+    type_lookup = {
+        'file': file.is_file,
+        'directory': file.is_directory,
+        'pipe': file.is_pipe,
+        'socket': file.is_socket,
+        'symlink': file.is_symlink
+    }
+    message = f'file {file.path} on {host.backend.hostname} is not a {expected_file_type}.'
+    assert type_lookup[expected_file_type], message

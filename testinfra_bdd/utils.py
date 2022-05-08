@@ -118,6 +118,8 @@ def get_resource_from_host(host, resource_type, resource_name):
         return host.service(resource_name)
     elif resource_type == 'package':
         return host.package(resource_name)
+    elif resource_type == 'file':
+        return host.file(resource_name)
 
     raise ValueError(f'Unknown resource type "{resource_type}".')
 
