@@ -1,7 +1,52 @@
 # Changelog
 
 
-## 0.0.0
+## 0.1.0
+
+### New
+
+* Add checks for files. [Ben Dalling]
+
+* Add checks for packages. [Ben Dalling]
+
+* Add service checks. [Ben Dalling]
+
+* Add documentation for the command and system info steps. [Ben Dalling]
+
+* Implement fixtures from the host module. [Ben Dalling]
+
+* Implement "When" Steps. [Ben Dalling]
+
+* Add guidance on contributing. [Ben Dalling]
+
+* Add code of conduct guidelines. [Ben Dalling]
+
+* Implement "Given" Steps (fixes #1). [Ben Dalling]
+
+### Fix
+
+* Sort out YAML lint issues. [Ben Dalling]
+
+
+## 0.0.2 (2022-05-02)
+
+### Fix
+
+* Correct release version. [Ben Dalling]
+
+
+## 0.0.1 (2022-05-02)
+
+### Changes
+
+* Add CI status badge to the README.md file. [Ben Dalling]
+
+### Fix
+
+* Add missing requirements.txt file. [Ben Dalling]
+
+
+## 0.0.0 (2022-05-02)
 
 ### New
 

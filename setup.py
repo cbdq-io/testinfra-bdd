@@ -1,5 +1,4 @@
 """Dynamic configuration for setuptools."""
-import os
 import setuptools
 
 import testinfra_bdd
