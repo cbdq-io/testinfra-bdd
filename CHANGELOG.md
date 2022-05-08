@@ -1,9 +1,19 @@
 # Changelog
 
 
-## 0.0.2
+## 0.1.0
 
 ### New
+
+* Add checks for packages. [Ben Dalling]
+
+* Add service checks. [Ben Dalling]
+
+* Add documentation for the command and system info steps. [Ben Dalling]
+
+* Implement fixtures from the host module. [Ben Dalling]
+
+* Implement "When" Steps. [Ben Dalling]
 
 * Add guidance on contributing. [Ben Dalling]
 
