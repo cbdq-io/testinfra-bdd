@@ -163,8 +163,8 @@ If the host does not become available after 60 seconds, fail the tests.
 It may be that you may want to create a customized "Given" step.  An example
 could be that the hosts to be tested may be parametrized.  The "Given" step
 must return a target fixture called "testinfra_bdd_host" so that the rest of
-the Testinfra BDD fixtures will function.  This fixture is a `dict` and
-_must_contain keys called `host` and `url`.
+the Testinfra BDD fixtures will function.  This fixture is a instance of the
+`testinfra_bdd.`
 
 The "Given" step should also ascertain that the target host is ready (one
 can use the `is_host_ready` function for that).
@@ -172,10 +172,8 @@ can use the `is_host_ready` function for that).
 An example is:
 
 ```python
-import testinfra
-
 from pytest_bdd import given
-from testinfra_bdd import is_host_ready
+from testinfra_bdd import TestinfraBDD
 
 @given('my host is ready', target_fixture='testinfra_bdd_host')
 def my_host_is_ready():
@@ -183,14 +181,9 @@ def my_host_is_ready():
     Specify that the target host is a docker container called
     "my-host" and wait up to 60 seconds for the host to be ready.
     """
-    url = 'docker://my-host'
-    host = testinfra.get_host(url)
-    assert is_host_ready(host, 60), 'My host is not ready.'
-    
-    return {
-        'url': url,
-        'host': testinfra.get_host(url)
-    }
+    host = TestinfraBDD('docker://my-host')
+    assert host.is_host_ready(60), 'My host is not ready.'
+    return host
 
 ...
 ```
