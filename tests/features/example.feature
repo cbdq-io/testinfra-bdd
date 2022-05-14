@@ -12,6 +12,7 @@ Feature: Example of Testinfra BDD
     And the command is "ntpq -np"
     And the package is ntp
     And the file is /etc/ntp.conf
+    And the user is "ntp"
     Then the command return code is 0
     And the command stdout contains "remote"
     And the package is installed
@@ -22,6 +23,12 @@ Feature: Example of Testinfra BDD
     And the file contents contains "debian.pool.ntp"
     And the file contents contains the regex ".*pool [0-9].debian.pool.ntp.org iburst"
     And the file mode is 0o544
+    And the user state is present
+    And the user group is ntp
+    And the user uid is 101
+    And the user gid is 101
+    And the user home is /nonexistent
+    And the user shell is /usr/sbin/nologin
 
   Scenario: Skip Tests if Host is Windoze
     Given the host with URL "docker://sut" is ready within 10 seconds

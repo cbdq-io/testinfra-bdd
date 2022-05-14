@@ -1,7 +1,18 @@
 # Changelog
 
 
-## 0.1.0
+## 0.2.0
+
+### New
+
+* Add user checks to the fixtures. [Ben Dalling]
+
+### Changes
+
+* Correct minor typo. [Ben Dalling]
+
+
+## 0.1.0 (2022-05-08)
 
 ### New
 
