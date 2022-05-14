@@ -9,7 +9,7 @@ An interface between
 and
 [pytest-testinfra](https://testinfra.readthedocs.io/en/latest/index.html).
 
-## Defining a Scenario
+## Defining Scenarios
 
 Given a directory structure of:
 
@@ -163,8 +163,8 @@ If the host does not become available after 60 seconds, fail the tests.
 It may be that you may want to create a customized "Given" step.  An example
 could be that the hosts to be tested may be parametrized.  The "Given" step
 must return a target fixture called "testinfra_bdd_host" so that the rest of
-the Testinfra BDD fixtures will function.  This fixture is a `dict` and
-_must_contain keys called `host` and `url`.
+the Testinfra BDD fixtures will function.  This fixture is a instance of the
+`testinfra_bdd.`
 
 The "Given" step should also ascertain that the target host is ready (one
 can use the `is_host_ready` function for that).
@@ -172,10 +172,8 @@ can use the `is_host_ready` function for that).
 An example is:
 
 ```python
-import testinfra
-
 from pytest_bdd import given
-from testinfra_bdd import is_host_ready
+from testinfra_bdd import TestinfraBDD
 
 @given('my host is ready', target_fixture='testinfra_bdd_host')
 def my_host_is_ready():
@@ -183,14 +181,9 @@ def my_host_is_ready():
     Specify that the target host is a docker container called
     "my-host" and wait up to 60 seconds for the host to be ready.
     """
-    url = 'docker://my-host'
-    host = testinfra.get_host(url)
-    assert is_host_ready(host, 60), 'My host is not ready.'
-    
-    return {
-        'url': url,
-        'host': testinfra.get_host(url)
-    }
+    host = TestinfraBDD('docker://my-host')
+    assert host.is_host_ready(60), 'My host is not ready.'
+    return host
 
 ...
 ```
@@ -366,4 +359,57 @@ Check the permissions of a file (the permissions must be specified as Octal):
 ```gherkin
 When file is /etc/ntp.conf
 Then the file mode is 0o544
+```
+
+### Checking the Status of a User
+
+When naming the user in the "when" step, it is optional if the name is
+enclosed in double-quotes:
+
+```gherkin
+When the user is "ntp"
+```
+
+Check the user is present:
+
+```gherkin
+Then the user state is present
+```
+
+Check the user is absent:
+
+```gherkin
+Then the user state is absent
+```
+
+Check the name of the primary group of the user:
+
+```gherkin
+Then the user group is ntp
+```
+
+Check the uid of the user:
+
+```gherkin
+Then the user uid is 101
+```
+
+Check the gid of the user:
+
+```gherkin
+Then the user gid is 101
+```
+
+Check the name of the home directory of the user:
+
+```gherkin
+Then the user home is /nonexistent
+```
+
+```gherkin
+Check the shell of the user:
+```
+
+```gherkin
+Then the user shell is /usr/sbin/nologin
 ```
