@@ -33,7 +33,7 @@ Ensure your local repo is up-to-date:
 ```shell
 git checkout develop
 git fetch -p origin && git pull && git pull --tags
-get checkout main
+git checkout main
 git pull
 ```
 
