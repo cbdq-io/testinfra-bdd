@@ -53,6 +53,7 @@ class TestinfraBDD:
         self.service = None
         self.type = None
         self.url = url
+        self.user = None
 
     def get_host_property(self, property_name):
         """
@@ -112,6 +113,8 @@ class TestinfraBDD:
             self.package = self.host.package(resource_name)
         elif resource_type == 'file':
             self.file = self.host.file(resource_name)
+        elif resource_type == 'user':
+            self.user = self.host.user(resource_name)
         else:
             resource_type_is_set = False
 
@@ -696,3 +699,45 @@ def the_file_type_is_file(expected_file_type, testinfra_bdd_host):
     }
     message = f'file {file.path} on {testinfra_bdd_host.hostname} is not a {expected_file_type}.'
     assert type_lookup[expected_file_type], message
+
+
+@then(parsers.parse('the user {property_name} is {expected_value}'))
+def the_user_property_is(property_name, expected_value, testinfra_bdd_host):
+    """
+    Check the property of a user.
+
+    Parameters
+    ----------
+    property_name : str
+        The name of the property to compare.
+    expected_value : str
+        The value that is expected.
+    testinfra_bdd_host : TestinfraBDD
+        The test fixture.
+
+    Raises
+    ------
+    AssertError
+        If the actual value does not match the expected value.
+    """
+    user = testinfra_bdd_host.user
+    assert user, 'User not initialised.  Have you missed a "When user is" step?'
+
+    if testinfra_bdd_host.user.exists:
+        actual_state = 'present'
+    else:
+        actual_state = 'absent'
+
+    properties = {
+        'gid': str(user.gid),
+        'group': user.group,
+        'home': user.home,
+        'shell': user.shell,
+        'state': actual_state,
+        'uid': str(user.uid)
+    }
+    assert property_name in properties, f'Unknown user property "{property_name}".'
+    actual_value = properties[property_name]
+    message = f'Expected {property_name} for user {user.name} to be "{expected_value}" '
+    message += f'but it was "{actual_value}".'
+    assert actual_value == expected_value, message

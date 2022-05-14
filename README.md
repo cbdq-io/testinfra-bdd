@@ -9,7 +9,7 @@ An interface between
 and
 [pytest-testinfra](https://testinfra.readthedocs.io/en/latest/index.html).
 
-## Defining a Scenario
+## Defining Scenarios
 
 Given a directory structure of:
 
@@ -359,4 +359,57 @@ Check the permissions of a file (the permissions must be specified as Octal):
 ```gherkin
 When file is /etc/ntp.conf
 Then the file mode is 0o544
+```
+
+### Checking the Status of a User
+
+When naming the user in the "when" step, it is optional if the name is
+enclosed in double-quotes:
+
+```gherkin
+When the user is "ntp"
+```
+
+Check the user is present:
+
+```gherkin
+Then the user state is present
+```
+
+Check the user is absent:
+
+```gherkin
+Then the user state is absent
+```
+
+Check the name of the primary group of the user:
+
+```gherkin
+Then the user group is ntp
+```
+
+Check the uid of the user:
+
+```gherkin
+Then the user uid is 101
+```
+
+Check the gid of the user:
+
+```gherkin
+Then the user gid is 101
+```
+
+Check the name of the home directory of the user:
+
+```gherkin
+Then the user home is /nonexistent
+```
+
+```gherkin
+Check the shell of the user:
+```
+
+```gherkin
+Then the user shell is /usr/sbin/nologin
 ```
