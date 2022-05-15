@@ -1,7 +1,14 @@
 # Changelog
 
 
-## 0.2.0
+## 0.2.1
+
+### Fix
+
+* Ensure install_requires has the required details in setup.py. [Ben Dalling]
+
+
+## 0.2.0 (2022-05-14)
 
 ### New
 
