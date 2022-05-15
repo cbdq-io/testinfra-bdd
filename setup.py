@@ -14,7 +14,7 @@ setuptools.setup(
     author='League of Crafty Programmers Ltd.',
     author_email='info@locp.co.uk',
     description='An interface between pytest-bdd and pytest-testinfra.',
-    install_requires=['urllib3>=1.26.0'],
+    install_requires=['pytest-bdd>=5.00<=6.0.0', 'pytest-testinfra>=6.0.0<=7.0.0'],
     keywords='testinfra,bdd',
     long_description=long_description,
     long_description_content_type='text/markdown',
