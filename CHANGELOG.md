@@ -1,7 +1,14 @@
 # Changelog
 
 
-## 0.2.1
+## 0.2.2
+
+### Fix
+
+* Ensure regex search in commount stream works. [Ben Dalling]
+
+
+## 0.2.1 (2022-05-15)
 
 ### Fix
 
