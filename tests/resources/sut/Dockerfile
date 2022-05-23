@@ -7,3 +7,5 @@ RUN apt-get clean \
   && rm -rf /var/lib/apt/lists/* \
   && chmod 544 /etc/ntp.conf \
   && chown ntp:ntp /etc/ntp.conf
+
+COPY issue21.txt /tmp
