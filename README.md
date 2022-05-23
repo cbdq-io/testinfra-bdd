@@ -64,7 +64,7 @@ Feature: Example of Testinfra BDD
     When the command is "java -version"
     And the package is java-11-amazon-corretto-devel
     Then the command stderr contains "Corretto-11"
-    And the command stderr matches regex "openjdk version \"11\\W[0-9]"
+    And the command stderr contains the regex "openjdk version \"11\\W[0-9]"
     And the command stdout is empty
     And the command return code is 0
     And the package is installed
@@ -251,7 +251,7 @@ Then the command stderr contains "Corretto-11"
 
 Check for a regular expression in the standard error:
 ```gherkin
-Then command stderr matches regex "openjdk version \"11\\W[0-9]"
+Then command stderr contains the regex "openjdk version \"11\\W[0-9]"
 ```
 
 Check a stream (standard output) is empty:

@@ -333,8 +333,8 @@ def check_command_stream_contains(stream_name, text, testinfra_bdd_host):
     assert text in stream, message
 
 
-@then(parsers.parse('the command {stream_name} matches regex "{pattern}"'))
-def check_command_stream_matches_regex(stream_name, pattern, testinfra_bdd_host):
+@then(parsers.parse('the command {stream_name} contains the regex "{pattern}"'))
+def check_command_stream_contains_the_regex(stream_name, pattern, testinfra_bdd_host):
     """
     Check that the stdout or stderr stream matches a regular expression pattern.
 
@@ -355,11 +355,11 @@ def check_command_stream_matches_regex(stream_name, pattern, testinfra_bdd_host)
         When the stream name is not recognized.
     """
     stream = testinfra_bdd_host.get_stream_from_command(stream_name)
-    message = f'The regex "{pattern}" does not match the {stream_name} "{stream}".'
+    message = f'The regex "{pattern}" is not found in the {stream_name} "{stream}".'
     # The parsers.parse function escapes the parsed string.  We need to clean it up before using it.
     pattern = pattern.encode('utf-8').decode('unicode_escape')
     prog = re.compile(pattern)
-    assert prog.match(stream) is not None, message
+    assert prog.search(stream) is not None, message
 
 
 @then(parsers.parse('the command return code is {expected_return_code:d}'))
