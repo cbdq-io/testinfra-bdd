@@ -1,4 +1,4 @@
 ---
 path_classifiers:
   test:
-    - exclude:  testinfra_bdd/**/*.py
+    - exclude: testinfra_bdd/**/*.py
