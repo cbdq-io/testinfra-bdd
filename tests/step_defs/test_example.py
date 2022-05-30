@@ -42,3 +42,8 @@ def test_system_under_test():
 @scenario('../features/example.feature', 'Check a Service Status')
 def test_check_a_service_status():
     """Check a Service Status."""
+
+
+@scenario('../features/example.feature', 'Test for Absent Resources')
+def test_test_for_absent_resources():
+    """Test for Absent Resources."""
