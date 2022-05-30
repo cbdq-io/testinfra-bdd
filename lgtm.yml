@@ -1,0 +1,7 @@
+---
+path_classifiers:
+  test:
+    # Override LGTM's default classification of test files by excluding all files.
+    - exclude: /
+    # Classify all files in the top-level directories test/ and testsuites/ as test code.
+    - test
