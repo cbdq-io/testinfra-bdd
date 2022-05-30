@@ -6,6 +6,15 @@ Feature: Example of Testinfra BDD
     When the command is "service ntp start"
     Then the command return code is 0
 
+  Scenario: Test for Absent Resources
+    Given the host with URL "docker://sut" is ready
+    When the user is foo
+    And the package is foo
+    And the file is "/etc/foo.yml"
+    Then the user state is absent
+    And the package is absent
+    And the file is absent
+
   Scenario: System Under Test
     Given the host with URL "docker://sut" is ready within 10 seconds
     When the system property type is not "linux" skip tests

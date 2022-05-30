@@ -23,7 +23,7 @@ from pytest_bdd import (
 This is used by setuptools and by gitchangelog to identify the name of the name
 of the release.
 """
-__version__ = '0.2.2'
+__version__ = '0.2.3'
 
 
 class TestinfraBDD:
@@ -568,30 +568,6 @@ def the_file_contents_matches_the_regex(pattern, testinfra_bdd_host):
     assert re.search(pattern, file.content_string) is not None, message
 
 
-@then(parsers.parse('the file group is {expected_group_name}'))
-def the_file_group_is_ntp(expected_group_name, testinfra_bdd_host):
-    """
-    Check if the file group name is as expected.
-
-    Parameters
-    ----------
-    expected_group_name : str
-        The name one expects the group name to match.
-    testinfra_bdd_host : TestinfraBDD
-        The test fixture.
-
-    Raises
-    ------
-    AssertError
-        When the expected group name does not match the actual group name.
-    """
-    file = testinfra_bdd_host.file
-    actual_group_name = file.group
-    message = f'Expected the group name for {testinfra_bdd_host.hostname}:{file.path} to be {expected_group_name} '
-    message += f'but it is {actual_group_name}.'
-    assert expected_group_name == actual_group_name, message
-
-
 @then(parsers.parse('the file is {expected_status}'))
 def the_file_status(expected_status, testinfra_bdd_host):
     """
@@ -609,96 +585,68 @@ def the_file_status(expected_status, testinfra_bdd_host):
     AssertError
         When the expected status does not match the actual status.
     """
-    status_lookup = {
-        'absent': False,
-        'present': True
-    }
-    is_expected_to_exist = status_lookup[expected_status]
-    file = testinfra_bdd_host.file
+    the_file_property_is('state', expected_status, testinfra_bdd_host)
 
-    if is_expected_to_exist:
-        message = f'The file {file.path} is expected to exist on {testinfra_bdd_host.hostname} but is absent.'
+
+@then(parsers.parse('the file {property_name} is {expected_value}'))
+def the_file_property_is(property_name, expected_value, testinfra_bdd_host):
+    """
+    Check the property of a file.
+
+    Parameters
+    ----------
+    property_name : str
+        The name of the property to compare.
+    expected_value : str
+        The value that is expected.
+    testinfra_bdd_host : TestinfraBDD
+        The test fixture.
+
+    Raises
+    ------
+    AssertError
+        If the actual value does not match the expected value.
+    """
+    file = testinfra_bdd_host.file
+    assert file, 'File not initialised.  Have you missed a "When file is" step?'
+    actual_type = None
+
+    if file.exists:
+        actual_file_state = 'present'
+        actual_file_mode = '0o%o' % file.mode
+        type_lookup = {
+            'file': file.is_file,
+            'directory': file.is_directory,
+            'pipe': file.is_pipe,
+            'socket': file.is_socket,
+            'symlink': file.is_symlink
+        }
+
+        for key in type_lookup.keys():
+            if type_lookup[key]:
+                actual_type = key
+                break
+
+        properties = {
+            'group': file.group,
+            'mode': actual_file_mode,
+            'owner': file.user,
+            'state': actual_file_state,
+            'type': actual_type,
+            'user': file.user
+        }
     else:
-        message = f'The file {file.path} is expected to be absent on {testinfra_bdd_host.hostname} but is present.'
+        actual_file_state = 'absent'
+        properties = {
+            'state': actual_file_state,
+            'type': None
+        }
 
-    assert is_expected_to_exist == file.exists, message
-
-
-@then(parsers.parse('the file mode is {expected_file_mode}'))
-def the_file_mode_is_0o544(expected_file_mode, testinfra_bdd_host):
-    """
-    Check that the expected file mode matches the actual file mode.
-
-    Parameters
-    ----------
-    expected_file_mode : str
-        Must be an octal string representing the expected file mode.
-    testinfra_bdd_host : TestinfraBDD
-        The test fixture.
-
-    Raises
-    ------
-    AssertError
-        When the expected mode does not match the actual mode.
-    """
-    file = testinfra_bdd_host.file
-    actual_file_mode = '0o%o' % file.mode
-    message = f'Expected the mode for {testinfra_bdd_host.hostname}:{file.path} to be {expected_file_mode} '
-    message += f'not {actual_file_mode}.'
-    assert expected_file_mode == actual_file_mode, message
-
-
-@then(parsers.parse('the file owner is {expected_username}'))
-def the_file_owner_is_ntp(expected_username, testinfra_bdd_host):
-    """
-    Check the expected username of the owner matches the actual username.
-
-    Parameters
-    ----------
-    expected_username : str
-        The expected username.
-    testinfra_bdd_host : TestinfraBDD
-        The test fixture.
-
-    Raises
-    ------
-    AssertError
-        When the expected username does not match the actual username.
-    """
-    file = testinfra_bdd_host.file
-    actual_username = file.user
-    message = f'Expected {testinfra_bdd_host.hostname}:{file.path} to be owned by {expected_username}, '
-    message += f'not by {actual_username}.'
-    assert expected_username == actual_username, message
-
-
-@then(parsers.parse('the file type is {expected_file_type}'))
-def the_file_type_is_file(expected_file_type, testinfra_bdd_host):
-    """
-    Check that the expected file type matches the actual file type.
-
-    Parameters
-    ----------
-    expected_file_type : str
-        The expected file type.  Can be one of file, directory, pipe, socket or symlink.
-    testinfra_bdd_host : TestinfraBDD
-        The test fixture.
-
-    Raises
-    ------
-    AssertError
-        When the expected file type does not match the actual file type.
-    """
-    file = testinfra_bdd_host.file
-    type_lookup = {
-        'file': file.is_file,
-        'directory': file.is_directory,
-        'pipe': file.is_pipe,
-        'socket': file.is_socket,
-        'symlink': file.is_symlink
-    }
-    message = f'file {file.path} on {testinfra_bdd_host.hostname} is not a {expected_file_type}.'
-    assert type_lookup[expected_file_type], message
+    assert property_name in properties, f'Unknown user property "{property_name}".'
+    actual_value = properties[property_name]
+    message = f'Expected {property_name} for file {file.path} to be "{expected_value}" '
+    message += f'but it was "{actual_value}".'
+    assert actual_value == expected_value, message
 
 
 @then(parsers.parse('the user {property_name} is {expected_value}'))
@@ -725,17 +673,20 @@ def the_user_property_is(property_name, expected_value, testinfra_bdd_host):
 
     if testinfra_bdd_host.user.exists:
         actual_state = 'present'
+        properties = {
+            'gid': str(user.gid),
+            'group': user.group,
+            'home': user.home,
+            'shell': user.shell,
+            'state': actual_state,
+            'uid': str(user.uid)
+        }
     else:
         actual_state = 'absent'
+        properties = {
+            'state': actual_state
+        }
 
-    properties = {
-        'gid': str(user.gid),
-        'group': user.group,
-        'home': user.home,
-        'shell': user.shell,
-        'state': actual_state,
-        'uid': str(user.uid)
-    }
     assert property_name in properties, f'Unknown user property "{property_name}".'
     actual_value = properties[property_name]
     message = f'Expected {property_name} for user {user.name} to be "{expected_value}" '
