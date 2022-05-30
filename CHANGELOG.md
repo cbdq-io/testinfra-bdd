@@ -1,7 +1,14 @@
 # Changelog
 
 
-## 0.2.2
+## 0.2.3
+
+### Fix
+
+* Handle non-existent resources gracefully. [Ben Dalling]
+
+
+## 0.2.2 (2022-05-23)
 
 ### Fix
 
