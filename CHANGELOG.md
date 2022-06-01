@@ -1,6 +1,13 @@
 # Changelog
 
 
+## 0.3.0
+
+### New
+
+* Allow the testing for a group properties. [Ben Dalling]
+
+
 ## 0.2.3 (2022-05-30)
 
 ### Fix

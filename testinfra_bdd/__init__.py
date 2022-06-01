@@ -22,7 +22,7 @@ from pytest_bdd import (
 This is used by setuptools and by gitchangelog to identify the name of the name
 of the release.
 """
-__version__ = '0.2.3'
+__version__ = '0.3.0'
 
 
 class TestinfraBDD:
