@@ -9,9 +9,11 @@ Feature: Example of Testinfra BDD
   Scenario: Test for Absent Resources
     Given the host with URL "docker://sut" is ready
     When the user is foo
+    And the group is foo
     And the package is foo
     And the file is "/etc/foo.yml"
     Then the user state is absent
+    And the group is absent
     And the package is absent
     And the file is absent
 
@@ -22,20 +24,26 @@ Feature: Example of Testinfra BDD
     And the package is ntp
     And the file is /etc/ntp.conf
     And the user is "ntp"
+    And the group is "ntp"
     Then the command return code is 0
     And the command stdout contains "remote"
     And the package is installed
     And the file is present
+    And the file state is present # Alternative method of checking the state of a resource.
     And the file type is file
     And the file owner is ntp
     And the file group is ntp
     And the file contents contains "debian.pool.ntp"
     And the file contents contains the regex ".*pool [0-9].debian.pool.ntp.org iburst"
     And the file mode is 0o544
-    And the user state is present
+    And the user is present
+    And the user state is present # Alternative method of checking the state of a resource.
     And the user group is ntp
     And the user uid is 101
     And the user gid is 101
+    And the group is present
+    And the group state is present # Alternative method of checking the state of a resource.
+    And the group gid is 101
     And the user home is /nonexistent
     And the user shell is /usr/sbin/nologin
 
