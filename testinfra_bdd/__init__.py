@@ -17,13 +17,12 @@ from pytest_bdd import (
     parsers
 )
 
-
 """The version of the module.
 
 This is used by setuptools and by gitchangelog to identify the name of the name
 of the release.
 """
-__version__ = '0.2.3'
+__version__ = '0.3.0'
 
 
 class TestinfraBDD:
@@ -46,6 +45,7 @@ class TestinfraBDD:
         self.command = None
         self.distribution = None
         self.file = None
+        self.group = None
         self.host = testinfra.get_host(url)
         self.hostname = None
         self.package = None
@@ -115,6 +115,8 @@ class TestinfraBDD:
             self.file = self.host.file(resource_name)
         elif resource_type == 'user':
             self.user = self.host.user(resource_name)
+        elif resource_type == 'group':
+            self.group = self.host.group(resource_name)
         else:
             resource_type_is_set = False
 
@@ -608,7 +610,7 @@ def the_file_property_is(property_name, expected_value, testinfra_bdd_host):
         If the actual value does not match the expected value.
     """
     file = testinfra_bdd_host.file
-    assert file, 'File not initialised.  Have you missed a "When file is" step?'
+    assert file, 'File not set.  Have you missed a "When file is" step?'
     actual_type = None
 
     if file.exists:
@@ -669,7 +671,7 @@ def the_user_property_is(property_name, expected_value, testinfra_bdd_host):
         If the actual value does not match the expected value.
     """
     user = testinfra_bdd_host.user
-    assert user, 'User not initialised.  Have you missed a "When user is" step?'
+    assert user, 'User not set.  Have you missed a "When user is" step?'
 
     if testinfra_bdd_host.user.exists:
         actual_state = 'present'
@@ -692,3 +694,72 @@ def the_user_property_is(property_name, expected_value, testinfra_bdd_host):
     message = f'Expected {property_name} for user {user.name} to be "{expected_value}" '
     message += f'but it was "{actual_value}".'
     assert actual_value == expected_value, message
+
+
+@then(parsers.parse('the user is {expected_state}'))
+def check_the_user_state(expected_state, testinfra_bdd_host):
+    """
+    Check that the actual state of a user matches the expected state.
+
+    Parameters
+    ----------
+    expected_state : str
+        The expected state (e.g. absent or present).
+    testinfra_bdd_host : TestinfraBDD
+        The test fixture.
+    """
+    the_user_property_is('state', expected_state, testinfra_bdd_host)
+
+
+@then(parsers.parse('the group {property_name} is {expected_value}'))
+def the_group_property_is(property_name, expected_value, testinfra_bdd_host):
+    """
+    Check the property of a group.
+
+    Parameters
+    ----------
+    property_name : str
+        The name of the property to compare.
+    expected_value : str
+        The value that is expected.
+    testinfra_bdd_host : TestinfraBDD
+        The test fixture.
+
+    Raises
+    ------
+    AssertError
+        If the actual value does not match the expected value.
+    """
+    group = testinfra_bdd_host.group
+    assert group, 'Group not set.  Have you missed a "When group is" step?'
+
+    properties = {
+        'gid': None,
+        'state': 'absent'
+    }
+
+    if group.exists:
+        properties = {
+            'gid': str(group.gid),
+            'state': 'present'
+        }
+
+    assert property_name in properties, f'Unknown group property ({property_name}).'
+    actual_value = properties[property_name]
+    message = f'Expected group property to be {expected_value} but it was {actual_value}.'
+    assert actual_value == expected_value, message
+
+
+@then(parsers.parse('the group is {expected_state}'))
+def check_the_group_state(expected_state, testinfra_bdd_host):
+    """
+    Check that the actual state of a group matches the expected state.
+
+    Parameters
+    ----------
+    expected_state : str
+        The expected state (e.g. absent or present).
+    testinfra_bdd_host : TestinfraBDD
+        The test fixture.
+    """
+    the_group_property_is('state', expected_state, testinfra_bdd_host)
