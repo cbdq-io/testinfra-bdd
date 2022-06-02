@@ -16,5 +16,5 @@ lint:
 
 test:
 	docker-compose -f tests/resources/docker-compose.yml up -d --build
-	docker-compose -f tests/resources/docker-compose.yml exec sut service ntp start
+	docker-compose -f tests/resources/docker-compose.yml exec -ti sut service ntp start
 	PYTHONPATH=.:.. pytest
