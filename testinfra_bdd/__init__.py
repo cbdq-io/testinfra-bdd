@@ -81,7 +81,8 @@ class TestinfraBDD:
             'release': self.host.system_info.release,
             'codename': self.host.system_info.codename,
             'arch': self.host.system_info.arch,
-            'hostname': self.host.backend.get_hostname()
+            'hostname': self.host.backend.get_hostname(),
+            'connection_type': self.host.backend.NAME
         }
 
         assert property_name in properties, f'Invalid host property name "{property_name}".'
@@ -292,6 +293,9 @@ def skip_tests_if_system_info_does_not_match(property_name, expected_value, test
         pytest.skip(f'System {property_name} is {actual_value} which is not {expected_value}.')
 
 
+#############################################################################
+# Command checks.
+#############################################################################
 @then(parsers.parse('the command "{command}" exists in path'))
 @then(parsers.parse('the command {command} exists in path'))
 def check_command_exists_in_path(command, testinfra_bdd_host):
@@ -411,6 +415,9 @@ def command_stream_is_empty(stream_name, testinfra_bdd_host):
     assert not stream, f'Expected {stream_name} to be empty ("{stream}").'
 
 
+#############################################################################
+# Service checks.
+#############################################################################
 @then('the service is not enabled')
 def the_service_is_not_enabled(testinfra_bdd_host):
     """
@@ -429,98 +436,6 @@ def the_service_is_not_enabled(testinfra_bdd_host):
     service = testinfra_bdd_host.service
     message = f'Expected {service.name} on host {testinfra_bdd_host.hostname} to be disabled, but it is enabled.'
     assert not service.is_enabled, message
-
-
-@then('the pip check is OK')
-def the_pip_check_is_ok(testinfra_bdd_host):
-    """
-    Verify installed packages have compatible dependencies.
-
-    Parameters
-    ----------
-    testinfra_bdd_host : TestinfraBDD
-        The test fixture.
-
-    Raises
-    ------
-    AssertError
-        When the packages have incompatible dependencies.
-    """
-    host = testinfra_bdd_host.host
-    cmd = host.pip_package.check()
-    message = f'Incompatible Pip packages - {cmd.stdout} {cmd.stderr}'
-    assert cmd.rc == 0, message
-
-
-@then(parsers.parse('the pip package state is {expected_state}'))
-@then(parsers.parse('the pip package is {expected_state}'))
-def the_pip_package_state_is(expected_state, testinfra_bdd_host):
-    """
-    Check the state of a Pip package.
-
-    Parameters
-    ----------
-    expected_state : str
-        The expected state of the package.  Can be absent, latest or installed.
-    testinfra_bdd_host : TestinfraBDD
-        The test fixture.
-
-    Raises
-    ------
-    AssertError
-        When the actual state doesn't match the expected state.
-    """
-    valid_expected_states = [
-        'absent',
-        'latest',
-        'present'
-    ]
-
-    message = f'Unknown state "{expected_state}" must be one of {"/".join(valid_expected_states)}.'
-    assert expected_state in valid_expected_states, message
-    pip_package = testinfra_bdd_host.pip_package
-    assert pip_package, 'Pip package not set.  Have you missed a "When pip package is" step?'
-
-    if expected_state == 'absent' or expected_state == 'present':
-        if pip_package.is_installed:
-            actual_state = 'present'
-        else:
-            actual_state = 'absent'
-    else:
-        host = testinfra_bdd_host.host
-        outdated_packages = host.pip_package.get_outdated_packages()
-
-        if pip_package.name in outdated_packages:
-            actual_state = 'superseded'
-        else:
-            actual_state = 'latest'
-
-    message = f'Expected pip package {pip_package.name} to be {expected_state} but it is {actual_state}.'
-    assert actual_state == expected_state, message
-
-
-@then(parsers.parse('the pip package version is {expected_version}'))
-def the_pip_package_version_is(expected_version, testinfra_bdd_host):
-    """
-    Check the version of a Pip package.
-
-    Parameters
-    ----------
-    expected_version : str
-        The version of the package that is expected.
-    testinfra_bdd_host : TestinfraBDD
-        The test fixture.
-
-    Raises
-    ------
-    AssertError
-        When the actual version is not the expected version.
-    """
-    pip_package = testinfra_bdd_host.pip_package
-    assert pip_package, 'Pip package not set.  Have you missed a "When pip package is" step?'
-    actual_version = pip_package.version
-    message = f'Expected Pip package version to be {expected_version} but it was {actual_version}.'
-    assert actual_version == expected_version, message
 
 
 @then('the service is enabled')
@@ -583,6 +498,104 @@ def the_service_is_running(testinfra_bdd_host):
     assert service.is_running, message
 
 
+#############################################################################
+#  Pip package checks.
+#############################################################################
+@then('the pip check is OK')
+def the_pip_check_is_ok(testinfra_bdd_host):
+    """
+    Verify installed packages have compatible dependencies.
+
+    Parameters
+    ----------
+    testinfra_bdd_host : TestinfraBDD
+        The test fixture.
+
+    Raises
+    ------
+    AssertError
+        When the packages have incompatible dependencies.
+    """
+    host = testinfra_bdd_host.host
+    cmd = host.pip.check()
+    message = f'Incompatible Pip packages - {cmd.stdout} {cmd.stderr}'
+    assert cmd.rc == 0, message
+
+
+@then(parsers.parse('the pip package state is {expected_state}'))
+@then(parsers.parse('the pip package is {expected_state}'))
+def the_pip_package_state_is(expected_state, testinfra_bdd_host):
+    """
+    Check the state of a Pip package.
+
+    Parameters
+    ----------
+    expected_state : str
+        The expected state of the package.  Can be absent, latest or installed.
+    testinfra_bdd_host : TestinfraBDD
+        The test fixture.
+
+    Raises
+    ------
+    AssertError
+        When the actual state doesn't match the expected state.
+    """
+    valid_expected_states = [
+        'absent',
+        'latest',
+        'present'
+    ]
+
+    message = f'Unknown state "{expected_state}" must be one of {"/".join(valid_expected_states)}.'
+    assert expected_state in valid_expected_states, message
+    pip_package = testinfra_bdd_host.pip_package
+    assert pip_package, 'Pip package not set.  Have you missed a "When pip package is" step?'
+
+    if expected_state == 'absent' or expected_state == 'present':
+        if pip_package.is_installed:
+            actual_state = 'present'
+        else:
+            actual_state = 'absent'
+    else:
+        host = testinfra_bdd_host.host
+        outdated_packages = host.pip.get_outdated_packages()
+
+        if pip_package.name in outdated_packages:
+            actual_state = 'superseded'
+        else:
+            actual_state = 'latest'
+
+    message = f'Expected pip package {pip_package.name} to be {expected_state} but it is {actual_state}.'
+    assert actual_state == expected_state, message
+
+
+@then(parsers.parse('the pip package version is {expected_version}'))
+def the_pip_package_version_is(expected_version, testinfra_bdd_host):
+    """
+    Check the version of a Pip package.
+
+    Parameters
+    ----------
+    expected_version : str
+        The version of the package that is expected.
+    testinfra_bdd_host : TestinfraBDD
+        The test fixture.
+
+    Raises
+    ------
+    AssertError
+        When the actual version is not the expected version.
+    """
+    pip_package = testinfra_bdd_host.pip_package
+    assert pip_package, 'Pip package not set.  Have you missed a "When pip package is" step?'
+    actual_version = pip_package.version
+    message = f'Expected Pip package version to be {expected_version} but it was {actual_version}.'
+    assert actual_version == expected_version, message
+
+
+#############################################################################
+#  System package checks.
+#############################################################################
 @then(parsers.parse('the package state is {expected_status}'))
 @then(parsers.parse('the package is {expected_status}'))
 def the_package_status_is(expected_status, testinfra_bdd_host):
@@ -620,6 +633,9 @@ def the_package_status_is(expected_status, testinfra_bdd_host):
     assert actual_status == expected_to_be_installed, message
 
 
+#############################################################################
+#  File checks.
+#############################################################################
 @then(parsers.parse('the file contents contains "{text}"'))
 def the_file_contents_contains_text(text, testinfra_bdd_host):
     """
@@ -747,6 +763,9 @@ def the_file_property_is(property_name, expected_value, testinfra_bdd_host):
     assert actual_value == expected_value, message
 
 
+#############################################################################
+#  User checks.
+#############################################################################
 @then(parsers.parse('the user {property_name} is {expected_value}'))
 def the_user_property_is(property_name, expected_value, testinfra_bdd_host):
     """
@@ -807,6 +826,9 @@ def check_the_user_state(expected_state, testinfra_bdd_host):
     the_user_property_is('state', expected_state, testinfra_bdd_host)
 
 
+#############################################################################
+#  Group checks.
+#############################################################################
 @then(parsers.parse('the group {property_name} is {expected_value}'))
 def the_group_property_is(property_name, expected_value, testinfra_bdd_host):
     """
