@@ -40,6 +40,7 @@ class TestinfraBDD:
             The URL of the System Under Test (SUT).  Must comply to the Testinfra
             URL patterns.  See https://testinfra.readthedocs.io/en/latest/backends.html
         """
+        self.address = None
         self.arch = None
         self.codename = None
         self.command = None
@@ -50,10 +51,14 @@ class TestinfraBDD:
         self.hostname = None
         self.package = None
         self.pip_package = None
+        self.port = None
+        self.port_number = None
         self.process_specification = None
         self.processes = None
         self.release = None
         self.service = None
+        self.socket = None
+        self.socket_url = None
         self.type = None
         self.url = url
         self.user = None
@@ -127,6 +132,18 @@ class TestinfraBDD:
             self.process_specification = resource_name
             filters = self.parse_process_filters()
             self.processes = self.host.process.filter(**filters)
+        elif resource_type == 'socket':
+            self.socket = self.host.socket(resource_name)
+        elif resource_type == 'address':
+            self.address = self.host.addr(resource_name)
+        elif resource_type == 'address and port':
+            port = resource_name.split(':')
+            assert len(port) == 2, f'Unable to parse addr:port from "{resource_name}".'
+            address = port[0]
+            address = self.host.addr(address)
+            self.port_number = int(port[1])
+            self.port = address.port(self.port_number)
+            self.address = address
         else:
             resource_type_is_set = False
 
@@ -940,3 +957,95 @@ def the_process_count_is(expected_count, testinfra_bdd_host):
     message = f'Expected process specification "{specification}" to return {expected_count} '
     message += f'but found {actual_process_count} "{processes}".'
     assert actual_process_count == expected_count, message
+
+
+#############################################################################
+#  Process checks.
+#############################################################################
+@then(parsers.parse('the address is {expected_state}'))
+def the_address_is(expected_state, testinfra_bdd_host):
+    """
+    Check the actual state of an address against an expected state.
+
+    Parameters
+    ----------
+    expected_state : str
+        The expected state of the address.
+
+    testinfra_bdd_host : TestinfraBDD
+        The test fixture.
+
+    Raises
+    ------
+    AssertError
+        If the actual state does not match the state.
+    """
+    address = testinfra_bdd_host.address
+    assert address, 'Address is not set.  Did you miss a "When address is" step?'
+    properties = {
+        'resolvable': address.is_resolvable,
+        'reachable': address.is_reachable
+    }
+    assert expected_state in properties, f'Invalid state for {address.name} ("{expected_state}").'
+    message = f'Expected the address {address.name} to be {expected_state} but it is not.'
+    assert properties[expected_state], message
+
+
+@then(parsers.parse('the port is {expected_state}'))
+def the_port_is(expected_state, testinfra_bdd_host):
+    """
+    Check the actual state of an address port against an expected state.
+
+    Parameters
+    ----------
+    expected_state : str
+        The expected state of the port.
+
+    testinfra_bdd_host : TestinfraBDD
+        The test fixture.
+
+    Raises
+    ------
+    AssertError
+        If the actual state does not match the state.
+    """
+    port = testinfra_bdd_host.port
+    assert port, 'Port is not set.  Did you miss a "When the address and port" step?'
+    properties = {
+        'reachable': port.is_reachable
+    }
+    assert expected_state in properties, f'Unknown Port property ("{expected_state}").'
+    message = f'{testinfra_bdd_host.address.name}:{testinfra_bdd_host.port_number} is unreachable.'
+    assert properties['reachable'], message
+
+
+#############################################################################
+#  Socket checks.
+#############################################################################
+@then(parsers.parse('the socket is {expected_state}'))
+def the_socket_is(expected_state, testinfra_bdd_host):
+    """
+    Check the state of a socket.
+
+    Parameters
+    ----------
+    expected_state : str
+        The expected state of the socket.
+    testinfra_bdd_host : TestinfraBDD
+        The test fixture.
+
+    Raises
+    ------
+    AssertError
+        If the actual state does not match the state.
+    """
+    socket = testinfra_bdd_host.socket
+    socket_url = testinfra_bdd_host.socket_url
+    actual_state = 'not listening'
+    assert socket, 'Socket is not set.  Have you missed a "When socket is" step?'
+
+    if socket.is_listening:
+        actual_state = 'listening'
+
+    message = f'Expected socket {socket_url} to be {expected_state} but it is {actual_state}.'
+    assert actual_state == expected_state, message

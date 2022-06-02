@@ -24,6 +24,21 @@ def test_check_java_is_installed_in_the_path():
     """Check Java is Installed in the Path."""
 
 
+@scenario('../features/example.feature', 'Check Network Address')
+def test_check_network_address():
+    """Check Network Address."""
+
+
+@scenario('../features/example.feature', 'Check Network Address With Port')
+def test_check_network_address_with_port():
+    """Check Network Address With Port."""
+
+
+@scenario('../features/example.feature', 'Check Sockets')
+def test_check_sockets():
+    """Check Sockets."""
+
+
 @scenario('../features/example.feature', 'File Checks')
 def test_file_checks():
     """File Checks."""

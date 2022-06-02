@@ -112,6 +112,30 @@ Feature: Example of Testinfra BDD
       | pytest-testinfra |
       | testinfra-bdd    |
 
+  Scenario Outline:  Check Sockets
+    # This checks that NTP is listening but SSH isn't.
+    # The socket url is defined at https://testinfra.readthedocs.io/en/latest/modules.html#socket
+    Given the host with URL "docker://sut" is ready within 10 seconds
+    When the socket is <url>
+    Then the socket is <expected_state>
+    Examples:
+      | url       | expected_state |
+      | udp://123 | listening      |
+      | tcp://22  | not listening  |
+
+  Scenario: Check Network Address
+    Given the host with URL "docker://sut" is ready within 10 seconds
+    When the address is www.google.com
+    Then the address is resolvable
+    And the address is reachable
+
+  Scenario: Check Network Address With Port
+    Given the host with URL "docker://sut" is ready within 10 seconds
+    When the address and port is www.google.com:443
+    Then the address is resolvable
+    And the address is reachable
+    And the port is reachable
+
   Scenario: Check Java is Installed in the Path
     Given the host with URL "docker://java11" is ready within 10 seconds
     Then the command "java" exists in path
