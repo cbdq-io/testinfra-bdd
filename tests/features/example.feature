@@ -1,6 +1,10 @@
 Feature: Example of Testinfra BDD
   Give an example of all the possible Given, When and Then steps.
 
+  The Given steps to skip the address and port tests when running under
+  GitHub actions are not part of the testinfra-bdd package itself, but are
+  required as GitHub/Azure does not allow Ping/ICMP traffic.
+
   Scenario: Skip Tests if Host is Windoze
     Given the host with URL "docker://sut" is ready within 10 seconds
     # The system property can be one of:
@@ -125,12 +129,14 @@ Feature: Example of Testinfra BDD
 
   Scenario: Check Network Address
     Given the host with URL "docker://sut" is ready within 10 seconds
+    And on GitHub Actions we skip tests
     When the address is www.google.com
     Then the address is resolvable
     And the address is reachable
 
   Scenario: Check Network Address With Port
     Given the host with URL "docker://sut" is ready within 10 seconds
+    And on GitHub Actions we skip tests
     When the address and port is www.google.com:443
     Then the address is resolvable
     And the address is reachable
