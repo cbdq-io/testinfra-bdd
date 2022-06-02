@@ -1,6 +1,10 @@
 Feature: Example of Testinfra BDD
   Give an example of all the possible Given, When and Then steps.
 
+  The Given steps to skip the address and port tests when running under
+  GitHub actions are not part of the testinfra-bdd package itself, but are
+  required as GitHub/Azure does not allow Ping/ICMP traffic.
+
   Scenario: Skip Tests if Host is Windoze
     Given the host with URL "docker://sut" is ready within 10 seconds
     # The system property can be one of:
@@ -94,6 +98,13 @@ Feature: Example of Testinfra BDD
       | ntp     | running       | enabled       |
       | named   | not running   | not enabled   |
 
+  Scenario: Test Running Processes
+    Given the host with URL "docker://sut" is ready
+    # Processes are selected using filter() attributes names are
+    # described in the ps man page.
+    When the process filter is "user=root,comm=ntpd"
+    Then the process count is 1
+
   Scenario Outline: Test Pip Packages are Latest Versions
     Given the host with URL "docker://sut" is ready
     When the pip package is <pip_package>
@@ -104,6 +115,32 @@ Feature: Example of Testinfra BDD
       | pytest-bdd       |
       | pytest-testinfra |
       | testinfra-bdd    |
+
+  Scenario Outline:  Check Sockets
+    # This checks that NTP is listening but SSH isn't.
+    # The socket url is defined at https://testinfra.readthedocs.io/en/latest/modules.html#socket
+    Given the host with URL "docker://sut" is ready within 10 seconds
+    When the socket is <url>
+    Then the socket is <expected_state>
+    Examples:
+      | url       | expected_state |
+      | udp://123 | listening      |
+      | tcp://22  | not listening  |
+
+  Scenario: Check Network Address
+    Given the host with URL "docker://sut" is ready within 10 seconds
+    And on GitHub Actions we skip tests
+    When the address is www.google.com
+    Then the address is resolvable
+    And the address is reachable
+
+  Scenario: Check Network Address With Port
+    Given the host with URL "docker://sut" is ready within 10 seconds
+    And on GitHub Actions we skip tests
+    When the address and port is www.google.com:443
+    Then the address is resolvable
+    And the address is reachable
+    And the port is reachable
 
   Scenario: Check Java is Installed in the Path
     Given the host with URL "docker://java11" is ready within 10 seconds

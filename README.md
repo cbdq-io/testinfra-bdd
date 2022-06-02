@@ -122,6 +122,13 @@ Feature: Example of Testinfra BDD
       | ntp     | running       | enabled       |
       | named   | not running   | not enabled   |
 
+  Scenario: Test Running Processes
+    Given the host with URL "docker://sut" is ready
+    # Processes are selected using filter() attributes names are
+    # described in the ps man page.
+    When the process filter is "user=root,comm=ntpd"
+    Then the process count is 1
+
   Scenario Outline: Test Pip Packages are Latest Versions
     Given the host with URL "docker://sut" is ready
     When the pip package is <pip_package>
@@ -132,6 +139,30 @@ Feature: Example of Testinfra BDD
       | pytest-bdd       |
       | pytest-testinfra |
       | testinfra-bdd    |
+
+  Scenario Outline:  Check Sockets
+    # This checks that NTP is listening but SSH isn't.
+    # The socket url is defined at https://testinfra.readthedocs.io/en/latest/modules.html#socket
+    Given the host with URL "docker://sut" is ready within 10 seconds
+    When the socket is <url>
+    Then the socket is <expected_state>
+    Examples:
+      | url       | expected_state |
+      | udp://123 | listening      |
+      | tcp://22  | not listening  |
+
+  Scenario: Check Network Address
+    Given the host with URL "docker://sut" is ready within 10 seconds
+    When the address is www.google.com
+    Then the address is resolvable
+    And the address is reachable
+
+  Scenario: Check Network Address With Port
+    Given the host with URL "docker://sut" is ready within 10 seconds
+    When the address and port is www.google.com:443
+    Then the address is resolvable
+    And the address is reachable
+    And the port is reachable
 
   Scenario: Check Java is Installed in the Path
     Given the host with URL "docker://java11" is ready within 10 seconds
@@ -177,6 +208,21 @@ def test_check_java_is_installed_in_the_path():
     """Check Java is Installed in the Path."""
 
 
+@scenario('../features/example.feature', 'Check Network Address')
+def test_check_network_address():
+    """Check Network Address."""
+
+
+@scenario('../features/example.feature', 'Check Network Address With Port')
+def test_check_network_address_with_port():
+    """Check Network Address With Port."""
+
+
+@scenario('../features/example.feature', 'Check Sockets')
+def test_check_sockets():
+    """Check Sockets."""
+
+
 @scenario('../features/example.feature', 'File Checks')
 def test_file_checks():
     """File Checks."""
@@ -217,6 +263,11 @@ def test_test_pip_packages_are_latest_versions():
     """Test Pip Packages are Latest Versions."""
 
 
+@scenario('../features/example.feature', 'Test Running Processes')
+def test_test_running_processes():
+    """Test Running Processes."""
+
+
 @scenario('../features/example.feature', 'Test for Absent Resources')
 def test_test_for_absent_resources():
     """Test for Absent Resources."""
@@ -225,7 +276,6 @@ def test_test_for_absent_resources():
 @scenario('../features/example.feature', 'User Checks')
 def test_user_checks():
     """User Checks."""
-
 ```
 ## "Given" Steps
 

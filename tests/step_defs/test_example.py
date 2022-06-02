@@ -6,12 +6,22 @@ Notes
 The user must define their scenarios in a way similar to below.  However, the
 scenarios can be empty.
 """
+import os
+import pytest
 
+from pytest_bdd import given
 from pytest_bdd import scenario
 
 # Ensure that the PyTest fixtures provided in testinfra-bdd are available to
 # your test suite.
 pytest_plugins = ['testinfra_bdd']
+
+
+@given('on GitHub Actions we skip tests')
+def on_github_actions_we_skip_tests():
+    """on GitHub Actions we skip tests."""
+    if 'GITHUB_ACTIONS' in os.environ and os.environ['GITHUB_ACTIONS'] == 'true':
+        pytest.skip('GitHub Actions does not support Ping/ICMP.')
 
 
 @scenario('../features/example.feature', 'Check Java 11 is Installed')
@@ -22,6 +32,21 @@ def test_check_java_11_is_installed():
 @scenario('../features/example.feature', 'Check Java is Installed in the Path')
 def test_check_java_is_installed_in_the_path():
     """Check Java is Installed in the Path."""
+
+
+@scenario('../features/example.feature', 'Check Network Address')
+def test_check_network_address():
+    """Check Network Address."""
+
+
+@scenario('../features/example.feature', 'Check Network Address With Port')
+def test_check_network_address_with_port():
+    """Check Network Address With Port."""
+
+
+@scenario('../features/example.feature', 'Check Sockets')
+def test_check_sockets():
+    """Check Sockets."""
 
 
 @scenario('../features/example.feature', 'File Checks')
@@ -62,6 +87,11 @@ def test_system_package():
 @scenario('../features/example.feature', 'Test Pip Packages are Latest Versions')
 def test_test_pip_packages_are_latest_versions():
     """Test Pip Packages are Latest Versions."""
+
+
+@scenario('../features/example.feature', 'Test Running Processes')
+def test_test_running_processes():
+    """Test Running Processes."""
 
 
 @scenario('../features/example.feature', 'Test for Absent Resources')
