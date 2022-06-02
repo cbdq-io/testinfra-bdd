@@ -22,7 +22,7 @@ from pytest_bdd import (
 This is used by setuptools and by gitchangelog to identify the name of the name
 of the release.
 """
-__version__ = '0.3.0'
+__version__ = '1.0.0'
 
 
 class TestinfraBDD:
@@ -40,6 +40,7 @@ class TestinfraBDD:
             The URL of the System Under Test (SUT).  Must comply to the Testinfra
             URL patterns.  See https://testinfra.readthedocs.io/en/latest/backends.html
         """
+        self.address = None
         self.arch = None
         self.codename = None
         self.command = None
@@ -49,8 +50,15 @@ class TestinfraBDD:
         self.host = testinfra.get_host(url)
         self.hostname = None
         self.package = None
+        self.pip_package = None
+        self.port = None
+        self.port_number = None
+        self.process_specification = None
+        self.processes = None
         self.release = None
         self.service = None
+        self.socket = None
+        self.socket_url = None
         self.type = None
         self.url = url
         self.user = None
@@ -80,7 +88,8 @@ class TestinfraBDD:
             'release': self.host.system_info.release,
             'codename': self.host.system_info.codename,
             'arch': self.host.system_info.arch,
-            'hostname': self.host.backend.get_hostname()
+            'hostname': self.host.backend.get_hostname(),
+            'connection_type': self.host.backend.NAME
         }
 
         assert property_name in properties, f'Invalid host property name "{property_name}".'
@@ -117,6 +126,24 @@ class TestinfraBDD:
             self.user = self.host.user(resource_name)
         elif resource_type == 'group':
             self.group = self.host.group(resource_name)
+        elif resource_type == 'pip package':
+            self.pip_package = self.host.pip(resource_name)
+        elif resource_type == 'process filter':
+            self.process_specification = resource_name
+            filters = self.parse_process_filters()
+            self.processes = self.host.process.filter(**filters)
+        elif resource_type == 'socket':
+            self.socket = self.host.socket(resource_name)
+        elif resource_type == 'address':
+            self.address = self.host.addr(resource_name)
+        elif resource_type == 'address and port':
+            port = resource_name.split(':')
+            assert len(port) == 2, f'Unable to parse addr:port from "{resource_name}".'
+            address = port[0]
+            address = self.host.addr(address)
+            self.port_number = int(port[1])
+            self.port = address.port(self.port_number)
+            self.address = address
         else:
             resource_type_is_set = False
 
@@ -193,6 +220,30 @@ class TestinfraBDD:
             now = time.time()
 
         return is_ready
+
+    def parse_process_filters(self):
+        """
+        Parse the process filters into a dictionary.
+
+        Raises
+        ------
+        ValueError
+            If the specification can't be parsed.
+        """
+        filters = {}
+        specification = self.process_specification
+
+        for keypair in specification.split(','):
+            keypair = keypair.split('=')
+
+            if len(keypair) != 2:
+                raise ValueError(f'Unable to parse process filters "{specification}".')
+
+            key = keypair[0]
+            value = keypair[1]
+            filters[key] = value
+
+        return filters
 
 
 @given(parsers.parse('the host with URL "{hostspec}" is ready'), target_fixture='testinfra_bdd_host')
@@ -289,6 +340,9 @@ def skip_tests_if_system_info_does_not_match(property_name, expected_value, test
         pytest.skip(f'System {property_name} is {actual_value} which is not {expected_value}.')
 
 
+#############################################################################
+# Command checks.
+#############################################################################
 @then(parsers.parse('the command "{command}" exists in path'))
 @then(parsers.parse('the command {command} exists in path'))
 def check_command_exists_in_path(command, testinfra_bdd_host):
@@ -408,6 +462,9 @@ def command_stream_is_empty(stream_name, testinfra_bdd_host):
     assert not stream, f'Expected {stream_name} to be empty ("{stream}").'
 
 
+#############################################################################
+# Service checks.
+#############################################################################
 @then('the service is not enabled')
 def the_service_is_not_enabled(testinfra_bdd_host):
     """
@@ -488,6 +545,105 @@ def the_service_is_running(testinfra_bdd_host):
     assert service.is_running, message
 
 
+#############################################################################
+#  Pip package checks.
+#############################################################################
+@then('the pip check is OK')
+def the_pip_check_is_ok(testinfra_bdd_host):
+    """
+    Verify installed packages have compatible dependencies.
+
+    Parameters
+    ----------
+    testinfra_bdd_host : TestinfraBDD
+        The test fixture.
+
+    Raises
+    ------
+    AssertError
+        When the packages have incompatible dependencies.
+    """
+    host = testinfra_bdd_host.host
+    cmd = host.pip.check()
+    message = f'Incompatible Pip packages - {cmd.stdout} {cmd.stderr}'
+    assert cmd.rc == 0, message
+
+
+@then(parsers.parse('the pip package state is {expected_state}'))
+@then(parsers.parse('the pip package is {expected_state}'))
+def the_pip_package_state_is(expected_state, testinfra_bdd_host):
+    """
+    Check the state of a Pip package.
+
+    Parameters
+    ----------
+    expected_state : str
+        The expected state of the package.  Can be absent, latest or installed.
+    testinfra_bdd_host : TestinfraBDD
+        The test fixture.
+
+    Raises
+    ------
+    AssertError
+        When the actual state doesn't match the expected state.
+    """
+    valid_expected_states = [
+        'absent',
+        'latest',
+        'present'
+    ]
+
+    message = f'Unknown state "{expected_state}" must be one of {"/".join(valid_expected_states)}.'
+    assert expected_state in valid_expected_states, message
+    pip_package = testinfra_bdd_host.pip_package
+    assert pip_package, 'Pip package not set.  Have you missed a "When pip package is" step?'
+
+    if expected_state == 'absent' or expected_state == 'present':
+        if pip_package.is_installed:
+            actual_state = 'present'
+        else:
+            actual_state = 'absent'
+    else:
+        host = testinfra_bdd_host.host
+        outdated_packages = host.pip.get_outdated_packages()
+
+        if pip_package.name in outdated_packages:
+            actual_state = 'superseded'
+        else:
+            actual_state = 'latest'
+
+    message = f'Expected pip package {pip_package.name} to be {expected_state} but it is {actual_state}.'
+    assert actual_state == expected_state, message
+
+
+@then(parsers.parse('the pip package version is {expected_version}'))
+def the_pip_package_version_is(expected_version, testinfra_bdd_host):
+    """
+    Check the version of a Pip package.
+
+    Parameters
+    ----------
+    expected_version : str
+        The version of the package that is expected.
+    testinfra_bdd_host : TestinfraBDD
+        The test fixture.
+
+    Raises
+    ------
+    AssertError
+        When the actual version is not the expected version.
+    """
+    pip_package = testinfra_bdd_host.pip_package
+    assert pip_package, 'Pip package not set.  Have you missed a "When pip package is" step?'
+    actual_version = pip_package.version
+    message = f'Expected Pip package version to be {expected_version} but it was {actual_version}.'
+    assert actual_version == expected_version, message
+
+
+#############################################################################
+#  System package checks.
+#############################################################################
+@then(parsers.parse('the package state is {expected_status}'))
 @then(parsers.parse('the package is {expected_status}'))
 def the_package_status_is(expected_status, testinfra_bdd_host):
     """
@@ -524,6 +680,9 @@ def the_package_status_is(expected_status, testinfra_bdd_host):
     assert actual_status == expected_to_be_installed, message
 
 
+#############################################################################
+#  File checks.
+#############################################################################
 @then(parsers.parse('the file contents contains "{text}"'))
 def the_file_contents_contains_text(text, testinfra_bdd_host):
     """
@@ -651,6 +810,9 @@ def the_file_property_is(property_name, expected_value, testinfra_bdd_host):
     assert actual_value == expected_value, message
 
 
+#############################################################################
+#  User checks.
+#############################################################################
 @then(parsers.parse('the user {property_name} is {expected_value}'))
 def the_user_property_is(property_name, expected_value, testinfra_bdd_host):
     """
@@ -711,6 +873,9 @@ def check_the_user_state(expected_state, testinfra_bdd_host):
     the_user_property_is('state', expected_state, testinfra_bdd_host)
 
 
+#############################################################################
+#  Group checks.
+#############################################################################
 @then(parsers.parse('the group {property_name} is {expected_value}'))
 def the_group_property_is(property_name, expected_value, testinfra_bdd_host):
     """
@@ -763,3 +928,124 @@ def check_the_group_state(expected_state, testinfra_bdd_host):
         The test fixture.
     """
     the_group_property_is('state', expected_state, testinfra_bdd_host)
+
+
+#############################################################################
+#  Process checks.
+#############################################################################
+@then(parsers.parse('the process count is {expected_count:d}'))
+def the_process_count_is(expected_count, testinfra_bdd_host):
+    """
+    Check that the process count matches the expected count.
+
+    Parameters
+    ----------
+    expected_count : int
+        The expected number of processes.
+    testinfra_bdd_host : TestinfraBDD
+        The test fixture.
+
+    Raises
+    ------
+    AssertError
+        If the actual process count does not match the expected count.
+    """
+    specification = testinfra_bdd_host.process_specification
+    processes = testinfra_bdd_host.processes
+    assert processes, 'No process set, did you forget a "When process filter" step?'
+    actual_process_count = len(processes)
+    message = f'Expected process specification "{specification}" to return {expected_count} '
+    message += f'but found {actual_process_count} "{processes}".'
+    assert actual_process_count == expected_count, message
+
+
+#############################################################################
+#  Process checks.
+#############################################################################
+@then(parsers.parse('the address is {expected_state}'))
+def the_address_is(expected_state, testinfra_bdd_host):
+    """
+    Check the actual state of an address against an expected state.
+
+    Parameters
+    ----------
+    expected_state : str
+        The expected state of the address.
+
+    testinfra_bdd_host : TestinfraBDD
+        The test fixture.
+
+    Raises
+    ------
+    AssertError
+        If the actual state does not match the state.
+    """
+    address = testinfra_bdd_host.address
+    assert address, 'Address is not set.  Did you miss a "When address is" step?'
+    properties = {
+        'resolvable': address.is_resolvable,
+        'reachable': address.is_reachable
+    }
+    assert expected_state in properties, f'Invalid state for {address.name} ("{expected_state}").'
+    message = f'Expected the address {address.name} to be {expected_state} but it is not.'
+    assert properties[expected_state], message
+
+
+@then(parsers.parse('the port is {expected_state}'))
+def the_port_is(expected_state, testinfra_bdd_host):
+    """
+    Check the actual state of an address port against an expected state.
+
+    Parameters
+    ----------
+    expected_state : str
+        The expected state of the port.
+
+    testinfra_bdd_host : TestinfraBDD
+        The test fixture.
+
+    Raises
+    ------
+    AssertError
+        If the actual state does not match the state.
+    """
+    port = testinfra_bdd_host.port
+    assert port, 'Port is not set.  Did you miss a "When the address and port" step?'
+    properties = {
+        'reachable': port.is_reachable
+    }
+    assert expected_state in properties, f'Unknown Port property ("{expected_state}").'
+    message = f'{testinfra_bdd_host.address.name}:{testinfra_bdd_host.port_number} is unreachable.'
+    assert properties['reachable'], message
+
+
+#############################################################################
+#  Socket checks.
+#############################################################################
+@then(parsers.parse('the socket is {expected_state}'))
+def the_socket_is(expected_state, testinfra_bdd_host):
+    """
+    Check the state of a socket.
+
+    Parameters
+    ----------
+    expected_state : str
+        The expected state of the socket.
+    testinfra_bdd_host : TestinfraBDD
+        The test fixture.
+
+    Raises
+    ------
+    AssertError
+        If the actual state does not match the state.
+    """
+    socket = testinfra_bdd_host.socket
+    socket_url = testinfra_bdd_host.socket_url
+    actual_state = 'not listening'
+    assert socket, 'Socket is not set.  Have you missed a "When socket is" step?'
+
+    if socket.is_listening:
+        actual_state = 'listening'
+
+    message = f'Expected socket {socket_url} to be {expected_state} but it is {actual_state}.'
+    assert actual_state == expected_state, message

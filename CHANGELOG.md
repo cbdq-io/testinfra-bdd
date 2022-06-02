@@ -1,7 +1,22 @@
 # Changelog
 
 
-## 0.3.0
+## 1.0.0
+
+### New
+
+* Add address, port and socket checks. [Ben Dalling]
+
+* Add process checks. [Ben Dalling]
+
+* Add Pip package checks. [Ben Dalling]
+
+### Fix
+
+* Skip address and port tests on GitHub Actions as Azure blocks ICMP/Ping. [Ben Dalling]
+
+
+## 0.3.0 (2022-06-01)
 
 ### New
 
