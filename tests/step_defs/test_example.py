@@ -47,3 +47,8 @@ def test_check_a_service_status():
 @scenario('../features/example.feature', 'Test for Absent Resources')
 def test_test_for_absent_resources():
     """Test for Absent Resources."""
+
+
+@scenario('../features/example.feature', 'Test Pip Packages are Latest Versions')
+def test_test_pip_packages_are_latest_versions():
+    """Test Pip Packages are Latest Versions."""

@@ -6,16 +6,18 @@ Feature: Example of Testinfra BDD
     When the command is "service ntp start"
     Then the command return code is 0
 
-  Scenario: Test for Absent Resources
+  Scenario Outline: Test for Absent Resources
     Given the host with URL "docker://sut" is ready
-    When the user is foo
-    And the group is foo
-    And the package is foo
-    And the file is "/etc/foo.yml"
-    Then the user state is absent
-    And the group is absent
-    And the package is absent
-    And the file is absent
+    When the <resource_type> is "foo"
+    Then the <resource_type> is absent
+    And the <resource_type> state is absent # Alternative method.
+    Examples:
+      | resource_type |
+      | user          |
+      | group         |
+      | package       |
+      | file          |
+      | pip package   |
 
   Scenario: System Under Test
     Given the host with URL "docker://sut" is ready within 10 seconds
@@ -25,6 +27,7 @@ Feature: Example of Testinfra BDD
     And the file is /etc/ntp.conf
     And the user is "ntp"
     And the group is "ntp"
+    And the pip package is testinfra-bdd
     Then the command return code is 0
     And the command stdout contains "remote"
     And the package is installed
@@ -46,6 +49,19 @@ Feature: Example of Testinfra BDD
     And the group gid is 101
     And the user home is /nonexistent
     And the user shell is /usr/sbin/nologin
+    And the pip package is present
+    And the pip package version is 0.3.0
+    And the pip package is latest
+    And the pip check is OK
+
+  Scenario Outline: Test Pip Packages are Latest Versions
+    Given the host with URL "docker://sut" is ready
+    When the pip package is <pip_package>
+    Then the pip package is latest
+    Examples:
+      | pip_package      |
+      | pytest-bdd       |
+      | pytest-testinfra |
 
   Scenario: Skip Tests if Host is Windoze
     Given the host with URL "docker://sut" is ready within 10 seconds
