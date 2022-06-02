@@ -4,9 +4,6 @@ version: "3"
 services:
   sut:
     build: sut
-    command:
-      - "sleep"
-      - "infinity"
     container_name: sut
 
   java11:

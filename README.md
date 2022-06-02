@@ -29,55 +29,109 @@ The file `tests/features/example.feature` could look something like:
 Feature: Example of Testinfra BDD
   Give an example of all the possible Given, When and Then steps.
 
-  Scenario: Start NTP Service
+  Scenario: Skip Tests if Host is Windoze
     Given the host with URL "docker://sut" is ready within 10 seconds
-    When the command is "service ntp start"
-    Then the command return code is 0
+    # The system property can be one of:
+    #   - type (e.g. linux).
+    #   - distribution (e.g. debian).
+    #   - release (e.g. 11).
+    #   - codename (e.g. bullseye).
+    #   - arch (e.g. x86_64).
+    #   - hostname (e.g. sut).
+    #   - connection_type (e.g. docker or ssh).
+    When the system property type is not Windoze skip tests
 
-  Scenario: Test for Absent Resources
+  Scenario Outline: Test for Absent Resources
+    Given the host with URL "docker://sut" is ready within 10 seconds
+    When the <resource_type> is "foo"
+    Then the <resource_type> is absent
+    And the <resource_type> state is absent # Alternative method.
+    Examples:
+      | resource_type |
+      | user          |
+      | group         |
+      | package       |
+      | file          |
+      | pip package   |
+
+  Scenario: User Checks
     Given the host with URL "docker://sut" is ready
-    When the user is foo
-    And the group is foo
-    And the package is foo
-    And the file is "/etc/foo.yml"
-    Then the user state is absent
-    And the group is absent
-    And the package is absent
-    And the file is absent
+    When the user is "ntp"
+    Then the user is present
+    And the user state is present # Alternative method of checking the state of a resource.
+    And the user group is ntp
+    And the user uid is 101
+    And the user gid is 101
+    And the user home is /nonexistent
+    And the user shell is /usr/sbin/nologin
 
-  Scenario: System Under Test
-    Given the host with URL "docker://sut" is ready within 10 seconds
-    When the system property type is not "linux" skip tests
-    And the command is "ntpq -np"
-    And the package is ntp
-    And the file is /etc/ntp.conf
-    And the user is "ntp"
-    And the group is "ntp"
-    Then the command return code is 0
-    And the command stdout contains "remote"
-    And the package is installed
-    And the file is present
-    And the file state is present # Alternative method of checking the state of a resource.
+  Scenario: File Checks
+    Given the host with URL "docker://sut" is ready
+    When the file is /etc/ntp.conf
+    # Expected state can be present or absent.
+    Then the file is present
+    # Alternative method of checking the state of a resource.
+    And the file state is present
+    # Valid types to check for are file, directory, pipe, socket or symlink.
     And the file type is file
     And the file owner is ntp
     And the file group is ntp
     And the file contents contains "debian.pool.ntp"
     And the file contents contains the regex ".*pool [0-9].debian.pool.ntp.org iburst"
+    # The expected mode must be specified as an octal.
     And the file mode is 0o544
-    And the user is present
-    And the user state is present # Alternative method of checking the state of a resource.
-    And the user group is ntp
-    And the user uid is 101
-    And the user gid is 101
-    And the group is present
-    And the group state is present # Alternative method of checking the state of a resource.
-    And the group gid is 101
-    And the user home is /nonexistent
-    And the user shell is /usr/sbin/nologin
 
-  Scenario: Skip Tests if Host is Windoze
-    Given the host with URL "docker://sut" is ready within 10 seconds
-    When the system property type is not Windoze skip tests
+  Scenario: Group Checks
+    Given the host with URL "docker://sut" is ready
+    When the group is "ntp"
+    # Can check if the group is present or absent.
+    Then the group is present
+    # Alternative method of checking the state of a resource.
+    And the group state is present
+    And the group gid is 101
+
+  Scenario: Running Commands
+    Given the host with URL "docker://sut" is ready
+    When the command is "ntpq -np"
+    Then the command return code is 0
+    And the command "ntpq" exists in path
+    And the command stdout contains "remote"
+
+  Scenario: System Package
+    Given the host with URL "docker://sut" is ready
+    When the package is ntp
+    # Can check if the package is absent, present or installed.
+    Then the package is installed
+
+  Scenario: Python Package
+    Given the host with URL "docker://sut" is ready
+    When the pip package is testinfra-bdd
+    # Can check if the package is absent or present.
+    Then the pip package is present
+    And the pip package version is 0.3.0
+    # Check that installed packages have compatible dependencies.
+    And the pip check is OK
+
+  Scenario Outline: Service Checks
+    Given the host with URL "docker://sut" is ready
+    When the service is <service>
+    Then the service is <running_state>
+    And the service is <enabled_state>
+    Examples:
+      | service | running_state | enabled_state |
+      | ntp     | running       | enabled       |
+      | named   | not running   | not enabled   |
+
+  Scenario Outline: Test Pip Packages are Latest Versions
+    Given the host with URL "docker://sut" is ready
+    When the pip package is <pip_package>
+    Then the pip package is present
+    And the pip package is latest
+    Examples:
+      | pip_package      |
+      | pytest-bdd       |
+      | pytest-testinfra |
+      | testinfra-bdd    |
 
   Scenario: Check Java is Installed in the Path
     Given the host with URL "docker://java11" is ready within 10 seconds
@@ -92,20 +146,6 @@ Feature: Example of Testinfra BDD
     And the command stdout is empty
     And the command return code is 0
     And the package is installed
-
-  Scenario Outline: Check a Service Status
-    Given the host with URL "docker://sut" is ready
-    When the service is <service_name>
-    And the package is <package_name>
-    And the file is <file_name>
-    Then the service <status> enabled
-    And the service <status> running
-    And the package is <package_status>
-    And the file is <file_status>
-    Examples:
-      | service_name | status | package_name | package_status | file_name       | file_status |
-      | ntp          | is     | ntp          | installed      | /etc/ntp.conf   | present     |
-      | named        | is not | named        | absent         | /etc/named.conf | absent      |
 ```
 
 and `tests/step_defs/test_example.py` contains the following:
@@ -127,11 +167,6 @@ from pytest_bdd import scenario
 pytest_plugins = ['testinfra_bdd']
 
 
-@scenario('../features/example.feature', 'Start NTP Service')
-def test_start_ntp_service():
-    """Start NTP Service."""
-
-
 @scenario('../features/example.feature', 'Check Java 11 is Installed')
 def test_check_java_11_is_installed():
     """Check Java 11 is Installed."""
@@ -142,24 +177,55 @@ def test_check_java_is_installed_in_the_path():
     """Check Java is Installed in the Path."""
 
 
+@scenario('../features/example.feature', 'File Checks')
+def test_file_checks():
+    """File Checks."""
+
+
+@scenario('../features/example.feature', 'Group Checks')
+def test_group_checks():
+    """Group Checks."""
+
+
+@scenario('../features/example.feature', 'Python Package')
+def test_python_package():
+    """Python Package."""
+
+
+@scenario('../features/example.feature', 'Running Commands')
+def test_running_commands():
+    """Running Commands."""
+
+
+@scenario('../features/example.feature', 'Service Checks')
+def test_service_checks():
+    """Service Checks."""
+
+
 @scenario('../features/example.feature', 'Skip Tests if Host is Windoze')
 def test_skip_tests_if_host_is_windoze():
     """Skip Tests if Host is Windoze."""
 
 
-@scenario('../features/example.feature', 'System Under Test')
-def test_system_under_test():
-    """System Under Test."""
+@scenario('../features/example.feature', 'System Package')
+def test_system_package():
+    """System Package."""
 
 
-@scenario('../features/example.feature', 'Check a Service Status')
-def test_check_a_service_status():
-    """Check a Service Status."""
+@scenario('../features/example.feature', 'Test Pip Packages are Latest Versions')
+def test_test_pip_packages_are_latest_versions():
+    """Test Pip Packages are Latest Versions."""
 
 
 @scenario('../features/example.feature', 'Test for Absent Resources')
 def test_test_for_absent_resources():
     """Test for Absent Resources."""
+
+
+@scenario('../features/example.feature', 'User Checks')
+def test_user_checks():
+    """User Checks."""
+
 ```
 ## "Given" Steps
 
@@ -242,222 +308,4 @@ Example:
   Scenario: Skip Tests if Host is Windoze
     Given the host with URL "docker://sut" is ready within 10 seconds
     When the system property type is not Windoze skip tests
-```
-
-## "Then" Steps
-
-### Check a Command Exists on the Path
-
-In this example, the test will pass if the command called "java" is found
-on the path of the host being tested:
-
-```gherkin
-  Scenario: Check Java is Installed in the Path
-    Given the host with URL "docker://java11" is ready within 10 seconds
-    Then the command java exists in path
-```
-
-### Check a Command Return Code
-
-```gherkin
-  Scenario: Start NTP Service
-    Given the host with URL "docker://sut" is ready within 10 seconds
-    When the command is "service ntp start"
-    Then the command return code is 0
-```
-
-### Check the Output of a Command
-There are two output streams for a command.  The stream called stdout is
-for standard output and stderr is for the standard error.
-
-There following methods are available:
-
-Check for a string in the standard error:
-```gherkin
-Then the command stderr contains "Corretto-11"
-```
-
-Check for a regular expression in the standard error:
-```gherkin
-Then command stderr contains the regex "openjdk version \"11\\W[0-9]"
-```
-
-Check a stream (standard output) is empty:
-```gherkin
-Then the command stdout is empty
-```
-
-### Check the Status of a Service
-
-Check that a service (ntp) is running and enabled:
-
-```gherkin
-When the service is ntp
-Then the service is running
-And the service is enabled
-```
-
-Check that a service (named) is not running and is disabled:
-
-```gherkin
-When the service is named
-Then the service is not running
-And the service is not enabled
-```
-
-### Check the Installation Status of a Package
-
-Check that a package (ntp) is installed:
-
-```gherkin
-When the package is ntp
-Then the package is installed
-```
-
-This same check can also be written as:
-
-```gherkin
-When the package is ntp
-Then the package is present
-```
-
-To assert that a package (named) is absent:
-
-```gherkin
-When the package is named
-Then the package is absent
-```
-
-### Checking the Status of a File
-
-Check if a file is present on the host:
-
-```gherkin
-When file is /etc/ntp.conf
-Then the file is present
-```
-
-Check if a file is absent on the host:
-
-```gherkin
-When file is /etc/ntp.conf
-Then the file is absent
-```
-
-Check the file type (the file type must be one of file, directory, pipe, socket
-or symlink):
-
-```gherkin
-When file is /etc/ntp.conf
-Then the file type is file
-```
-
-Check the name of the owner of a file:
-
-```gherkin
-When file is /etc/ntp.conf
-Then the file owner is ntp
-```
-
-Check the name of the group of a file:
-
-```gherkin
-When file is /etc/ntp.conf
-Then the file group is ntp
-```
-
-Search for a string in the contents of the file (the text to search for must be
-enclosed in double quotes):
-
-```gherkin
-When file is /etc/ntp.conf
-Then the file contents contains "debian.pool.ntp"
-```
-
-Search for a regular expression in the contents of the file (the regex must
-be enclosed in double quotes):
-
-```gherkin
-When file is /etc/ntp.conf
-Then the file contents contains the regex ".*pool [0-9].debian.pool.ntp.org iburst"
-```
-
-Check the permissions of a file (the permissions must be specified as Octal):
-
-```gherkin
-When file is /etc/ntp.conf
-Then the file mode is 0o544
-```
-
-### Checking the Status of a User
-
-When naming the user in the "when" step, it is optional if the name is
-enclosed in double-quotes:
-
-```gherkin
-When the user is "ntp"
-```
-
-Check the user is present:
-
-```gherkin
-Then the user state is present
-```
-
-Check the user is absent:
-
-```gherkin
-Then the user state is absent
-```
-
-Check the name of the primary group of the user:
-
-```gherkin
-Then the user group is ntp
-```
-
-Check the uid of the user:
-
-```gherkin
-Then the user uid is 101
-```
-
-Check the gid of the user:
-
-```gherkin
-Then the user gid is 101
-```
-
-Check the name of the home directory of the user:
-
-```gherkin
-Then the user home is /nonexistent
-```
-
-```gherkin
-Check the shell of the user:
-```
-
-```gherkin
-Then the user shell is /usr/sbin/nologin
-```
-
-### Checking the Status of a Group
-
-Check the group is present:
-
-```gherkin
-Then the group state is present
-```
-
-Check the group is absent:
-
-```gherkin
-Then the group state is absent
-```
-
-Check the gid of the group:
-
-```gherkin
-Then the group gid is 101
 ```
