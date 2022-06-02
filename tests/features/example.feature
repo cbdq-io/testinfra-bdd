@@ -94,6 +94,13 @@ Feature: Example of Testinfra BDD
       | ntp     | running       | enabled       |
       | named   | not running   | not enabled   |
 
+  Scenario: Test Running Processes
+    Given the host with URL "docker://sut" is ready
+    # Processes are selected using filter() attributes names are
+    # described in the ps man page.
+    When the process filter is "user=root,comm=ntpd"
+    Then the process count is 1
+
   Scenario Outline: Test Pip Packages are Latest Versions
     Given the host with URL "docker://sut" is ready
     When the pip package is <pip_package>

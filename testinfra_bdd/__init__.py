@@ -50,6 +50,8 @@ class TestinfraBDD:
         self.hostname = None
         self.package = None
         self.pip_package = None
+        self.process_specification = None
+        self.processes = None
         self.release = None
         self.service = None
         self.type = None
@@ -121,6 +123,10 @@ class TestinfraBDD:
             self.group = self.host.group(resource_name)
         elif resource_type == 'pip package':
             self.pip_package = self.host.pip(resource_name)
+        elif resource_type == 'process filter':
+            self.process_specification = resource_name
+            filters = self.parse_process_filters()
+            self.processes = self.host.process.filter(**filters)
         else:
             resource_type_is_set = False
 
@@ -197,6 +203,30 @@ class TestinfraBDD:
             now = time.time()
 
         return is_ready
+
+    def parse_process_filters(self):
+        """
+        Parse the process filters into a dictionary.
+
+        Raises
+        ------
+        ValueError
+            If the specification can't be parsed.
+        """
+        filters = {}
+        specification = self.process_specification
+
+        for keypair in specification.split(','):
+            keypair = keypair.split('=')
+
+            if len(keypair) != 2:
+                raise ValueError(f'Unable to parse process filters "{specification}".')
+
+            key = keypair[0]
+            value = keypair[1]
+            filters[key] = value
+
+        return filters
 
 
 @given(parsers.parse('the host with URL "{hostspec}" is ready'), target_fixture='testinfra_bdd_host')
@@ -881,3 +911,32 @@ def check_the_group_state(expected_state, testinfra_bdd_host):
         The test fixture.
     """
     the_group_property_is('state', expected_state, testinfra_bdd_host)
+
+
+#############################################################################
+#  Process checks.
+#############################################################################
+@then(parsers.parse('the process count is {expected_count:d}'))
+def the_process_count_is(expected_count, testinfra_bdd_host):
+    """
+    Check that the process count matches the expected count.
+
+    Parameters
+    ----------
+    expected_count : int
+        The expected number of processes.
+    testinfra_bdd_host : TestinfraBDD
+        The test fixture.
+
+    Raises
+    ------
+    AssertError
+        If the actual process count does not match the expected count.
+    """
+    specification = testinfra_bdd_host.process_specification
+    processes = testinfra_bdd_host.processes
+    assert processes, 'No process set, did you forget a "When process filter" step?'
+    actual_process_count = len(processes)
+    message = f'Expected process specification "{specification}" to return {expected_count} '
+    message += f'but found {actual_process_count} "{processes}".'
+    assert actual_process_count == expected_count, message

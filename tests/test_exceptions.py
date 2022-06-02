@@ -50,3 +50,22 @@ def test_superseded_pip_package():
         assert str(ex) == 'Expected pip package semver to be latest but it is superseded.'
 
     assert exception_raised, 'Expected an exception to be raised.'
+
+
+def test_invalid_process_specifications():
+    """Test that exceptions are raised when the process specification is invalid."""
+    process_specifications = ['', 'foo']
+
+    for process_specification in process_specifications:
+        exception_raised = False
+        expected_message = f'Unable to parse process filters "{process_specification}".'
+
+        try:
+            host = testinfra_bdd.TestinfraBDD('docker://sut')
+            host.get_resource_from_host('process filter', process_specification)
+        except ValueError as ex:
+            exception_raised = True
+            actual_message = str(ex)
+            assert actual_message == expected_message
+
+        assert exception_raised, 'Expected an exception to be raised.'

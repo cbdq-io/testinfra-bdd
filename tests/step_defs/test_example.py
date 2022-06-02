@@ -64,6 +64,11 @@ def test_test_pip_packages_are_latest_versions():
     """Test Pip Packages are Latest Versions."""
 
 
+@scenario('../features/example.feature', 'Test Running Processes')
+def test_test_running_processes():
+    """Test Running Processes."""
+
+
 @scenario('../features/example.feature', 'Test for Absent Resources')
 def test_test_for_absent_resources():
     """Test for Absent Resources."""

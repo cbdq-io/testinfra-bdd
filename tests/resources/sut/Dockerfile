@@ -11,4 +11,4 @@ RUN apt-get clean \
 
 COPY issue21.txt /tmp
 
-CMD service ntp start && sleep infinity
+CMD ["sh", "-c", "service ntp start && sleep infinity"]
