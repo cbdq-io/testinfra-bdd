@@ -10,3 +10,5 @@ RUN apt-get clean \
   && pip install --no-cache-dir semver==2.12.0 testinfra-bdd==0.3.0
 
 COPY issue21.txt /tmp
+
+CMD service ntp start && sleep infinity
