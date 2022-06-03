@@ -7,6 +7,7 @@ changelog:
 	PYTHONPATH=. gitchangelog > CHANGELOG.md
 
 clean:
+	rm -rf dist
 	docker-compose -f tests/resources/docker-compose.yml down -t 0 -v
 
 lint:
