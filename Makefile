@@ -14,6 +14,7 @@ lint:
 	docker run --rm -i hadolint/hadolint < tests/resources/sut/Dockerfile
 	yamllint -s .
 	flake8
+	bandit -r .
 
 test:
 	docker-compose -f tests/resources/docker-compose.yml up -d --build
