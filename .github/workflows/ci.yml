@@ -26,7 +26,7 @@ jobs:
       - name: Requirements
         run: pip install -r requirements.txt
 
-      - name: Test & Build
+      - name: Test
         run: make test
 
       - name: Publish Code Coverage
@@ -35,6 +35,8 @@ jobs:
           CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
         with:
           coverageCommand: coverage report
+          coverageLocations: |
+            ${{github.workspace}}/.coverage:coverage.py
 
       - name: Build
         run: make build
