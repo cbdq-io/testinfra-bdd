@@ -26,5 +26,17 @@ jobs:
       - name: Requirements
         run: pip install -r requirements.txt
 
-      - name: Test & Build
-        run: make test build
+      - name: Test
+        run: make test
+
+      - name: Publish Code Coverage
+        uses: paambaati/codeclimate-action@v3.0.0
+        env:
+          CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
+        with:
+          coverageCommand: coverage xml
+          coverageLocations: |
+            ${{github.workspace}}/coverage.xml:coverage.py
+
+      - name: Build
+        run: make build
