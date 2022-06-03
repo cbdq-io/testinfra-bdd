@@ -3,6 +3,7 @@
 [![CI](https://github.com/locp/testinfra-bdd/actions/workflows/ci.yml/badge.svg)](https://github.com/locp/testinfra-bdd/actions/workflows/ci.yml)
 [![Total alerts](https://img.shields.io/lgtm/alerts/g/locp/testinfra-bdd.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/locp/testinfra-bdd/alerts/)
 [![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/locp/testinfra-bdd.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/locp/testinfra-bdd/context:python)
+[![Maintainability](https://api.codeclimate.com/v1/badges/5482c55d78b369a0a55e/maintainability)](https://codeclimate.com/github/locp/testinfra-bdd/maintainability)
 
 An interface between
 [pytest-bdd](https://pytest-bdd.readthedocs.io/en/latest/)
