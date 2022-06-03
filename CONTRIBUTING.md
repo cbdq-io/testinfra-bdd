@@ -65,3 +65,10 @@ git flow finish -m "v${RELEASE}" -p
 
 When all the CI jobs have completed, create the new release at
 https://github.com/locp/testinfra-bdd/releases
+
+### Post Release Steps
+
+After a release has been published, the following files will need
+to be updated for the tests to continue to work:
+- `tests/features/example.feature`
+- `tests/resources/sut/Dockerfile`
