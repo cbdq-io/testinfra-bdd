@@ -34,9 +34,9 @@ jobs:
         env:
           CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
         with:
-          coverageCommand: coverage report
+          coverageCommand: coverage xml
           coverageLocations: |
-            ${{github.workspace}}/.coverage:coverage.py
+            ${{github.workspace}}/coverage.xml:coverage.py
 
       - name: Build
         run: make build
