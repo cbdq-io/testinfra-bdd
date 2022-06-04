@@ -188,23 +188,52 @@ class TestinfraBDD:
             True if the host is responding to the host.system_info.type request.
             False if it doesn't.
         """
+        if timeout:
+            self.wait_until_is_host_ready(timeout)
+
+        try:
+            self.host.system_info.type
+            self.arch = self.host.system_info.arch
+            self.codename = self.host.system_info.codename
+            self.distribution = self.host.system_info.distribution
+            self.hostname = self.host.backend.hostname
+            self.release = self.host.system_info.release
+            self.type = self.host.system_info.type
+            is_ready = True
+        except AssertionError:
+            is_ready = False
+
+        return is_ready
+
+    def wait_until_is_host_ready(self, timeout=0):
+        """
+        Check if a host is ready within a specified time.
+
+        Will poll the host every second until timeout number of seconds have
+        expired.  If this host has not responded within that time, the host
+        is assumed to not be ready.
+
+        Parameters
+        ----------
+        timeout : int,optional
+            The time in seconds to wait for the host to become ready.  The
+            default is zero.
+
+        Returns
+        -------
+        bool
+            True if the host is responding to the host.system_info.type request.
+            False if it doesn't.
+        """
         is_ready = False
         now = time.time()
         deadline = now + timeout
 
         while now <= deadline and not is_ready:
-            try:
-                self.host.system_info.type
-                is_ready = True
-                self.arch = self.host.system_info.arch
-                self.codename = self.host.system_info.codename
-                self.distribution = self.host.system_info.distribution
-                self.hostname = self.host.backend.hostname
-                self.release = self.host.system_info.release
-                self.type = self.host.system_info.type
-            except AssertionError:
-                if now < deadline:
-                    time.sleep(1)
+            is_ready = self.is_host_ready()
+
+            if now < deadline and not is_ready:
+                time.sleep(1)
 
             now = time.time()
 
