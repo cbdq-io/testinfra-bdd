@@ -6,7 +6,8 @@ https://github.com/locp/testinfra-bdd
 """
 import re
 import pytest
-from testinfra_bdd.fixture import TestinfraBDD
+
+import testinfra_bdd.fixture
 
 from pytest_bdd import (
     given,
@@ -38,16 +39,12 @@ def the_host_is_ready(hostspec):
         URL patterns.  See
         https://testinfra.readthedocs.io/en/latest/backends.html
 
-    Raises
-    ------
-    AssertError
-        If the host is not ready.
+    Returns
+    -------
+    testinfra_bdd.fixture.TestinfraBDD
+        The object to return as a fixture.
     """
-    host = TestinfraBDD(hostspec)
-
-    message = f'The host {hostspec} is not ready.'
-    assert host.is_host_ready(), message
-    return host
+    return testinfra_bdd.fixture.get_host_fixture(hostspec)
 
 
 @given(parsers.parse('the host with URL "{hostspec}" is ready within {seconds:d} seconds'),
@@ -68,16 +65,12 @@ def the_host_is_ready_with_a_number_of_seconds(hostspec, seconds):
     seconds : int
         The number of seconds that the host is expected to become ready in.
 
-    Raises
-    ------
-    AssertError
-        If the host does not become ready within the specified number of seconds.
+    Returns
+    -------
+    testinfra_bdd.fixture.TestinfraBDD
+        The object to return as a fixture.
     """
-    host = TestinfraBDD(hostspec)
-
-    message = f'The host {hostspec} is not ready within {seconds} seconds.'
-    assert host.is_host_ready(seconds), message
-    return host
+    return testinfra_bdd.fixture.get_host_fixture(hostspec, seconds)
 
 
 @when(parsers.parse('the {resource_type} is "{resource_name}"'))
@@ -112,7 +105,6 @@ def skip_tests_if_system_info_does_not_match(property_name, expected_value, test
         The test fixture.
     """
     actual_value = testinfra_bdd_host.get_host_property(property_name)
-
     if actual_value != expected_value:
         pytest.skip(f'System {property_name} is {actual_value} which is not {expected_value}.')
 

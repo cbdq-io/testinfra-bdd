@@ -1,5 +1,6 @@
 """Test exceptions are raised as expected."""
 import testinfra_bdd
+import testinfra_bdd.fixture
 
 
 def test_invalid_resource_type():
@@ -7,7 +8,7 @@ def test_invalid_resource_type():
     exception_raised = False
 
     try:
-        host = testinfra_bdd.TestinfraBDD('docker://sut')
+        host = testinfra_bdd.fixture.get_host_fixture('docker://sut')
         host.get_resource_from_host('foo', 'foo')
     except AssertionError as ex:
         exception_raised = True
@@ -21,7 +22,7 @@ def test_invalid_command_stream_name():
     exception_raised = False
 
     try:
-        host = testinfra_bdd.TestinfraBDD('docker://sut')
+        host = testinfra_bdd.fixture.get_host_fixture('docker://sut')
         host.get_resource_from_host('command', 'ls')
         host.get_stream_from_command('foo')
     except ValueError as ex:
@@ -33,8 +34,15 @@ def test_invalid_command_stream_name():
 
 def test_unready_host():
     """Test that a non-ready host throws an exception."""
-    host = testinfra_bdd.TestinfraBDD('docker://foo')
-    assert not host.is_host_ready(1)
+    exception_raised = False
+
+    try:
+        testinfra_bdd.fixture.get_host_fixture('docker://foo', 1)
+    except AssertionError as ex:
+        exception_raised = True
+        assert str(ex) == 'The host docker://foo is not ready within 1 seconds.'
+
+    assert exception_raised, 'Expected an exception to be raised.'
 
 
 def test_superseded_pip_package():
@@ -42,7 +50,7 @@ def test_superseded_pip_package():
     exception_raised = False
 
     try:
-        host = testinfra_bdd.TestinfraBDD('docker://sut')
+        host = testinfra_bdd.fixture.get_host_fixture('docker://sut')
         host.get_resource_from_host('pip package', 'semver')
         testinfra_bdd.the_pip_package_state_is('latest', host)
     except AssertionError as ex:
@@ -61,7 +69,7 @@ def test_invalid_process_specifications():
         expected_message = f'Unable to parse process filters "{process_specification}".'
 
         try:
-            host = testinfra_bdd.TestinfraBDD('docker://sut')
+            host = testinfra_bdd.fixture.get_host_fixture('docker://sut')
             host.get_resource_from_host('process filter', process_specification)
         except ValueError as ex:
             exception_raised = True

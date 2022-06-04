@@ -223,3 +223,34 @@ class TestinfraBDD:
             filters[key] = value
 
         return filters
+
+
+def get_host_fixture(hostspec, timeout=0):
+    """
+    Return a host that is confirmed as ready.
+
+    hostspec : str
+        The URL of the System Under Test (SUT).  Must comply to the Testinfra
+        URL patterns.  See
+        https://testinfra.readthedocs.io/en/latest/backends.html
+    timeout : int, optional
+        The number of seconds that the host is expected to become ready in.
+
+    Returns
+    -------
+    testinfra_bdd.fixture.TestinfraBDD
+        The object to return as a fixture.
+
+    Raises
+    ------
+    AssertError
+        When the host is not ready.
+    """
+    if timeout:
+        message = f'The host {hostspec} is not ready within {timeout} seconds.'
+    else:
+        message = f'The host {hostspec} is not ready.'
+
+    host = TestinfraBDD(hostspec)
+    assert host.is_host_ready(timeout), message
+    return host
