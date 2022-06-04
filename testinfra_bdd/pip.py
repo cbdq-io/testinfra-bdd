@@ -3,6 +3,37 @@
 from testinfra_bdd.exception_message import exception_message
 
 
+def check_entry_requirements(pip_package, expected_state):
+    """
+    Check that the entry requirements are met for the test.
+
+    Parameters
+    ----------
+    pip_package : testinfra.Pip
+        The Pip package to be checked.
+    expected_state : str
+        The expected state.
+
+    Raises
+    ------
+    ValueError
+        If the expected state is invalid.
+    RuntimeError
+        If the Pip package has not been set.
+    """
+    valid_expected_states = [
+        'absent',
+        'latest',
+        'present',
+        'superseded'
+    ]
+
+    if expected_state not in valid_expected_states:
+        raise ValueError(f'Unknown expected state "{expected_state}" for a Pip package.')
+    elif not pip_package:
+        raise RuntimeError('Pip package not set.  Have you missed a "When pip package is" step?')
+
+
 def get_pip_package_actual_state(pip_package, expected_state, host):
     """
     Get the actual state of a Pip package given the package and the expected state.
@@ -24,21 +55,12 @@ def get_pip_package_actual_state(pip_package, expected_state, host):
         str
             A suitable message if the actual state doesn't match the actual state.
     """
-    valid_expected_states = [
-        'absent',
-        'latest',
-        'present',
-        'superseded'
-    ]
     state_checks = [
         'absent',
         'present'
     ]
 
-    if expected_state not in valid_expected_states:
-        raise ValueError(f'Unknown expected state "{expected_state}" for a Pip package.')
-    elif not pip_package:
-        raise RuntimeError('Pip package not set.  Have you missed a "When pip package is" step?')
+    check_entry_requirements(pip_package, expected_state)
 
     if expected_state in state_checks:
         actual_state = 'absent'
