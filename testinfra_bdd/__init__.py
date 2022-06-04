@@ -8,6 +8,7 @@ import re
 import pytest
 
 import testinfra_bdd.fixture
+import testinfra_bdd.pip
 
 from pytest_bdd import (
     given,
@@ -356,32 +357,11 @@ def the_pip_package_state_is(expected_state, testinfra_bdd_host):
     AssertError
         When the actual state doesn't match the expected state.
     """
-    valid_expected_states = [
-        'absent',
-        'latest',
-        'present'
-    ]
-
-    message = f'Unknown state "{expected_state}" must be one of {"/".join(valid_expected_states)}.'
-    assert expected_state in valid_expected_states, message
-    pip_package = testinfra_bdd_host.pip_package
-    assert pip_package, 'Pip package not set.  Have you missed a "When pip package is" step?'
-
-    if expected_state == 'absent' or expected_state == 'present':
-        if pip_package.is_installed:
-            actual_state = 'present'
-        else:
-            actual_state = 'absent'
-    else:
-        host = testinfra_bdd_host.host
-        outdated_packages = host.pip.get_outdated_packages()
-
-        if pip_package.name in outdated_packages:
-            actual_state = 'superseded'
-        else:
-            actual_state = 'latest'
-
-    message = f'Expected pip package {pip_package.name} to be {expected_state} but it is {actual_state}.'
+    (actual_state, message) = testinfra_bdd.pip.get_pip_package_actual_state(
+        testinfra_bdd_host.pip_package,
+        expected_state,
+        testinfra_bdd_host.host
+    )
     assert actual_state == expected_state, message
 
 
