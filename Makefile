@@ -13,7 +13,7 @@ clean:
 lint:
 	docker run --rm -i hadolint/hadolint < tests/resources/sut/Dockerfile
 	yamllint -s .
-	flake8
+	flake8 --radon-no-assert
 	bandit -r .
 
 test:

@@ -85,48 +85,55 @@ class TestinfraBDD:
         resource_name : str
             The name of the resource to be examined.  If resource_type is "command" then this is the
             command line to be executed.
-
-        Returns
-        -------
-        object
-            The resource that has been requested.
         """
-        resource_type_is_set = True
+        resource_types = {
+            'address': {
+                'attribute': 'address',
+                'function': self.host.addr
+            },
+            'command': {
+                'attribute': 'command',
+                'function': self.host.run
+            },
+            'file': {
+                'attribute': 'file',
+                'function': self.host.file
+            },
+            'group': {
+                'attribute': 'group',
+                'function': self.host.group
+            },
+            'package': {
+                'attribute': 'package',
+                'function': self.host.package
+            },
+            'pip package': {
+                'attribute': 'pip_package',
+                'function': self.host.pip
+            },
+            'service': {
+                'attribute': 'service',
+                'function': self.host.service
+            },
+            'user': {
+                'attribute': 'user',
+                'function': self.host.user
+            }
+        }
 
-        if resource_type == 'command':
-            self.command = self.host.run(resource_name)
-        elif resource_type == 'service':
-            self.service = self.host.service(resource_name)
-        elif resource_type == 'package':
-            self.package = self.host.package(resource_name)
-        elif resource_type == 'file':
-            self.file = self.host.file(resource_name)
-        elif resource_type == 'user':
-            self.user = self.host.user(resource_name)
-        elif resource_type == 'group':
-            self.group = self.host.group(resource_name)
-        elif resource_type == 'pip package':
-            self.pip_package = self.host.pip(resource_name)
+        if resource_type == 'address and port':
+            self.parse_addr_and_port(resource_name)
         elif resource_type == 'process filter':
-            self.process_specification = resource_name
-            filters = self.parse_process_filters()
+            filters = self.parse_process_filters(resource_name)
             self.processes = self.host.process.filter(**filters)
         elif resource_type == 'socket':
             self.socket = self.host.socket(resource_name)
-        elif resource_type == 'address':
-            self.address = self.host.addr(resource_name)
-        elif resource_type == 'address and port':
-            port = resource_name.split(':')
-            assert len(port) == 2, f'Unable to parse addr:port from "{resource_name}".'
-            address = port[0]
-            address = self.host.addr(address)
-            self.port_number = int(port[1])
-            self.port = address.port(self.port_number)
-            self.address = address
+        elif resource_type not in resource_types:
+            raise ValueError(f'Unknown resource type "{resource_type}".')
         else:
-            resource_type_is_set = False
-
-        assert resource_type_is_set, f'Unknown resource type "{resource_type}".'
+            attribute = resource_types[resource_type]['attribute']
+            function = resource_types[resource_type]['function']
+            setattr(self, attribute, function(resource_name))
 
     def get_stream_from_command(self, stream_name):
         """
@@ -200,9 +207,50 @@ class TestinfraBDD:
 
         return is_ready
 
-    def parse_process_filters(self):
+    def parse_addr_and_port(self, addr_and_port):
+        """
+        Parse a string containing an address and port.
+
+        Parameters
+        ----------
+        addr_and_port : str
+            The address and port in the format of "host:port".
+
+        Returns
+        -------
+        tuple
+            str the address, int the port number.
+
+        Raises
+        ------
+        ValueError
+            If the string can't be parsed.
+        """
+        strings = addr_and_port.split(':')
+        message = f'Unable to parse addr:port from "{addr_and_port}".'
+
+        if len(strings) != 2:
+            raise ValueError(message)
+
+        addr = strings[0]
+
+        try:
+            port = int(strings[1])
+        except ValueError:
+            raise ValueError(message + ' Unable to parse port.')
+
+        self.address = self.host.addr(addr)
+        self.port = self.address.port(port)
+        self.port_number = port
+
+    def parse_process_filters(self, specification):
         """
         Parse the process filters into a dictionary.
+
+        Parameters
+        ----------
+        specification : str
+            The process specifications to be parsed.
 
         Raises
         ------
@@ -210,7 +258,7 @@ class TestinfraBDD:
             If the specification can't be parsed.
         """
         filters = {}
-        specification = self.process_specification
+        self.process_specification = specification
 
         for keypair in specification.split(','):
             keypair = keypair.split('=')
