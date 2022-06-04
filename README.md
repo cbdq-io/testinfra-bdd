@@ -279,6 +279,7 @@ def test_test_for_absent_resources():
 def test_user_checks():
     """User Checks."""
 ```
+
 ## "Given" Steps
 
 Given steps require that the URL of the system to be tested (SUT) is provided.
@@ -291,6 +292,7 @@ Examples:
 
 To connect to a Docker container called sut (fail if the target host is
 not ready):
+
 ```gherkin
 Given the host with URL "docker://java11" is ready
 ```
@@ -356,6 +358,7 @@ can be achieved by comparing against the following configurations:
 - The hostname (e.g. sut)
 
 Example:
+
 ```gherkin
   Scenario: Skip Tests if Host is Windoze
     Given the host with URL "docker://sut" is ready within 10 seconds

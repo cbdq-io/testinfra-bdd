@@ -26,6 +26,9 @@ jobs:
       - name: Requirements
         run: pip install -r requirements.txt
 
+      - name: Bandit
+        run: bandit -r .
+
       - name: Test
         run: make test
 

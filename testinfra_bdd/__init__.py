@@ -5,10 +5,9 @@ For documentation and examples, please go to
 https://github.com/locp/testinfra-bdd
 """
 import re
-import time
-
 import pytest
-import testinfra
+
+import testinfra_bdd.fixture
 
 from pytest_bdd import (
     given,
@@ -23,227 +22,6 @@ This is used by setuptools and by gitchangelog to identify the name of the name
 of the release.
 """
 __version__ = '1.0.0'
-
-
-class TestinfraBDD:
-    """A class that is used as the fixture in the given/when/then steps."""
-
-    def __init__(self, url):
-        """
-        Create a TestinfraBDD object.
-
-        Initialises the host attribute.
-
-        Parameters
-        ----------
-        url : str
-            The URL of the System Under Test (SUT).  Must comply to the Testinfra
-            URL patterns.  See https://testinfra.readthedocs.io/en/latest/backends.html
-        """
-        self.address = None
-        self.arch = None
-        self.codename = None
-        self.command = None
-        self.distribution = None
-        self.file = None
-        self.group = None
-        self.host = testinfra.get_host(url)
-        self.hostname = None
-        self.package = None
-        self.pip_package = None
-        self.port = None
-        self.port_number = None
-        self.process_specification = None
-        self.processes = None
-        self.release = None
-        self.service = None
-        self.socket = None
-        self.socket_url = None
-        self.type = None
-        self.url = url
-        self.user = None
-
-    def get_host_property(self, property_name):
-        """
-        Get a named host property.
-
-        Parameters
-        ----------
-        property_name : str
-            The name of the property to be extracted.
-
-        Raises
-        ------
-        AssertError
-            If the property_name is invalid.
-
-        Returns
-        -------
-        str
-            The value of the property.
-        """
-        properties = {
-            'type': self.host.system_info.type,
-            'distribution': self.host.system_info.distribution,
-            'release': self.host.system_info.release,
-            'codename': self.host.system_info.codename,
-            'arch': self.host.system_info.arch,
-            'hostname': self.host.backend.get_hostname(),
-            'connection_type': self.host.backend.NAME
-        }
-
-        assert property_name in properties, f'Invalid host property name "{property_name}".'
-        return properties[property_name]
-
-    def get_resource_from_host(self, resource_type, resource_name):
-        """
-        Use a Testinfra module to get a resource from the system under test.
-
-        Parameters
-        ----------
-        resource_type : str
-            The type of resource to be examined.
-        resource_name : str
-            The name of the resource to be examined.  If resource_type is "command" then this is the
-            command line to be executed.
-
-        Returns
-        -------
-        object
-            The resource that has been requested.
-        """
-        resource_type_is_set = True
-
-        if resource_type == 'command':
-            self.command = self.host.run(resource_name)
-        elif resource_type == 'service':
-            self.service = self.host.service(resource_name)
-        elif resource_type == 'package':
-            self.package = self.host.package(resource_name)
-        elif resource_type == 'file':
-            self.file = self.host.file(resource_name)
-        elif resource_type == 'user':
-            self.user = self.host.user(resource_name)
-        elif resource_type == 'group':
-            self.group = self.host.group(resource_name)
-        elif resource_type == 'pip package':
-            self.pip_package = self.host.pip(resource_name)
-        elif resource_type == 'process filter':
-            self.process_specification = resource_name
-            filters = self.parse_process_filters()
-            self.processes = self.host.process.filter(**filters)
-        elif resource_type == 'socket':
-            self.socket = self.host.socket(resource_name)
-        elif resource_type == 'address':
-            self.address = self.host.addr(resource_name)
-        elif resource_type == 'address and port':
-            port = resource_name.split(':')
-            assert len(port) == 2, f'Unable to parse addr:port from "{resource_name}".'
-            address = port[0]
-            address = self.host.addr(address)
-            self.port_number = int(port[1])
-            self.port = address.port(self.port_number)
-            self.address = address
-        else:
-            resource_type_is_set = False
-
-        assert resource_type_is_set, f'Unknown resource type "{resource_type}".'
-
-    def get_stream_from_command(self, stream_name):
-        """
-        Get a named stream from the command.
-
-        Parameters
-        ----------
-        stream_name : str
-            The name of the stream.
-
-        Raises
-        ------
-        AssertError
-            If the command attribute is None.
-        ValueError
-            When the stream name is not recognized.
-
-        Returns
-        -------
-        str
-            The requested stream content.
-        """
-        assert self.command, 'No command has been executed.'
-
-        if stream_name == 'stdout':
-            return self.command.stdout
-        elif stream_name == 'stderr':
-            return self.command.stderr
-
-        raise ValueError(f'Unknown stream name "{stream_name}".')
-
-    def is_host_ready(self, timeout=0):
-        """
-        Check if a host is ready within a specified time.
-
-        Will poll the host every second until timeout number of seconds have
-        expired.  If this host has not responded within that time, the host
-        is assumed to not be ready.
-
-        Parameters
-        ----------
-        timeout : int,optional
-            The time in seconds to wait for the host to become ready.  The
-            default is zero.
-
-        Returns
-        -------
-        bool
-            True if the host is responding to the host.system_info.type request.
-            False if it doesn't.
-        """
-        is_ready = False
-        now = time.time()
-        deadline = now + timeout
-
-        while now <= deadline and not is_ready:
-            try:
-                self.host.system_info.type
-                is_ready = True
-                self.arch = self.host.system_info.arch
-                self.codename = self.host.system_info.codename
-                self.distribution = self.host.system_info.distribution
-                self.hostname = self.host.backend.hostname
-                self.release = self.host.system_info.release
-                self.type = self.host.system_info.type
-            except AssertionError:
-                if now < deadline:
-                    time.sleep(1)
-
-            now = time.time()
-
-        return is_ready
-
-    def parse_process_filters(self):
-        """
-        Parse the process filters into a dictionary.
-
-        Raises
-        ------
-        ValueError
-            If the specification can't be parsed.
-        """
-        filters = {}
-        specification = self.process_specification
-
-        for keypair in specification.split(','):
-            keypair = keypair.split('=')
-
-            if len(keypair) != 2:
-                raise ValueError(f'Unable to parse process filters "{specification}".')
-
-            key = keypair[0]
-            value = keypair[1]
-            filters[key] = value
-
-        return filters
 
 
 @given(parsers.parse('the host with URL "{hostspec}" is ready'), target_fixture='testinfra_bdd_host')
@@ -261,16 +39,12 @@ def the_host_is_ready(hostspec):
         URL patterns.  See
         https://testinfra.readthedocs.io/en/latest/backends.html
 
-    Raises
-    ------
-    AssertError
-        If the host is not ready.
+    Returns
+    -------
+    testinfra_bdd.fixture.TestinfraBDD
+        The object to return as a fixture.
     """
-    host = TestinfraBDD(hostspec)
-
-    message = f'The host {hostspec} is not ready.'
-    assert host.is_host_ready(), message
-    return host
+    return testinfra_bdd.fixture.get_host_fixture(hostspec)
 
 
 @given(parsers.parse('the host with URL "{hostspec}" is ready within {seconds:d} seconds'),
@@ -291,16 +65,12 @@ def the_host_is_ready_with_a_number_of_seconds(hostspec, seconds):
     seconds : int
         The number of seconds that the host is expected to become ready in.
 
-    Raises
-    ------
-    AssertError
-        If the host does not become ready within the specified number of seconds.
+    Returns
+    -------
+    testinfra_bdd.fixture.TestinfraBDD
+        The object to return as a fixture.
     """
-    host = TestinfraBDD(hostspec)
-
-    message = f'The host {hostspec} is not ready within {seconds} seconds.'
-    assert host.is_host_ready(seconds), message
-    return host
+    return testinfra_bdd.fixture.get_host_fixture(hostspec, seconds)
 
 
 @when(parsers.parse('the {resource_type} is "{resource_name}"'))
@@ -315,7 +85,7 @@ def the_resource_type_is(resource_type, resource_name, testinfra_bdd_host):
         The type of the resource.
     resource_name : str
         The name of the resource.
-    testinfra_bdd_host : TestinfraBDD
+    testinfra_bdd_host : testinfra_bdd.fixture.TestinfraBDD
         The test fixture.
     """
     testinfra_bdd_host.get_resource_from_host(resource_type, resource_name)
@@ -331,11 +101,10 @@ def skip_tests_if_system_info_does_not_match(property_name, expected_value, test
     ----------
     property_name : str
     expected_value : str
-    testinfra_bdd_host : TestinfraBDD
+    testinfra_bdd_host : testinfra_bdd.fixture.TestinfraBDD
         The test fixture.
     """
     actual_value = testinfra_bdd_host.get_host_property(property_name)
-
     if actual_value != expected_value:
         pytest.skip(f'System {property_name} is {actual_value} which is not {expected_value}.')
 
@@ -353,7 +122,7 @@ def check_command_exists_in_path(command, testinfra_bdd_host):
     ----------
     command : str
         The name of the command to check for.
-    testinfra_bdd_host : TestinfraBDD
+    testinfra_bdd_host : testinfra_bdd.fixture.TestinfraBDD
         The test fixture.
 
     Raises
@@ -376,7 +145,7 @@ def check_command_stream_contains(stream_name, text, testinfra_bdd_host):
         The name of the stream to check.  Must be "stdout" or "stderr".
     text : str
         The text to search for.
-    testinfra_bdd_host : TestinfraBDD
+    testinfra_bdd_host : testinfra_bdd.fixture.TestinfraBDD
         The test fixture.
 
     Raises
@@ -400,7 +169,7 @@ def check_command_stream_contains_the_regex(stream_name, pattern, testinfra_bdd_
         The name of the stream to be checked.  Must be stdout or stderr.
     pattern : str
         The pattern to search for in the stream.
-    testinfra_bdd_host : TestinfraBDD
+    testinfra_bdd_host : testinfra_bdd.fixture.TestinfraBDD
         The test fixture.
 
     Raises
@@ -427,7 +196,7 @@ def check_command_return_code(expected_return_code, testinfra_bdd_host):
     ----------
     expected_return_code : int
         The expected return code (e.g. zero/0).
-    testinfra_bdd_host : TestinfraBDD
+    testinfra_bdd_host : testinfra_bdd.fixture.TestinfraBDD
         The test fixture.
 
     Raises
@@ -450,7 +219,7 @@ def command_stream_is_empty(stream_name, testinfra_bdd_host):
     ----------
     stream_name : str
         The name of the stream to be checked.  Must be stdout or stderr.
-    testinfra_bdd_host : TestinfraBDD
+    testinfra_bdd_host : testinfra_bdd.fixture.TestinfraBDD
         The test fixture.
 
     Raises
@@ -472,7 +241,7 @@ def the_service_is_not_enabled(testinfra_bdd_host):
 
     Parameters
     ----------
-    testinfra_bdd_host : TestinfraBDD
+    testinfra_bdd_host : testinfra_bdd.fixture.TestinfraBDD
         The test fixture.
 
     Raises
@@ -492,7 +261,7 @@ def the_service_is_enabled(testinfra_bdd_host):
 
     Parameters
     ----------
-    testinfra_bdd_host : TestinfraBDD
+    testinfra_bdd_host : testinfra_bdd.fixture.TestinfraBDD
         The test fixture.
 
     Raises
@@ -512,7 +281,7 @@ def the_service_is_not_running(testinfra_bdd_host):
 
     Parameters
     ----------
-    testinfra_bdd_host : TestinfraBDD
+    testinfra_bdd_host : testinfra_bdd.fixture.TestinfraBDD
         The test fixture.
 
     Raises
@@ -532,7 +301,7 @@ def the_service_is_running(testinfra_bdd_host):
 
     Parameters
     ----------
-    testinfra_bdd_host : TestinfraBDD
+    testinfra_bdd_host : testinfra_bdd.fixture.TestinfraBDD
         The test fixture.
 
     Raises
@@ -555,7 +324,7 @@ def the_pip_check_is_ok(testinfra_bdd_host):
 
     Parameters
     ----------
-    testinfra_bdd_host : TestinfraBDD
+    testinfra_bdd_host : testinfra_bdd.fixture.TestinfraBDD
         The test fixture.
 
     Raises
@@ -579,7 +348,7 @@ def the_pip_package_state_is(expected_state, testinfra_bdd_host):
     ----------
     expected_state : str
         The expected state of the package.  Can be absent, latest or installed.
-    testinfra_bdd_host : TestinfraBDD
+    testinfra_bdd_host : testinfra_bdd.fixture.TestinfraBDD
         The test fixture.
 
     Raises
@@ -625,7 +394,7 @@ def the_pip_package_version_is(expected_version, testinfra_bdd_host):
     ----------
     expected_version : str
         The version of the package that is expected.
-    testinfra_bdd_host : TestinfraBDD
+    testinfra_bdd_host : testinfra_bdd.fixture.TestinfraBDD
         The test fixture.
 
     Raises
@@ -653,7 +422,7 @@ def the_package_status_is(expected_status, testinfra_bdd_host):
     ----------
     expected_status : str
         Can be absent, installed or present.
-    testinfra_bdd_host : TestinfraBDD
+    testinfra_bdd_host : testinfra_bdd.fixture.TestinfraBDD
         The test fixture.
 
     Raises
@@ -692,7 +461,7 @@ def the_file_contents_contains_text(text, testinfra_bdd_host):
     ----------
     text : str
         The string to search for in the file content.
-    testinfra_bdd_host : TestinfraBDD
+    testinfra_bdd_host : testinfra_bdd.fixture.TestinfraBDD
         The test fixture.
 
     Raises
@@ -713,7 +482,7 @@ def the_file_contents_matches_the_regex(pattern, testinfra_bdd_host):
     ----------
     pattern : str
         The regular expression to match against the file content.
-    testinfra_bdd_host : TestinfraBDD
+    testinfra_bdd_host : testinfra_bdd.fixture.TestinfraBDD
         The test fixture.
 
     Raises
@@ -738,7 +507,7 @@ def the_file_status(expected_status, testinfra_bdd_host):
     ----------
     expected_status : str
         Should be present or absent.
-    testinfra_bdd_host : TestinfraBDD
+    testinfra_bdd_host : testinfra_bdd.fixture.TestinfraBDD
         The test fixture.
 
     Raises
@@ -760,7 +529,7 @@ def the_file_property_is(property_name, expected_value, testinfra_bdd_host):
         The name of the property to compare.
     expected_value : str
         The value that is expected.
-    testinfra_bdd_host : TestinfraBDD
+    testinfra_bdd_host : testinfra_bdd.fixture.TestinfraBDD
         The test fixture.
 
     Raises
@@ -824,7 +593,7 @@ def the_user_property_is(property_name, expected_value, testinfra_bdd_host):
         The name of the property to compare.
     expected_value : str
         The value that is expected.
-    testinfra_bdd_host : TestinfraBDD
+    testinfra_bdd_host : testinfra_bdd.fixture.TestinfraBDD
         The test fixture.
 
     Raises
@@ -867,7 +636,7 @@ def check_the_user_state(expected_state, testinfra_bdd_host):
     ----------
     expected_state : str
         The expected state (e.g. absent or present).
-    testinfra_bdd_host : TestinfraBDD
+    testinfra_bdd_host : testinfra_bdd.fixture.TestinfraBDD
         The test fixture.
     """
     the_user_property_is('state', expected_state, testinfra_bdd_host)
@@ -887,7 +656,7 @@ def the_group_property_is(property_name, expected_value, testinfra_bdd_host):
         The name of the property to compare.
     expected_value : str
         The value that is expected.
-    testinfra_bdd_host : TestinfraBDD
+    testinfra_bdd_host : testinfra_bdd.fixture.TestinfraBDD
         The test fixture.
 
     Raises
@@ -924,7 +693,7 @@ def check_the_group_state(expected_state, testinfra_bdd_host):
     ----------
     expected_state : str
         The expected state (e.g. absent or present).
-    testinfra_bdd_host : TestinfraBDD
+    testinfra_bdd_host : testinfra_bdd.fixture.TestinfraBDD
         The test fixture.
     """
     the_group_property_is('state', expected_state, testinfra_bdd_host)
@@ -942,7 +711,7 @@ def the_process_count_is(expected_count, testinfra_bdd_host):
     ----------
     expected_count : int
         The expected number of processes.
-    testinfra_bdd_host : TestinfraBDD
+    testinfra_bdd_host : testinfra_bdd.fixture.TestinfraBDD
         The test fixture.
 
     Raises
@@ -972,7 +741,7 @@ def the_address_is(expected_state, testinfra_bdd_host):
     expected_state : str
         The expected state of the address.
 
-    testinfra_bdd_host : TestinfraBDD
+    testinfra_bdd_host : testinfra_bdd.fixture.TestinfraBDD
         The test fixture.
 
     Raises
@@ -1001,7 +770,7 @@ def the_port_is(expected_state, testinfra_bdd_host):
     expected_state : str
         The expected state of the port.
 
-    testinfra_bdd_host : TestinfraBDD
+    testinfra_bdd_host : testinfra_bdd.fixture.TestinfraBDD
         The test fixture.
 
     Raises
@@ -1031,7 +800,7 @@ def the_socket_is(expected_state, testinfra_bdd_host):
     ----------
     expected_state : str
         The expected state of the socket.
-    testinfra_bdd_host : TestinfraBDD
+    testinfra_bdd_host : testinfra_bdd.fixture.TestinfraBDD
         The test fixture.
 
     Raises
