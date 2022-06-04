@@ -7,7 +7,9 @@ https://github.com/locp/testinfra-bdd
 import re
 import pytest
 
+import testinfra_bdd.file
 import testinfra_bdd.fixture
+import testinfra_bdd.pip
 
 from pytest_bdd import (
     given,
@@ -356,32 +358,11 @@ def the_pip_package_state_is(expected_state, testinfra_bdd_host):
     AssertError
         When the actual state doesn't match the expected state.
     """
-    valid_expected_states = [
-        'absent',
-        'latest',
-        'present'
-    ]
-
-    message = f'Unknown state "{expected_state}" must be one of {"/".join(valid_expected_states)}.'
-    assert expected_state in valid_expected_states, message
-    pip_package = testinfra_bdd_host.pip_package
-    assert pip_package, 'Pip package not set.  Have you missed a "When pip package is" step?'
-
-    if expected_state == 'absent' or expected_state == 'present':
-        if pip_package.is_installed:
-            actual_state = 'present'
-        else:
-            actual_state = 'absent'
-    else:
-        host = testinfra_bdd_host.host
-        outdated_packages = host.pip.get_outdated_packages()
-
-        if pip_package.name in outdated_packages:
-            actual_state = 'superseded'
-        else:
-            actual_state = 'latest'
-
-    message = f'Expected pip package {pip_package.name} to be {expected_state} but it is {actual_state}.'
+    (actual_state, message) = testinfra_bdd.pip.get_pip_package_actual_state(
+        testinfra_bdd_host.pip_package,
+        expected_state,
+        testinfra_bdd_host.host
+    )
     assert actual_state == expected_state, message
 
 
@@ -537,46 +518,12 @@ def the_file_property_is(property_name, expected_value, testinfra_bdd_host):
     AssertError
         If the actual value does not match the expected value.
     """
-    file = testinfra_bdd_host.file
-    assert file, 'File not set.  Have you missed a "When file is" step?'
-    actual_type = None
-
-    if file.exists:
-        actual_file_state = 'present'
-        actual_file_mode = '0o%o' % file.mode
-        type_lookup = {
-            'file': file.is_file,
-            'directory': file.is_directory,
-            'pipe': file.is_pipe,
-            'socket': file.is_socket,
-            'symlink': file.is_symlink
-        }
-
-        for key in type_lookup.keys():
-            if type_lookup[key]:
-                actual_type = key
-                break
-
-        properties = {
-            'group': file.group,
-            'mode': actual_file_mode,
-            'owner': file.user,
-            'state': actual_file_state,
-            'type': actual_type,
-            'user': file.user
-        }
-    else:
-        actual_file_state = 'absent'
-        properties = {
-            'state': actual_file_state,
-            'type': None
-        }
-
-    assert property_name in properties, f'Unknown user property "{property_name}".'
-    actual_value = properties[property_name]
-    message = f'Expected {property_name} for file {file.path} to be "{expected_value}" '
-    message += f'but it was "{actual_value}".'
-    assert actual_value == expected_value, message
+    (actual_value, exception_message) = testinfra_bdd.file.get_file_actual_state(
+        testinfra_bdd_host.file,
+        property_name,
+        expected_value
+    )
+    assert actual_value == expected_value, exception_message
 
 
 #############################################################################

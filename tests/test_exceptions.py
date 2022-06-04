@@ -46,17 +46,27 @@ def test_unready_host():
     assert exception_raised, 'Expected an exception to be raised.'
 
 
-def test_superseded_pip_package():
+@pytest.mark.parametrize(
+    'pip,expected_state,expected_exception_message',
+    [
+        (None, 'present', 'Pip package not set.  Have you missed a "When pip package is" step?'),
+        ('semver', 'foo', 'Unknown expected state "foo" for a Pip package.'),
+        ('semver', 'latest', 'Expected Pip package semver to be latest but it is superseded.')
+    ]
+)
+def test_pip_package(pip, expected_state, expected_exception_message):
     """Test that a superseded pip package is identified."""
     exception_raised = False
+    host = testinfra_bdd.fixture.get_host_fixture('docker://sut')
+
+    if pip:
+        host.get_resource_from_host('pip package', pip)
 
     try:
-        host = testinfra_bdd.fixture.get_host_fixture('docker://sut')
-        host.get_resource_from_host('pip package', 'semver')
-        testinfra_bdd.the_pip_package_state_is('latest', host)
-    except AssertionError as ex:
+        testinfra_bdd.the_pip_package_state_is(expected_state, host)
+    except (AssertionError, RuntimeError, ValueError) as ex:
         exception_raised = True
-        assert str(ex) == 'Expected pip package semver to be latest but it is superseded.'
+        assert str(ex) == expected_exception_message
 
     assert exception_raised, 'Expected an exception to be raised.'
 
