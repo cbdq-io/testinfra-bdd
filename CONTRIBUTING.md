@@ -53,12 +53,14 @@ make changelog
 
 Now commit these changes in a way that we don't have excessive messages
 in the changelog:
+
 ```shell
 git add .
 git commit -m "chg: doc: Release ${RELEASE} \!minor"
 ```
 
 Now finish the release in Git Flow:
+
 ```shell
 git flow finish -m "v${RELEASE}" -p
 ```
@@ -70,5 +72,6 @@ https://github.com/locp/testinfra-bdd/releases
 
 After a release has been published, the following files will need
 to be updated for the tests to continue to work:
+
 - `tests/features/example.feature`
 - `tests/resources/sut/Dockerfile`

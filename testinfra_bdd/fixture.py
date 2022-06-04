@@ -3,6 +3,9 @@ import time
 
 import testinfra
 
+from testinfra_bdd.parsers import parse_addr_and_port
+from testinfra_bdd.parsers import parse_process_filters
+
 
 class TestinfraBDD:
     """A class that is used as the fixture in the given/when/then steps."""
@@ -122,10 +125,10 @@ class TestinfraBDD:
         }
 
         if resource_type == 'address and port':
-            self.parse_addr_and_port(resource_name)
+            (self.address, self.port, self.port_number) = parse_addr_and_port(resource_name, self.host)
         elif resource_type == 'process filter':
-            filters = self.parse_process_filters(resource_name)
-            self.processes = self.host.process.filter(**filters)
+            self.process_specification = resource_name
+            self.processes = self.host.process.filter(**parse_process_filters(resource_name))
         elif resource_type == 'socket':
             self.socket = self.host.socket(resource_name)
         elif resource_type not in resource_types:
@@ -206,71 +209,6 @@ class TestinfraBDD:
             now = time.time()
 
         return is_ready
-
-    def parse_addr_and_port(self, addr_and_port):
-        """
-        Parse a string containing an address and port.
-
-        Parameters
-        ----------
-        addr_and_port : str
-            The address and port in the format of "host:port".
-
-        Returns
-        -------
-        tuple
-            str the address, int the port number.
-
-        Raises
-        ------
-        ValueError
-            If the string can't be parsed.
-        """
-        strings = addr_and_port.split(':')
-        message = f'Unable to parse addr:port from "{addr_and_port}".'
-
-        if len(strings) != 2:
-            raise ValueError(message)
-
-        addr = strings[0]
-
-        try:
-            port = int(strings[1])
-        except ValueError:
-            raise ValueError(message + ' Unable to parse port.')
-
-        self.address = self.host.addr(addr)
-        self.port = self.address.port(port)
-        self.port_number = port
-
-    def parse_process_filters(self, specification):
-        """
-        Parse the process filters into a dictionary.
-
-        Parameters
-        ----------
-        specification : str
-            The process specifications to be parsed.
-
-        Raises
-        ------
-        ValueError
-            If the specification can't be parsed.
-        """
-        filters = {}
-        self.process_specification = specification
-
-        for keypair in specification.split(','):
-            keypair = keypair.split('=')
-
-            if len(keypair) != 2:
-                raise ValueError(f'Unable to parse process filters "{specification}".')
-
-            key = keypair[0]
-            value = keypair[1]
-            filters[key] = value
-
-        return filters
 
 
 def get_host_fixture(hostspec, timeout=0):
