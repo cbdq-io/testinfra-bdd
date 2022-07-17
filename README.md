@@ -3,6 +3,8 @@
 [![CI](https://github.com/locp/testinfra-bdd/actions/workflows/ci.yml/badge.svg)](https://github.com/locp/testinfra-bdd/actions/workflows/ci.yml)
 [![Total alerts](https://img.shields.io/lgtm/alerts/g/locp/testinfra-bdd.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/locp/testinfra-bdd/alerts/)
 [![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/locp/testinfra-bdd.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/locp/testinfra-bdd/context:python)
+[![Maintainability](https://api.codeclimate.com/v1/badges/5482c55d78b369a0a55e/maintainability)](https://codeclimate.com/github/locp/testinfra-bdd/maintainability)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/5482c55d78b369a0a55e/test_coverage)](https://codeclimate.com/github/locp/testinfra-bdd/test_coverage)
 
 An interface between
 [pytest-bdd](https://pytest-bdd.readthedocs.io/en/latest/)
@@ -277,6 +279,7 @@ def test_test_for_absent_resources():
 def test_user_checks():
     """User Checks."""
 ```
+
 ## "Given" Steps
 
 Given steps require that the URL of the system to be tested (SUT) is provided.
@@ -289,6 +292,7 @@ Examples:
 
 To connect to a Docker container called sut (fail if the target host is
 not ready):
+
 ```gherkin
 Given the host with URL "docker://java11" is ready
 ```
@@ -354,6 +358,7 @@ can be achieved by comparing against the following configurations:
 - The hostname (e.g. sut)
 
 Example:
+
 ```gherkin
   Scenario: Skip Tests if Host is Windoze
     Given the host with URL "docker://sut" is ready within 10 seconds
