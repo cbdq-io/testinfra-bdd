@@ -1,7 +1,14 @@
 # Changelog
 
 
-## 1.0.3
+## 1.0.4
+
+### Fix
+
+* Missing a comma in the version specifications for requirements. [Ben Dalling]
+
+
+## 1.0.3 (2022-07-17)
 
 ### Fix
 

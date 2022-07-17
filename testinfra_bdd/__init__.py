@@ -23,7 +23,7 @@ from pytest_bdd import (
 This is used by setuptools and by gitchangelog to identify the name of the name
 of the release.
 """
-__version__ = '1.0.3'
+__version__ = '1.0.4'
 
 
 @given(parsers.parse('the host with URL "{hostspec}" is ready'), target_fixture='testinfra_bdd_host')
