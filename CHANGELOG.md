@@ -1,7 +1,14 @@
 # Changelog
 
 
-## 1.0.4
+## 1.0.5
+
+### Fix
+
+* Fix the dynamic install requirements in setup.py. [Ben Dalling]
+
+
+## 1.0.4 (2022-07-17)
 
 ### Fix
 
