@@ -1,7 +1,14 @@
 # Changelog
 
 
-## 1.0.1
+## 1.0.2
+
+### Fix
+
+* Correct the allowed range for pytest-bdd and pytest-testinfra (setup.py). [Ben Dalling]
+
+
+## 1.0.1 (2022-07-17)
 
 ### Fix
 
