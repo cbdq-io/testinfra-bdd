@@ -14,7 +14,7 @@ with open('pyproject.toml') as stream:
     pyproject = stream.readlines()
 
 for line in pyproject:
-    line = line.strip().replace('"', '').replace(',', '')
+    line = line.strip()[1:-2]
 
     if line.startswith('pytest-bdd>') or line.startswith('pytest-testinfra>'):
         install_requires.append(line)
