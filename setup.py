@@ -8,13 +8,24 @@ with open('README.md', 'r', encoding='utf-8') as fh:
 
 version = testinfra_bdd.__version__
 
+install_requires = []
+
+with open('pyproject.toml') as stream:
+    pyproject = stream.readlines()
+
+for line in pyproject:
+    line = line.strip().replace('"', '').replace(',', '')
+
+    if line.startswith('pytest-bdd>') or line.startswith('pytest-testinfra>'):
+        install_requires.append(line)
+
 setuptools.setup(
     name='testinfra-bdd',
     version=version,
     author='League of Crafty Programmers Ltd.',
     author_email='info@locp.co.uk',
     description='An interface between pytest-bdd and pytest-testinfra.',
-    install_requires=['pytest-bdd>=5.00<=6.0.0', 'pytest-testinfra>=6.0.0<=7.0.0'],
+    install_requires=install_requires,
     keywords='testinfra,bdd',
     long_description=long_description,
     long_description_content_type='text/markdown',
