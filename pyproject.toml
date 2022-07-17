@@ -1,7 +1,7 @@
 [build-system]
 requires = [
-    "pytest-bdd>=5.00<=6.0.0",
-    "pytest-testinfra>=6.0.0<=7.0.0",
+    "pytest-bdd>=5.00<6.0.0",
+    "pytest-testinfra>=6.0.0<7.0.0",
     # "semver>=2.13.0<=3.0.0",
     "setuptools>=42",
     "urllib3>=1.26.0",
