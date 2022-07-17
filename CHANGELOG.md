@@ -1,7 +1,18 @@
 # Changelog
 
 
-## 1.0.0
+## 1.0.1
+
+### Fix
+
+* Temp disable of latest checks to cut a release. [Ben Dalling]
+
+* Correct the allowed range for pytest-bdd and pytest-testinfra. [Ben Dalling]
+
+* Reduce the size of testinfra_bdd/__init__.py. [Ben Dalling]
+
+
+## 1.0.0 (2022-06-02)
 
 ### New
 
