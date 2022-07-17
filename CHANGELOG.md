@@ -1,7 +1,14 @@
 # Changelog
 
 
-## 1.0.2
+## 1.0.3
+
+### Fix
+
+* Correct SemVer version for pytest-bdd requirement. [Ben Dalling]
+
+
+## 1.0.2 (2022-07-17)
 
 ### Fix
 
