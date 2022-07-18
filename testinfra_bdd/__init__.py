@@ -75,8 +75,8 @@ def the_host_is_ready_with_a_number_of_seconds(hostspec, seconds):
     return testinfra_bdd.fixture.get_host_fixture(hostspec, seconds)
 
 
-@when(parsers.parse('the {resource_type} is "{resource_name}"'))
 @when(parsers.parse('the {resource_type} is {resource_name}'))
+@when(parsers.parse('the {resource_type} is "{resource_name}"'))
 def the_resource_type_is(resource_type, resource_name, testinfra_bdd_host):
     """
     Get a resource of a specified type from the system under test.
@@ -114,8 +114,8 @@ def skip_tests_if_system_info_does_not_match(property_name, expected_value, test
 #############################################################################
 # Command checks.
 #############################################################################
-@then(parsers.parse('the command "{command}" exists in path'))
 @then(parsers.parse('the command {command} exists in path'))
+@then(parsers.parse('the command "{command}" exists in path'))
 def check_command_exists_in_path(command, testinfra_bdd_host):
     """
     Assert that a specified command is present on the host path.
