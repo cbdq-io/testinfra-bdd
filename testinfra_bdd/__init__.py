@@ -23,7 +23,7 @@ from pytest_bdd import (
 This is used by setuptools and by gitchangelog to identify the name of the name
 of the release.
 """
-__version__ = '1.0.5'
+__version__ = '1.0.6'
 
 
 @given(parsers.parse('the host with URL "{hostspec}" is ready'), target_fixture='testinfra_bdd_host')
@@ -75,8 +75,8 @@ def the_host_is_ready_with_a_number_of_seconds(hostspec, seconds):
     return testinfra_bdd.fixture.get_host_fixture(hostspec, seconds)
 
 
-@when(parsers.parse('the {resource_type} is "{resource_name}"'))
 @when(parsers.parse('the {resource_type} is {resource_name}'))
+@when(parsers.parse('the {resource_type} is "{resource_name}"'))
 def the_resource_type_is(resource_type, resource_name, testinfra_bdd_host):
     """
     Get a resource of a specified type from the system under test.
@@ -114,8 +114,8 @@ def skip_tests_if_system_info_does_not_match(property_name, expected_value, test
 #############################################################################
 # Command checks.
 #############################################################################
-@then(parsers.parse('the command "{command}" exists in path'))
 @then(parsers.parse('the command {command} exists in path'))
+@then(parsers.parse('the command "{command}" exists in path'))
 def check_command_exists_in_path(command, testinfra_bdd_host):
     """
     Assert that a specified command is present on the host path.
