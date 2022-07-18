@@ -1,7 +1,14 @@
 # Changelog
 
 
-## 1.0.5
+## 1.0.6
+
+### Fix
+
+* Correct code to work with pytest-bdd 6.0.1. [Ben Dalling]
+
+
+## 1.0.5 (2022-07-17)
 
 ### Fix
 
