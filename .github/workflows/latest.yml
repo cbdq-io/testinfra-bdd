@@ -27,6 +27,7 @@ jobs:
         run: |
           pip install -qr tests/resources/requirements-latest.txt
           pip freeze
+          pip check
 
       - name: Bandit
         run: bandit -r .

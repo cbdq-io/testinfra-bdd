@@ -23,7 +23,10 @@ jobs:
           python-version: '3.x'
 
       - name: Requirements
-        run: pip install -qr requirements.txt
+        run: |
+          pip install -qr requirements.txt
+          pip freeze
+          pip check
 
       - name: Bandit
         run: bandit -r .
