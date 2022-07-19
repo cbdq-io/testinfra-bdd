@@ -13,7 +13,7 @@ RUN apt-get clean \
   && rm -rf /var/lib/apt/lists/* \
   && chmod 544 /etc/ntp.conf \
   && chown ntp:ntp /etc/ntp.conf \
-  && pip install --no-cache-dir semver==2.12.0 testinfra-bdd==1.0.0
+  && pip install --no-cache-dir semver==2.12.0 testinfra-bdd==1.0.6
 
 COPY issue21.txt /tmp
 
