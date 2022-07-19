@@ -24,7 +24,9 @@ jobs:
           python-version: '3.x'
 
       - name: Requirements
-        run: pip install -r tests/resources/requirements-latest.txt
+        run: |
+          pip install -qr tests/resources/requirements-latest.txt
+          pip freeze
 
       - name: Bandit
         run: bandit -r .
