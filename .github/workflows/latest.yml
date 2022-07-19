@@ -1,17 +1,18 @@
 ---
-name: CI
+name: Latest
 
 on:
   push:
-    branches-ignore:
-      - 'feature/latest'
+    branches:
+      - feature/latest
+  schedule:
+    - cron: '0 0 1,15 * *'
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
 jobs:
   build:
-    if: "!contains(github.event.head_commit.message, 'skip ci')"
     runs-on: ubuntu-latest
 
     steps:
@@ -24,7 +25,7 @@ jobs:
 
       - name: Requirements
         run: |
-          pip install -qr requirements.txt
+          pip install -qr tests/resources/requirements-latest.txt
           pip freeze
           pip check
 
@@ -33,15 +34,6 @@ jobs:
 
       - name: Test
         run: make test
-
-      - name: Publish Code Coverage
-        uses: paambaati/codeclimate-action@v3.0.0
-        env:
-          CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
-        with:
-          coverageCommand: coverage xml
-          coverageLocations: |
-            ${{github.workspace}}/coverage.xml:coverage.py
 
       - name: Build
         run: make build
