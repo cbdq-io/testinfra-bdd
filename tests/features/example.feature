@@ -34,7 +34,8 @@ Feature: Example of Testinfra BDD
     Given the host with URL "docker://sut" is ready
     When the user is "ntp"
     Then the user is present
-    And the user state is present # Alternative method of checking the state of a resource.
+    # Alternative method of checking the state of a resource.
+    And the user state is present
     And the user group is ntp
     And the user uid is 101
     And the user gid is 101
