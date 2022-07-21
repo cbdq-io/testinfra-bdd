@@ -128,17 +128,21 @@ Feature: Example of Testinfra BDD
       | udp://123 | listening      |
       | tcp://22  | not listening  |
 
+  Scenario: Skip Tests Due to Environment Variable
+    Given the host with URL "docker://java11" is ready
+    When the environment variable PYTHONPATH is .:.. skip tests
+
   Scenario: Check Network Address
     Given the host with URL "docker://sut" is ready within 10 seconds
-    And on GitHub Actions we skip tests
-    When the address is www.google.com
+    When the environment variable GITHUB_ACTIONS is true skip tests
+    And the address is www.google.com
     Then the address is resolvable
     And the address is reachable
 
   Scenario: Check Network Address With Port
     Given the host with URL "docker://sut" is ready within 10 seconds
-    And on GitHub Actions we skip tests
-    When the address and port is www.google.com:443
+    When the environment variable GITHUB_ACTIONS is true skip tests
+    And the address and port is www.google.com:443
     Then the address is resolvable
     And the address is reachable
     And the port is reachable
