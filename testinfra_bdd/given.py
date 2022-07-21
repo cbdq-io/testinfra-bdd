@@ -1,5 +1,5 @@
 """The given steps of testinfra-bdd."""
-import testinfra_bdd
+import testinfra_bdd.fixture
 from pytest_bdd import given
 from pytest_bdd import parsers
 
@@ -24,7 +24,7 @@ def the_host_is_ready(hostspec):
     testinfra_bdd.fixture.TestinfraBDD
         The object to return as a fixture.
     """
-    return testinfra_bdd.fixture.get_host_fixture(hostspec)
+    return testinfra_bdd.get_host_fixture(hostspec)
 
 
 @given(parsers.parse('the host with URL "{hostspec}" is ready within {seconds:d} seconds'),
@@ -50,4 +50,4 @@ def the_host_is_ready_with_a_number_of_seconds(hostspec, seconds):
     testinfra_bdd.fixture.TestinfraBDD
         The object to return as a fixture.
     """
-    return testinfra_bdd.fixture.get_host_fixture(hostspec, seconds)
+    return testinfra_bdd.get_host_fixture(hostspec, seconds)
