@@ -5,12 +5,14 @@ import pytest
 from pytest_bdd import given
 from pytest_bdd import scenarios
 
+import testinfra_bdd.plugins
+
 scenarios('../features/example.feature')
 
 
 # Ensure that the PyTest fixtures provided in testinfra-bdd are available to
 # your test suite.
-pytest_plugins = ['testinfra_bdd']
+pytest_plugins = testinfra_bdd.plugins.add_plugins()
 
 
 @given('on GitHub Actions we skip tests')
