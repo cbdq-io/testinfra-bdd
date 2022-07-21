@@ -1,4 +1,5 @@
 """Lines of Code feature tests."""
+import shutil
 import json
 import pytest
 import subprocess
@@ -11,8 +12,16 @@ from pytest_bdd import (
     parsers
 )
 
-radon_report = subprocess.run(['radon', 'raw', '--json', '.'], capture_output=True)
-radon_report = json.loads(radon_report.stdout)
+radon_executable = shutil.which('radon')
+radon_command = [
+    radon_executable,
+    'raw',
+    '--json',
+    '.'
+]
+
+radon_report = subprocess.check_output(radon_command).decode('utf-8')  # nosec
+radon_report = json.loads(radon_report)
 python_files = []
 
 for _ in radon_report:
@@ -20,7 +29,7 @@ for _ in radon_report:
 
 
 @pytest.mark.parametrize(
-    ["python_file"],
+    ['python_file'],
     python_files,
 )
 @scenario('../features/lines_of_code.feature', 'Check Lines of Code in Radon Report')
