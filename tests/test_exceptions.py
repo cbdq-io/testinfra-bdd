@@ -1,7 +1,8 @@
 """Test exceptions are raised as expected."""
 import pytest
-import testinfra_bdd
-import testinfra_bdd.fixture
+
+from testinfra_bdd.then.pip import the_pip_package_state_is
+from testinfra_bdd import get_host_fixture
 
 
 def test_invalid_resource_type():
@@ -9,7 +10,7 @@ def test_invalid_resource_type():
     exception_raised = False
 
     try:
-        host = testinfra_bdd.fixture.get_host_fixture('docker://sut')
+        host = get_host_fixture('docker://sut')
         host.get_resource_from_host('foo', 'foo')
     except ValueError as ex:
         exception_raised = True
@@ -23,7 +24,7 @@ def test_invalid_command_stream_name():
     exception_raised = False
 
     try:
-        host = testinfra_bdd.fixture.get_host_fixture('docker://sut')
+        host = get_host_fixture('docker://sut')
         host.get_resource_from_host('command', 'ls')
         host.get_stream_from_command('foo')
     except ValueError as ex:
@@ -38,7 +39,7 @@ def test_unready_host():
     exception_raised = False
 
     try:
-        testinfra_bdd.fixture.get_host_fixture('docker://foo', 1)
+        get_host_fixture('docker://foo', 1)
     except AssertionError as ex:
         exception_raised = True
         assert str(ex) == 'The host docker://foo is not ready within 1 seconds.'
@@ -57,13 +58,13 @@ def test_unready_host():
 def test_pip_package(pip, expected_state, expected_exception_message):
     """Test that a superseded pip package is identified."""
     exception_raised = False
-    host = testinfra_bdd.fixture.get_host_fixture('docker://sut')
+    host = get_host_fixture('docker://sut')
 
     if pip:
         host.get_resource_from_host('pip package', pip)
 
     try:
-        testinfra_bdd.the_pip_package_state_is(expected_state, host)
+        the_pip_package_state_is(expected_state, host)
     except (AssertionError, RuntimeError, ValueError) as ex:
         exception_raised = True
         assert str(ex) == expected_exception_message
@@ -84,7 +85,7 @@ def test_invalid_process_specifications(process_specification):
     expected_message = f'Unable to parse process filters "{process_specification}".'
 
     try:
-        host = testinfra_bdd.fixture.get_host_fixture('docker://sut')
+        host = get_host_fixture('docker://sut')
         host.get_resource_from_host('process filter', process_specification)
     except ValueError as ex:
         exception_raised = True
@@ -110,7 +111,7 @@ def test_invalid_addr_and_port_specifications(specification):
     }
 
     try:
-        host = testinfra_bdd.fixture.get_host_fixture('docker://sut')
+        host = get_host_fixture('docker://sut')
         host.get_resource_from_host('address and port', specification)
     except ValueError as ex:
         exception_raised = True
