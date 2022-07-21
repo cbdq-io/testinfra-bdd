@@ -1,7 +1,24 @@
 # Changelog
 
 
-## 1.0.6
+## 2.0.0
+
+### New
+
+* Add "When" step to allow skipping of tests depending on environment variable. [Ben Dalling]
+
+### Changes
+
+* Add details on upgrading from 1.X.X to 2.0.0. [Ben Dalling]
+
+* Add the Snyk badge and reduce the size of the step functions. [Ben Dalling]
+
+### Fix
+
+* Refactor Markdown. [Ben Dalling]
+
+
+## 1.0.6 (2022-07-18)
 
 ### Fix
 

@@ -31,4 +31,5 @@ rules:
     level: warning
     ignore: |
       .github/workflows/ci.yml
+      .github/workflows/latest.yml
       .github/workflows/publish.yml

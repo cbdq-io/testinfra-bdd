@@ -1,0 +1,39 @@
+---
+name: Latest
+
+on:
+  push:
+    branches:
+      - feature/latest
+  schedule:
+    - cron: '0 0 1,15 * *'
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: '3.x'
+
+      - name: Requirements
+        run: |
+          pip install -qr tests/resources/requirements-latest.txt
+          pip freeze
+          pip check
+
+      - name: Bandit
+        run: bandit -r .
+
+      - name: Test
+        run: make test
+
+      - name: Build
+        run: make build

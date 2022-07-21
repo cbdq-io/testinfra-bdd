@@ -3,9 +3,8 @@ name: CI
 
 on:
   push:
-  pull_request:
-    branches:
-      - main
+    branches-ignore:
+      - 'feature/latest'
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -24,13 +23,13 @@ jobs:
           python-version: '3.x'
 
       - name: Requirements
-        run: pip install -r requirements.txt
+        run: |
+          pip install -qr requirements.txt
+          pip freeze
+          pip check
 
-      - name: Bandit
-        run: bandit -r .
-
-      - name: Test
-        run: make test
+      - name: Run Make
+        run: make
 
       - name: Publish Code Coverage
         uses: paambaati/codeclimate-action@v3.0.0

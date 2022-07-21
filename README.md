@@ -5,6 +5,7 @@
 [![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/locp/testinfra-bdd.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/locp/testinfra-bdd/context:python)
 [![Maintainability](https://api.codeclimate.com/v1/badges/5482c55d78b369a0a55e/maintainability)](https://codeclimate.com/github/locp/testinfra-bdd/maintainability)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/5482c55d78b369a0a55e/test_coverage)](https://codeclimate.com/github/locp/testinfra-bdd/test_coverage)
+[![testinfra-bdd](https://snyk.io/advisor/python/testinfra-bdd/badge.svg)](https://snyk.io/advisor/python/testinfra-bdd)
 
 An interface between
 [pytest-bdd](https://pytest-bdd.readthedocs.io/en/latest/)
@@ -30,6 +31,10 @@ The file `tests/features/example.feature` could look something like:
 ```gherkin
 Feature: Example of Testinfra BDD
   Give an example of all the possible Given, When and Then steps.
+
+  The Given steps to skip the address and port tests when running under
+  GitHub actions are not part of the testinfra-bdd package itself, but are
+  required as GitHub/Azure does not allow Ping/ICMP traffic.
 
   Scenario: Skip Tests if Host is Windoze
     Given the host with URL "docker://sut" is ready within 10 seconds
@@ -60,7 +65,8 @@ Feature: Example of Testinfra BDD
     Given the host with URL "docker://sut" is ready
     When the user is "ntp"
     Then the user is present
-    And the user state is present # Alternative method of checking the state of a resource.
+    # Alternative method of checking the state of a resource.
+    And the user state is present
     And the user group is ntp
     And the user uid is 101
     And the user gid is 101
@@ -110,7 +116,7 @@ Feature: Example of Testinfra BDD
     When the pip package is testinfra-bdd
     # Can check if the package is absent or present.
     Then the pip package is present
-    And the pip package version is 0.3.0
+    And the pip package version is 1.0.6
     # Check that installed packages have compatible dependencies.
     And the pip check is OK
 
@@ -153,15 +159,21 @@ Feature: Example of Testinfra BDD
       | udp://123 | listening      |
       | tcp://22  | not listening  |
 
+  Scenario: Skip Tests Due to Environment Variable
+    Given the host with URL "docker://java11" is ready
+    When the environment variable PYTHONPATH is .:.. skip tests
+
   Scenario: Check Network Address
     Given the host with URL "docker://sut" is ready within 10 seconds
-    When the address is www.google.com
+    When the environment variable GITHUB_ACTIONS is true skip tests
+    And the address is www.google.com
     Then the address is resolvable
     And the address is reachable
 
   Scenario: Check Network Address With Port
     Given the host with URL "docker://sut" is ready within 10 seconds
-    When the address and port is www.google.com:443
+    When the environment variable GITHUB_ACTIONS is true skip tests
+    And the address and port is www.google.com:443
     Then the address is resolvable
     And the address is reachable
     And the port is reachable
@@ -184,100 +196,16 @@ Feature: Example of Testinfra BDD
 and `tests/step_defs/test_example.py` contains the following:
 
 ```python
-"""
-Examples of step definitions for Testinfra BDD feature tests.
+"""Examples of step definitions for Testinfra BDD feature tests."""
+import testinfra_bdd
+from pytest_bdd import scenarios
 
-Notes
------
-The user must define their scenarios in a way similar to below.  However, the
-scenarios can be empty.
-"""
+scenarios('../features/example.feature')
 
-from pytest_bdd import scenario
 
 # Ensure that the PyTest fixtures provided in testinfra-bdd are available to
 # your test suite.
-pytest_plugins = ['testinfra_bdd']
-
-
-@scenario('../features/example.feature', 'Check Java 11 is Installed')
-def test_check_java_11_is_installed():
-    """Check Java 11 is Installed."""
-
-
-@scenario('../features/example.feature', 'Check Java is Installed in the Path')
-def test_check_java_is_installed_in_the_path():
-    """Check Java is Installed in the Path."""
-
-
-@scenario('../features/example.feature', 'Check Network Address')
-def test_check_network_address():
-    """Check Network Address."""
-
-
-@scenario('../features/example.feature', 'Check Network Address With Port')
-def test_check_network_address_with_port():
-    """Check Network Address With Port."""
-
-
-@scenario('../features/example.feature', 'Check Sockets')
-def test_check_sockets():
-    """Check Sockets."""
-
-
-@scenario('../features/example.feature', 'File Checks')
-def test_file_checks():
-    """File Checks."""
-
-
-@scenario('../features/example.feature', 'Group Checks')
-def test_group_checks():
-    """Group Checks."""
-
-
-@scenario('../features/example.feature', 'Python Package')
-def test_python_package():
-    """Python Package."""
-
-
-@scenario('../features/example.feature', 'Running Commands')
-def test_running_commands():
-    """Running Commands."""
-
-
-@scenario('../features/example.feature', 'Service Checks')
-def test_service_checks():
-    """Service Checks."""
-
-
-@scenario('../features/example.feature', 'Skip Tests if Host is Windoze')
-def test_skip_tests_if_host_is_windoze():
-    """Skip Tests if Host is Windoze."""
-
-
-@scenario('../features/example.feature', 'System Package')
-def test_system_package():
-    """System Package."""
-
-
-@scenario('../features/example.feature', 'Test Pip Packages are Latest Versions')
-def test_test_pip_packages_are_latest_versions():
-    """Test Pip Packages are Latest Versions."""
-
-
-@scenario('../features/example.feature', 'Test Running Processes')
-def test_test_running_processes():
-    """Test Running Processes."""
-
-
-@scenario('../features/example.feature', 'Test for Absent Resources')
-def test_test_for_absent_resources():
-    """Test for Absent Resources."""
-
-
-@scenario('../features/example.feature', 'User Checks')
-def test_user_checks():
-    """User Checks."""
+pytest_plugins = testinfra_bdd.PYTEST_MODULES
 ```
 
 ## "Given" Steps
@@ -343,7 +271,6 @@ allow the user to either skip tests if the host does not match an expected
 profile.  They also allow the user to specify which resource or is to be
 tested.
 
-
 ### Skip Tests if Host Profile Does Not Match
 
 It may be useful to skip tests if you find that the system under test doesn't
@@ -363,4 +290,22 @@ Example:
   Scenario: Skip Tests if Host is Windoze
     Given the host with URL "docker://sut" is ready within 10 seconds
     When the system property type is not Windoze skip tests
+```
+
+## Upgrading from 1.Y.Z to 2.0.0
+
+We split the single package into multiple source files.  This means a minor
+but nonetheless breaking change in your step definitions (all feature files
+can remain as they are).  The change is how one sets `pytest_plugins`.
+
+### Old Code
+
+```python
+pytest_plugins = ['testinfra_bdd']
+```
+
+### New Code
+
+```python
+pytest_plugins = testinfra_bdd.PYTEST_MODULES
 ```
