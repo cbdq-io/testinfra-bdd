@@ -32,6 +32,10 @@ The file `tests/features/example.feature` could look something like:
 Feature: Example of Testinfra BDD
   Give an example of all the possible Given, When and Then steps.
 
+  The Given steps to skip the address and port tests when running under
+  GitHub actions are not part of the testinfra-bdd package itself, but are
+  required as GitHub/Azure does not allow Ping/ICMP traffic.
+
   Scenario: Skip Tests if Host is Windoze
     Given the host with URL "docker://sut" is ready within 10 seconds
     # The system property can be one of:
@@ -112,7 +116,7 @@ Feature: Example of Testinfra BDD
     When the pip package is testinfra-bdd
     # Can check if the package is absent or present.
     Then the pip package is present
-    And the pip package version is 0.3.0
+    And the pip package version is 1.0.6
     # Check that installed packages have compatible dependencies.
     And the pip check is OK
 
@@ -155,15 +159,21 @@ Feature: Example of Testinfra BDD
       | udp://123 | listening      |
       | tcp://22  | not listening  |
 
+  Scenario: Skip Tests Due to Environment Variable
+    Given the host with URL "docker://java11" is ready
+    When the environment variable PYTHONPATH is .:.. skip tests
+
   Scenario: Check Network Address
     Given the host with URL "docker://sut" is ready within 10 seconds
-    When the address is www.google.com
+    When the environment variable GITHUB_ACTIONS is true skip tests
+    And the address is www.google.com
     Then the address is resolvable
     And the address is reachable
 
   Scenario: Check Network Address With Port
     Given the host with URL "docker://sut" is ready within 10 seconds
-    When the address and port is www.google.com:443
+    When the environment variable GITHUB_ACTIONS is true skip tests
+    And the address and port is www.google.com:443
     Then the address is resolvable
     And the address is reachable
     And the port is reachable
@@ -187,6 +197,7 @@ and `tests/step_defs/test_example.py` contains the following:
 
 ```python
 """Examples of step definitions for Testinfra BDD feature tests."""
+import testinfra_bdd
 from pytest_bdd import scenarios
 
 scenarios('../features/example.feature')
@@ -194,7 +205,7 @@ scenarios('../features/example.feature')
 
 # Ensure that the PyTest fixtures provided in testinfra-bdd are available to
 # your test suite.
-pytest_plugins = ['testinfra_bdd']
+pytest_plugins = testinfra_bdd.PYTEST_MODULES
 ```
 
 ## "Given" Steps
@@ -279,4 +290,22 @@ Example:
   Scenario: Skip Tests if Host is Windoze
     Given the host with URL "docker://sut" is ready within 10 seconds
     When the system property type is not Windoze skip tests
+```
+
+## Upgrading from 1.Y.Z to 2.0.0
+
+We split the single package into multiple source files.  This means a minor
+but nonetheless breaking change in your step definitions (all feature files
+can remain as they are).  The change is how one sets `pytest_plugins`.
+
+### Old Code
+
+```python
+pytest_plugins = ['testinfra_bdd']
+```
+
+### New Code
+
+```python
+pytest_plugins = testinfra_bdd.PYTEST_MODULES
 ```
