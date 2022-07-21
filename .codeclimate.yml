@@ -44,8 +44,6 @@ checks:
       threshold:  # language-specific defaults. overrides affect all languages.
 
 plugins:
-  bandit:
-    enabled: true
   markdownlint:
     enabled: true
   radon:

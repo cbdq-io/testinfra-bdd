@@ -1,6 +1,5 @@
 """Test exceptions are raised as expected."""
 import pytest
-import testinfra_bdd
 
 from testinfra_bdd.then.pip import the_pip_package_state_is
 from testinfra_bdd import get_host_fixture
@@ -11,7 +10,7 @@ def test_invalid_resource_type():
     exception_raised = False
 
     try:
-        host = testinfra_bdd.get_host_fixture('docker://sut')
+        host = get_host_fixture('docker://sut')
         host.get_resource_from_host('foo', 'foo')
     except ValueError as ex:
         exception_raised = True
