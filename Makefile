@@ -1,6 +1,7 @@
 all: lint test build
 
 build: changelog
+	cut -d= -f1 requirements.txt > tests/resources/requirements-latest.txt
 	PYTHONPATH=. python3 -m build
 
 changelog:
