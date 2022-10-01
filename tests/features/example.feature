@@ -73,6 +73,7 @@ Feature: Example of Testinfra BDD
     Then the command return code is 0
     And the command "ntpq" exists in path
     And the command stdout contains "remote"
+    And the command stdout does not contain "foo"
 
   Scenario: System Package
     Given the host with URL "docker://sut" is ready

@@ -75,6 +75,30 @@ def the_command_stderr_contains_the_expected_value(stream_name, expected_value, 
     assert expected_value in stream, message
 
 
+@then(parsers.parse('the command {stream_name} does not contain "{text}"'))
+def the_command_stdout_does_not_contain_foo(stream_name, text, testinfra_bdd_host):
+    """
+    Check that the stdout or stderr stream does not contain a string.
+
+    Parameters
+    ----------
+    stream_name : str
+        The name of the stream to check.  Must be "stdout" or "stderr".
+    text : str
+        The text to search for.
+    testinfra_bdd_host : testinfra_bdd.fixture.TestinfraBDD
+        The test fixture.
+
+    Raises
+    ------
+    AssertError
+        When the specified stream does contain the unexpected text.
+    """
+    stream = testinfra_bdd_host.get_stream_from_command(stream_name)
+    message = f'The unexpected string "{text}" was found in the {stream_name} ("{stream}") of the command.'
+    assert text not in stream, message
+
+
 @then(parsers.parse('the command {stream_name} contains the regex "{pattern}"'))
 def check_command_stream_contains_the_regex(stream_name, pattern, testinfra_bdd_host):
     """
