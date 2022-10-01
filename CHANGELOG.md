@@ -1,7 +1,24 @@
 # Changelog
 
 
-## 2.0.0
+## 2.1.0
+
+### New
+
+* Add documentation for the expected_value fixture. [Ben Dalling]
+
+* Add a check to ensure text is absent from a command stream. [Ben Dalling]
+
+* Add the expected_value fixture. [Ben Dalling]
+
+### Fix
+
+* Suppress already-imported warning: PYTEST_DONT_REWRITE. [Ben Dalling]
+
+* The python-flake8 (1.1.1) package is not compatible with flake8 >= 5.0.0. [Ben Dalling]
+
+
+## 2.0.0 (2022-07-21)
 
 ### New
 
