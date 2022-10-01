@@ -3,6 +3,8 @@ An interface between pytest-bdd and pytest-testinfra.
 
 For documentation and examples, please go to
 https://github.com/locp/testinfra-bdd
+
+Please avoid already-imported warning: PYTEST_DONT_REWRITE.
 """
 from testinfra_bdd.fixture import TestinfraBDD
 
@@ -31,7 +33,7 @@ PYTEST_MODULES = [
 This is used by setuptools and by gitchangelog to identify the name of the name
 of the release.
 """
-__version__ = '2.0.0'
+__version__ = '2.1.0'
 
 
 def get_host_fixture(hostspec, timeout=0):

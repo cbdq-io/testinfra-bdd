@@ -104,6 +104,7 @@ Feature: Example of Testinfra BDD
     Then the command return code is 0
     And the command "ntpq" exists in path
     And the command stdout contains "remote"
+    And the command stdout does not contain "foo"
 
   Scenario: System Package
     Given the host with URL "docker://sut" is ready
@@ -116,7 +117,7 @@ Feature: Example of Testinfra BDD
     When the pip package is testinfra-bdd
     # Can check if the package is absent or present.
     Then the pip package is present
-    And the pip package version is 1.0.6
+    And the pip package version is 2.0.0
     # Check that installed packages have compatible dependencies.
     And the pip check is OK
 
@@ -191,6 +192,13 @@ Feature: Example of Testinfra BDD
     And the command stdout is empty
     And the command return code is 0
     And the package is installed
+
+  Scenario: Check for an Expected Value
+   # In this example we set the expected_value to "foo"
+   Given the host with URL "docker://sut" is ready
+   And the expected value is "foo"
+   When the command is "echo foo"
+   Then the command stdout contains the expected value
 ```
 
 and `tests/step_defs/test_example.py` contains the following:
@@ -198,7 +206,7 @@ and `tests/step_defs/test_example.py` contains the following:
 ```python
 """Examples of step definitions for Testinfra BDD feature tests."""
 import testinfra_bdd
-from pytest_bdd import scenarios
+from pytest_bdd import given, scenarios
 
 scenarios('../features/example.feature')
 
@@ -206,6 +214,17 @@ scenarios('../features/example.feature')
 # Ensure that the PyTest fixtures provided in testinfra-bdd are available to
 # your test suite.
 pytest_plugins = testinfra_bdd.PYTEST_MODULES
+
+
+@given('the expected value is "foo"', target_fixture='expected_value')
+def the_expected_value_is_foo():
+    """
+    The expected value is "foo".
+
+    The name and code is up to the user to develop.  However, the target
+    fixture must be called 'expected_value'.
+    """
+    return 'foo'
 ```
 
 ## "Given" Steps

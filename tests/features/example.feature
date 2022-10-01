@@ -73,6 +73,7 @@ Feature: Example of Testinfra BDD
     Then the command return code is 0
     And the command "ntpq" exists in path
     And the command stdout contains "remote"
+    And the command stdout does not contain "foo"
 
   Scenario: System Package
     Given the host with URL "docker://sut" is ready
@@ -85,7 +86,7 @@ Feature: Example of Testinfra BDD
     When the pip package is testinfra-bdd
     # Can check if the package is absent or present.
     Then the pip package is present
-    And the pip package version is 1.0.6
+    And the pip package version is 2.0.0
     # Check that installed packages have compatible dependencies.
     And the pip check is OK
 
@@ -160,3 +161,10 @@ Feature: Example of Testinfra BDD
     And the command stdout is empty
     And the command return code is 0
     And the package is installed
+
+  Scenario: Check for an Expected Value
+   # In this example we set the expected_value to "foo"
+   Given the host with URL "docker://sut" is ready
+   And the expected value is "foo"
+   When the command is "echo foo"
+   Then the command stdout contains the expected value

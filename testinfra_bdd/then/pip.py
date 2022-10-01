@@ -1,4 +1,8 @@
-"""Then pip package fixtures for testinfra-bdd."""
+"""
+Then pip package fixtures for testinfra-bdd.
+
+Please avoid already-imported warning: PYTEST_DONT_REWRITE.
+"""
 from pytest_bdd import (
     then,
     parsers
