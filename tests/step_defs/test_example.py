@@ -12,5 +12,10 @@ pytest_plugins = testinfra_bdd.PYTEST_MODULES
 
 @given('the expected value is "foo"', target_fixture='expected_value')
 def the_expected_value_is_foo():
-    """the expected value is "foo"."""
+    """
+    The expected value is "foo".
+
+    The name and code is up to the user to develop.  However, the target
+    fixture must be called 'expected_value'.
+    """
     return 'foo'
