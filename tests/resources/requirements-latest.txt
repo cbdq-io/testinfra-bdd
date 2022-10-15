@@ -12,6 +12,7 @@ gitdb
 GitPython
 glob2
 iniconfig
+jmespath
 Mako
 mando
 MarkupSafe

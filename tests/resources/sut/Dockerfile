@@ -16,5 +16,6 @@ RUN apt-get clean \
   && pip install --no-cache-dir semver==2.12.0 testinfra-bdd==2.1.0
 
 COPY issue21.txt /tmp
+COPY john-smith.json /tmp
 
 CMD ["sh", "-c", "service ntp start && sleep infinity"]
