@@ -1,7 +1,14 @@
 # Changelog
 
 
-## 2.1.0
+## 2.2.0
+
+### New
+
+* Allow JMESPath interrogation of files. [Ben Dalling]
+
+
+## 2.1.0 (2022-10-01)
 
 ### New
 
