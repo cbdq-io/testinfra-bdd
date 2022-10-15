@@ -86,7 +86,7 @@ Feature: Example of Testinfra BDD
     When the pip package is testinfra-bdd
     # Can check if the package is absent or present.
     Then the pip package is present
-    And the pip package version is 2.0.0
+    And the pip package version is 2.1.0
     # Check that installed packages have compatible dependencies.
     And the pip check is OK
 
@@ -168,3 +168,15 @@ Feature: Example of Testinfra BDD
    And the expected value is "foo"
    When the command is "echo foo"
    Then the command stdout contains the expected value
+
+  Scenario Outline: Check Contents of JSON File With JMESPath
+    Given the host with URL "docker://sut" is ready
+    When the file is /tmp/john-smith.json
+    Then the JMESPath expression <expression> returns <expected_value>
+    Examples:
+      | expression    | expected_value |
+      | firstName     | John           |
+      | lastName      | Smith          |
+      | age           | 27             |
+      | address.state | NY             |
+      | spouse        | None           |

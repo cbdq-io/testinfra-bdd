@@ -1,4 +1,6 @@
 """Then file fixtures for testinfra-bdd."""
+import jmespath
+import json
 import re
 
 from pytest_bdd import (
@@ -100,6 +102,37 @@ def the_file_property_is(property_name, expected_value, testinfra_bdd_host):
         expected_value
     )
     assert actual_value == expected_value, exception_message
+
+
+@then(parsers.parse('the JMESPath expression {expression} returns {expected_value}'))
+def the_jmespath_expression_expression_returns_expected_value(expression, expected_value, testinfra_bdd_host):
+    """
+    Check the contents of a JSON file with JMESPath.
+
+    Parameters
+    ----------
+    expression : str
+        A JMESPath expression.
+    expected_value : str
+        The value expected to be returned.  All values returned by JMESPath will
+        be converted to a string before comparison.
+    testinfra_bdd_host : testinfra_bdd.fixture.TestinfraBDD
+        The test fixture.
+
+    Raises
+    ------
+    AssertError
+        If the file is not valid JSON or if the JMESPath expression returns
+        another value other than the expected value.
+    """
+    file = testinfra_bdd_host.file
+    file_name = f'{testinfra_bdd_host.hostname}:{file.path}'
+    the_file_property_is('state', 'present', testinfra_bdd_host)
+    the_file_property_is('type', 'file', testinfra_bdd_host)
+    data = json.loads(file.content_string)
+    actual_value = str(jmespath.search(expression, data))
+    message = f'Expected {expression} in {file_name} to be "{expected_value}", but it is "{actual_value}".'
+    assert actual_value == expected_value, message
 
 
 def get_file_actual_state(file, property_name, expected_state):

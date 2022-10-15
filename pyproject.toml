@@ -1,5 +1,6 @@
 [build-system]
 requires = [
+    "jmespath>=1.0.0<2.0.0",
     "pytest-bdd>=6.0.0,<7.0.0",
     "pytest-testinfra>=6.0.0,<7.0.0",
     # "semver>=2.13.0<=3.0.0",
