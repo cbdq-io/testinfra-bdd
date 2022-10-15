@@ -73,8 +73,6 @@ When all the CI jobs have completed, create the new release at
 
 ### Post Release Steps
 
-After a release has been published, the following files will need
-to be updated for the tests to continue to work:
-
-- `tests/features/example.feature`
-- `tests/resources/sut/Dockerfile`
+After a release has been published, ensure the testinfra-bdd Python
+package has been updated in `tests/features/example.feature` for the
+tests to continue working.

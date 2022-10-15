@@ -1,5 +1,7 @@
 FROM debian:11
 
+COPY requirements.txt /tmp
+
 RUN apt-get clean \
   && apt-get update \
   && apt-get install --no-install-recommends -y \
@@ -13,7 +15,7 @@ RUN apt-get clean \
   && rm -rf /var/lib/apt/lists/* \
   && chmod 544 /etc/ntp.conf \
   && chown ntp:ntp /etc/ntp.conf \
-  && pip install --no-cache-dir semver==2.12.0 testinfra-bdd==2.1.0
+  && pip install --no-cache-dir -r /tmp/requirements.txt
 
 COPY issue21.txt /tmp
 COPY john-smith.json /tmp
