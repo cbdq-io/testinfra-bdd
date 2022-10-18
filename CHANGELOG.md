@@ -1,7 +1,14 @@
 # Changelog
 
 
-## 2.2.0
+## 2.2.1
+
+### Fix
+
+* Ensure JMESPath is installed as a requirement. [Ben Dalling]
+
+
+## 2.2.0 (2022-10-15)
 
 ### New
 
