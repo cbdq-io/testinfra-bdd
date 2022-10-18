@@ -16,7 +16,7 @@ with open('pyproject.toml') as stream:
 for line in pyproject:
     line = line.strip()[1:-2]
 
-    if line.startswith('pytest-bdd>') or line.startswith('pytest-testinfra>'):
+    if line.startswith('jmespath>') or line.startswith('pytest-bdd>') or line.startswith('pytest-testinfra>'):
         install_requires.append(line)
 
 setuptools.setup(
