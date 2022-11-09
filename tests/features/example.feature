@@ -111,12 +111,12 @@ Feature: Example of Testinfra BDD
     Given the host with URL "docker://sut" is ready
     When the pip package is <pip_package>
     Then the pip package is present
-    And the pip package is latest
+    And the pip package is <status>
     Examples:
-      | pip_package      |
-      | pytest-bdd       |
-      | pytest-testinfra |
-      | testinfra-bdd    |
+      | pip_package      | status     |
+      | pytest-bdd       | superseded |
+      | pytest-testinfra | latest     |
+      | testinfra-bdd    | latest     |
 
   Scenario Outline:  Check Sockets
     # This checks that NTP is listening but SSH isn't.
