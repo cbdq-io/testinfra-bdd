@@ -1,7 +1,14 @@
 # Changelog
 
 
-## 2.2.1
+## 2.2.2
+
+### Fix
+
+* Temporary work around until problem with pytest-bdd>=6.1.0 is fixed. [Ben Dalling]
+
+
+## 2.2.1 (2022-10-18)
 
 ### Fix
 
