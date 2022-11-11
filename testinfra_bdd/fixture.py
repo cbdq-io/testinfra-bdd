@@ -3,9 +3,6 @@ import time
 
 import testinfra
 
-from testinfra_bdd.parsers import parse_addr_and_port
-from testinfra_bdd.parsers import parse_process_filters
-
 
 class TestinfraBDD:
     """A class that is used as the fixture in the given/when/then steps."""
@@ -76,67 +73,6 @@ class TestinfraBDD:
 
         assert property_name in properties, f'Invalid host property name "{property_name}".'
         return properties[property_name]
-
-    def get_resource_from_host(self, resource_type, resource_name):
-        """
-        Use a Testinfra module to get a resource from the system under test.
-
-        Parameters
-        ----------
-        resource_type : str
-            The type of resource to be examined.
-        resource_name : str
-            The name of the resource to be examined.  If resource_type is "command" then this is the
-            command line to be executed.
-        """
-        resource_types = {
-            'address': {
-                'attribute': 'address',
-                'function': self.host.addr
-            },
-            'command': {
-                'attribute': 'command',
-                'function': self.host.run
-            },
-            'file': {
-                'attribute': 'file',
-                'function': self.host.file
-            },
-            'group': {
-                'attribute': 'group',
-                'function': self.host.group
-            },
-            'package': {
-                'attribute': 'package',
-                'function': self.host.package
-            },
-            'pip package': {
-                'attribute': 'pip_package',
-                'function': self.host.pip
-            },
-            'service': {
-                'attribute': 'service',
-                'function': self.host.service
-            },
-            'user': {
-                'attribute': 'user',
-                'function': self.host.user
-            }
-        }
-
-        if resource_type == 'address and port':
-            (self.address, self.port, self.port_number) = parse_addr_and_port(resource_name, self.host)
-        elif resource_type == 'process filter':
-            self.process_specification = resource_name
-            self.processes = self.host.process.filter(**parse_process_filters(resource_name))
-        elif resource_type == 'socket':
-            self.socket = self.host.socket(resource_name)
-        elif resource_type not in resource_types:
-            raise ValueError(f'Unknown resource type "{resource_type}".')
-        else:
-            attribute = resource_types[resource_type]['attribute']
-            function = resource_types[resource_type]['function']
-            setattr(self, attribute, function(resource_name))
 
     def get_stream_from_command(self, stream_name):
         """

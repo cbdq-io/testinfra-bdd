@@ -5,10 +5,26 @@ import re
 
 from pytest_bdd import (
     then,
-    parsers
+    parsers,
+    when
 )
 
 from testinfra_bdd.exception_message import exception_message
+
+
+@when(parsers.parse('the file is {file_name}'))
+def the_file_is(file_name: str, testinfra_bdd_host):
+    """
+    Check the status of a file.
+
+    Parameters
+    ----------
+    file_name : str
+        The package name (e.g. "/etc/motd").
+    testinfra_bdd_host : testinfra_bdd.fixture.TestinfraBDD
+        The test fixture.
+    """
+    testinfra_bdd_host.file = testinfra_bdd_host.host.file(file_name.strip('"'))
 
 
 @then(parsers.parse('the file contents contains "{text}"'))

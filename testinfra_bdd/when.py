@@ -5,22 +5,22 @@ from pytest_bdd import parsers
 from pytest_bdd import when
 
 
-@when(parsers.parse('the {resource_type} is {resource_name}'))
-@when(parsers.parse('the {resource_type} is "{resource_name}"'))
-def the_resource_type_is(resource_type, resource_name, testinfra_bdd_host):
-    """
-    Get a resource of a specified type from the system under test.
+# @when(parsers.parse('the {resource_type} is {resource_name}'))
+# @when(parsers.parse('the {resource_type} is "{resource_name}"'))
+# def the_resource_type_is(resource_type, resource_name, testinfra_bdd_host):
+#     """
+#     Get a resource of a specified type from the system under test.
 
-    Parameters
-    ----------
-    resource_type : str
-        The type of the resource.
-    resource_name : str
-        The name of the resource.
-    testinfra_bdd_host : testinfra_bdd.fixture.TestinfraBDD
-        The test fixture.
-    """
-    testinfra_bdd_host.get_resource_from_host(resource_type, resource_name)
+#     Parameters
+#     ----------
+#     resource_type : str
+#         The type of the resource.
+#     resource_name : str
+#         The name of the resource.
+#     testinfra_bdd_host : testinfra_bdd.fixture.TestinfraBDD
+#         The test fixture.
+#     """
+#     testinfra_bdd_host.get_resource_from_host(resource_type, resource_name)
 
 
 @when(parsers.parse('the system property {property_name} is not "{expected_value}" skip tests'))

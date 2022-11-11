@@ -3,6 +3,7 @@ bandit
 build
 colorama
 coverage
+exceptiongroup
 flake8
 flake8-docstrings
 flake8-quotes
@@ -42,5 +43,6 @@ smmap
 snowballstemmer
 stevedore
 tomli
+typing_extensions
 urllib3
 yamllint

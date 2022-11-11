@@ -50,7 +50,19 @@ Feature: Example of Testinfra BDD
     Given the host with URL "docker://sut" is ready within 10 seconds
     When the <resource_type> is "foo"
     Then the <resource_type> is absent
-    And the <resource_type> state is absent # Alternative method.
+    Examples:
+      | resource_type |
+      | user          |
+      | group         |
+      | package       |
+      | file          |
+      | pip package   |
+
+  Scenario Outline: Test for Absent Non-Quoted Resources
+    # Same as the example above except the resources are not quoted.
+    Given the host with URL "docker://sut" is ready within 10 seconds
+    When the <resource_type> is foo
+    Then the <resource_type> state is absent
     Examples:
       | resource_type |
       | user          |
@@ -115,7 +127,7 @@ Feature: Example of Testinfra BDD
     When the pip package is testinfra-bdd
     # Can check if the package is absent or present.
     Then the pip package is present
-    And the pip package version is 2.0.0
+    And the pip package version is 2.2.2
     # Check that installed packages have compatible dependencies.
     And the pip check is OK
 
@@ -140,12 +152,12 @@ Feature: Example of Testinfra BDD
     Given the host with URL "docker://sut" is ready
     When the pip package is <pip_package>
     Then the pip package is present
-    And the pip package is latest
+    And the pip package is <status>
     Examples:
-      | pip_package      |
-      | pytest-bdd       |
-      | pytest-testinfra |
-      | testinfra-bdd    |
+      | pip_package      | status     |
+      | pytest-bdd       | superseded |
+      | pytest-testinfra | latest     |
+      | testinfra-bdd    | latest     |
 
   Scenario Outline:  Check Sockets
     # This checks that NTP is listening but SSH isn't.
