@@ -98,7 +98,7 @@ Feature: Example of Testinfra BDD
     When the pip package is testinfra-bdd
     # Can check if the package is absent or present.
     Then the pip package is present
-    And the pip package version is 2.2.2
+    And the pip package version is 2.2.3
     # Check that installed packages have compatible dependencies.
     And the pip check is OK
 
@@ -125,10 +125,10 @@ Feature: Example of Testinfra BDD
     Then the pip package is present
     And the pip package is <status>
     Examples:
-      | pip_package      | status     |
-      | pytest-bdd       | superseded |
-      | pytest-testinfra | latest     |
-      | testinfra-bdd    | latest     |
+      | pip_package      | status |
+      | pytest-bdd       | latest |
+      | pytest-testinfra | latest |
+      | testinfra-bdd    | latest |
 
   Scenario Outline:  Check Sockets
     # This checks that NTP is listening but SSH isn't.
