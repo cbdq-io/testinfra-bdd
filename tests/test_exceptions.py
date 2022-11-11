@@ -1,22 +1,12 @@
 """Test exceptions are raised as expected."""
 import pytest
 
-from testinfra_bdd.then.pip import the_pip_package_state_is
 from testinfra_bdd import get_host_fixture
-
-
-def test_invalid_resource_type():
-    """Test that an exception is thrown when attempting to get an invalid resource type."""
-    exception_raised = False
-
-    try:
-        host = get_host_fixture('docker://sut')
-        host.get_resource_from_host('foo', 'foo')
-    except ValueError as ex:
-        exception_raised = True
-        assert str(ex) == 'Unknown resource type "foo".'
-
-    assert exception_raised, 'Expected an exception to be raised.'
+from testinfra_bdd.address import when_the_address_and_port_is
+from testinfra_bdd.command import the_command_is
+from testinfra_bdd.pip import the_pip_package_is
+from testinfra_bdd.pip import the_pip_package_state_is
+from testinfra_bdd.process import the_process_filter_is
 
 
 def test_invalid_command_stream_name():
@@ -25,7 +15,7 @@ def test_invalid_command_stream_name():
 
     try:
         host = get_host_fixture('docker://sut')
-        host.get_resource_from_host('command', 'ls')
+        the_command_is('ls', host)
         host.get_stream_from_command('foo')
     except ValueError as ex:
         exception_raised = True
@@ -61,7 +51,7 @@ def test_pip_package(pip, expected_state, expected_exception_message):
     host = get_host_fixture('docker://sut')
 
     if pip:
-        host.get_resource_from_host('pip package', pip)
+        the_pip_package_is(pip, host)
 
     try:
         the_pip_package_state_is(expected_state, host)
@@ -86,7 +76,7 @@ def test_invalid_process_specifications(process_specification):
 
     try:
         host = get_host_fixture('docker://sut')
-        host.get_resource_from_host('process filter', process_specification)
+        the_process_filter_is(process_specification, host)
     except ValueError as ex:
         exception_raised = True
         actual_message = str(ex)
@@ -112,7 +102,7 @@ def test_invalid_addr_and_port_specifications(specification):
 
     try:
         host = get_host_fixture('docker://sut')
-        host.get_resource_from_host('address and port', specification)
+        when_the_address_and_port_is(specification, host)
     except ValueError as ex:
         exception_raised = True
         actual_message = str(ex)

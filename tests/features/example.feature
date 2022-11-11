@@ -21,7 +21,19 @@ Feature: Example of Testinfra BDD
     Given the host with URL "docker://sut" is ready within 10 seconds
     When the <resource_type> is "foo"
     Then the <resource_type> is absent
-    And the <resource_type> state is absent # Alternative method.
+    Examples:
+      | resource_type |
+      | user          |
+      | group         |
+      | package       |
+      | file          |
+      | pip package   |
+
+  Scenario Outline: Test for Absent Non-Quoted Resources
+    # Same as the example above except the resources are not quoted.
+    Given the host with URL "docker://sut" is ready within 10 seconds
+    When the <resource_type> is foo
+    Then the <resource_type> state is absent
     Examples:
       | resource_type |
       | user          |

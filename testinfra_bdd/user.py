@@ -1,8 +1,24 @@
 """Then user fixtures for testinfra-bdd."""
 from pytest_bdd import (
     then,
-    parsers
+    parsers,
+    when
 )
+
+
+@when(parsers.parse('the user is {username}'))
+def the_user_is(username: str, testinfra_bdd_host):
+    """
+    Check the status of a user.
+
+    Parameters
+    ----------
+    username : str
+        The user name (e.g. "ben").
+    testinfra_bdd_host : testinfra_bdd.fixture.TestinfraBDD
+        The test fixture.
+    """
+    testinfra_bdd_host.user = testinfra_bdd_host.host.user(username.strip('"'))
 
 
 @then(parsers.parse('the user {property_name} is {expected_value}'))

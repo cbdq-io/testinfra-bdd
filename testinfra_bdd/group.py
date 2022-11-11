@@ -1,8 +1,24 @@
 """Then file fixtures for testinfra-bdd."""
 from pytest_bdd import (
     then,
-    parsers
+    parsers,
+    when
 )
+
+
+@when(parsers.parse('the group is {groupname}'))
+def the_group_is(groupname: str, testinfra_bdd_host):
+    """
+    Check the status of a group.
+
+    Parameters
+    ----------
+    groupname : str
+        The group name (e.g. "admin").
+    testinfra_bdd_host : testinfra_bdd.fixture.TestinfraBDD
+        The test fixture.
+    """
+    testinfra_bdd_host.group = testinfra_bdd_host.host.group(groupname.strip('"'))
 
 
 @then(parsers.parse('the group {property_name} is {expected_value}'))
