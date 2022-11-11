@@ -1,8 +1,33 @@
-"""Then process fixtures for testinfra-bdd."""
+"""
+Then process fixtures for testinfra-bdd.
+
+Please avoid already-imported warning: PYTEST_DONT_REWRITE.
+"""
 from pytest_bdd import (
     then,
-    parsers
+    parsers,
+    when
 )
+
+from testinfra_bdd.parsers import parse_process_filters
+
+
+@when(parsers.parse('the process filter is {process_specification}'))
+def the_process_filter_is(process_specification, testinfra_bdd_host):
+    """
+    Check the status of processes.
+
+    Parameters
+    ----------
+    process_specification : str
+        The process specification (e.g. "user=root,comm=ntpd").
+    testinfra_bdd_host : testinfra_bdd.fixture.TestinfraBDD
+        The test fixture.
+    """
+    process_specification = process_specification.strip('"')
+    testinfra_bdd_host.process_specification = process_specification
+    host = testinfra_bdd_host.host
+    testinfra_bdd_host.processes = host.process.filter(**parse_process_filters(process_specification))
 
 
 @then(parsers.parse('the process count is {expected_count:d}'))

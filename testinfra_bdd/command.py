@@ -1,8 +1,28 @@
-"""Then command fixtures for testinfra-bdd."""
+"""
+Then command fixtures for testinfra-bdd.
+
+Please avoid already-imported warning: PYTEST_DONT_REWRITE.
+"""
 import re
 
 from pytest_bdd import parsers
 from pytest_bdd import then
+from pytest_bdd import when
+
+
+@when(parsers.parse('the command is {command}'))
+def the_command_is(command: str, testinfra_bdd_host):
+    """
+    Execute and check the status of a command.
+
+    Parameters
+    ----------
+    command : str
+        The command (e.g. "ls -l /etc/motd").
+    testinfra_bdd_host : testinfra_bdd.fixture.TestinfraBDD
+        The test fixture.
+    """
+    testinfra_bdd_host.command = testinfra_bdd_host.host.run(command.strip('"'))
 
 
 @then(parsers.parse('the command {command} exists in path'))
@@ -24,7 +44,7 @@ def check_command_exists_in_path(command, testinfra_bdd_host):
         When the command is not found on the path.
     """
     message = f'Unable to find the command "{command}" on the path.'
-    assert testinfra_bdd_host.host.exists(command), message
+    assert testinfra_bdd_host.host.exists(command.strip('"')), message
 
 
 @then(parsers.parse('the command {stream_name} contains "{text}"'))

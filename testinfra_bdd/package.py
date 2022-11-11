@@ -1,8 +1,24 @@
 """Then system package fixtures for testinfra-bdd."""
 from pytest_bdd import (
     then,
-    parsers
+    parsers,
+    when
 )
+
+
+@when(parsers.parse('the package is {package_name}'))
+def the_package_is(package_name: str, testinfra_bdd_host):
+    """
+    Check the status of a package.
+
+    Parameters
+    ----------
+    package_name : str
+        The package name (e.g. "python3").
+    testinfra_bdd_host : testinfra_bdd.fixture.TestinfraBDD
+        The test fixture.
+    """
+    testinfra_bdd_host.package = testinfra_bdd_host.host.package(package_name.strip('"'))
 
 
 @then(parsers.parse('the package state is {expected_status}'))

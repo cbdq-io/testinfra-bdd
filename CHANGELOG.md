@@ -1,7 +1,14 @@
 # Changelog
 
 
-## 2.2.2
+## 2.2.3
+
+### Fix
+
+* Refactor "When" steps after update to pytest-bdd. [Ben Dalling]
+
+
+## 2.2.2 (2022-11-09)
 
 ### Fix
 

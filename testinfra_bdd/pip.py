@@ -5,10 +5,26 @@ Please avoid already-imported warning: PYTEST_DONT_REWRITE.
 """
 from pytest_bdd import (
     then,
-    parsers
+    parsers,
+    when
 )
 
 from testinfra_bdd.exception_message import exception_message
+
+
+@when(parsers.parse('the pip package is {package_name}'))
+def the_pip_package_is(package_name: str, testinfra_bdd_host):
+    """
+    Check the status of a pip package.
+
+    Parameters
+    ----------
+    package_name : str
+        The pip package name (e.g. "pytest-bdd").
+    testinfra_bdd_host : testinfra_bdd.fixture.TestinfraBDD
+        The test fixture.
+    """
+    testinfra_bdd_host.pip_package = testinfra_bdd_host.host.pip(package_name.strip('"'))
 
 
 def check_entry_requirements(pip_package, expected_state):

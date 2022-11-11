@@ -15,16 +15,16 @@ A list of all testinfra-bdd packages that contain fixtures.
 PYTEST_MODULES = [
     'testinfra_bdd',
     'testinfra_bdd.given',
-    'testinfra_bdd.then.address',
-    'testinfra_bdd.then.command',
-    'testinfra_bdd.then.file',
-    'testinfra_bdd.then.group',
-    'testinfra_bdd.then.package',
-    'testinfra_bdd.then.pip',
-    'testinfra_bdd.then.process',
-    'testinfra_bdd.then.service',
-    'testinfra_bdd.then.socket',
-    'testinfra_bdd.then.user',
+    'testinfra_bdd.address',
+    'testinfra_bdd.command',
+    'testinfra_bdd.file',
+    'testinfra_bdd.group',
+    'testinfra_bdd.package',
+    'testinfra_bdd.pip',
+    'testinfra_bdd.process',
+    'testinfra_bdd.service',
+    'testinfra_bdd.socket',
+    'testinfra_bdd.user',
     'testinfra_bdd.when'
 ]
 
@@ -33,7 +33,7 @@ PYTEST_MODULES = [
 This is used by setuptools and by gitchangelog to identify the name of the name
 of the release.
 """
-__version__ = '2.2.2'
+__version__ = '2.2.3'
 
 
 def get_host_fixture(hostspec, timeout=0):
