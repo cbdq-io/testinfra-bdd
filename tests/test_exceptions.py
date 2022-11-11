@@ -86,13 +86,14 @@ def test_invalid_process_specifications(process_specification):
 
 
 @pytest.mark.parametrize(
-    'specification',
+    'specification,exception_expected',
     [
-        'foo',
-        'foo:bar'
+        ('foo', True),
+        ('foo:bar', True),
+        ('localhost:0', False)
     ]
 )
-def test_invalid_addr_and_port_specifications(specification):
+def test_invalid_addr_and_port_specifications(specification, exception_expected):
     """Test that exceptions are raised when the specification is invalid."""
     exception_raised = False
     expected_messages = {
@@ -108,4 +109,5 @@ def test_invalid_addr_and_port_specifications(specification):
         actual_message = str(ex)
         assert actual_message == expected_messages[specification]
 
-    assert exception_raised, 'Expected an exception to be raised.'
+    if exception_expected:
+        assert exception_raised, 'Expected an exception to be raised.'
