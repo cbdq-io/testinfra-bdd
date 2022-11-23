@@ -1,5 +1,22 @@
 """Then service fixtures for testinfra-bdd."""
+from pytest_bdd import parsers
 from pytest_bdd import then
+from pytest_bdd import when
+
+
+@when(parsers.parse('the service is {service}'))
+def the_service_is(service: str, testinfra_bdd_host):
+    """
+    Check the status of a service.
+
+    Parameters
+    ----------
+    service : str
+        The service name (e.g. "named").
+    testinfra_bdd_host : testinfra_bdd.fixture.TestinfraBDD
+        The test fixture.
+    """
+    testinfra_bdd_host.service = testinfra_bdd_host.host.service(service.strip('"'))
 
 
 @then('the service is not enabled')

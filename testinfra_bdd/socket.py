@@ -1,8 +1,24 @@
 """Then socket fixtures for testinfra-bdd."""
 from pytest_bdd import (
     then,
-    parsers
+    parsers,
+    when
 )
+
+
+@when(parsers.parse('the socket is {socket}'))
+def when_the_socket_is(socket, testinfra_bdd_host):
+    """
+    Check the status of a socket.
+
+    Parameters
+    ----------
+    socket : str
+        URL of the socket (e.g. "tpc://22").
+    testinfra_bdd_host : testinfra_bdd.fixture.TestinfraBDD
+        The test fixture.
+    """
+    testinfra_bdd_host.socket = testinfra_bdd_host.host.socket(socket.strip('"'))
 
 
 @then(parsers.parse('the socket is {expected_state}'))
