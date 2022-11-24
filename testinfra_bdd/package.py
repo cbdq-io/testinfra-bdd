@@ -50,8 +50,7 @@ def the_package_status_is(expected_status, testinfra_bdd_host):
 
     if expected_to_be_installed:
         message = f'Expected {pkg.name} to be {expected_status} on {testinfra_bdd_host.hostname} but it is absent.'
-
-    if actual_status:
+    else:
         message = f'Expected {pkg.name} to be absent on {testinfra_bdd_host.hostname} '
         message += 'but it is installed ({pkg.version}).'
 
