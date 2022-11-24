@@ -30,6 +30,7 @@ rules:
   truthy:
     level: warning
     ignore: |
+      .github/workflows/codeql.yml
       .github/workflows/ci.yml
       .github/workflows/latest.yml
       .github/workflows/publish.yml
