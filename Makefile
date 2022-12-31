@@ -19,5 +19,5 @@ lint:
 
 test:
 	docker-compose -f tests/resources/docker-compose.yml up -d --build
-	docker-compose -f tests/resources/docker-compose.yml exec sut /usr/local/bin/install-dist-package.sh
+	docker-compose -f tests/resources/docker-compose.yml exec -T sut /usr/local/bin/install-dist-package.sh
 	PYTHONPATH=.:.. pytest
