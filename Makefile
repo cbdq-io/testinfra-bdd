@@ -1,4 +1,4 @@
-all: lint test build
+all: lint build test
 
 build: changelog
 	cut -d= -f1 requirements.txt > tests/resources/requirements-latest.txt
@@ -19,4 +19,5 @@ lint:
 
 test:
 	docker-compose -f tests/resources/docker-compose.yml up -d --build
+	docker-compose -f tests/resources/docker-compose.yml exec -T sut /usr/local/bin/install-dist-package.sh
 	PYTHONPATH=.:.. pytest

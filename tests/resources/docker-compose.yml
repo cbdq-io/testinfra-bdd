@@ -5,6 +5,8 @@ services:
   sut:
     build: sut
     container_name: sut
+    volumes:
+      - ../../dist/:/mnt/dist
 
   java11:
     command:
