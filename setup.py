@@ -1,12 +1,16 @@
 """Dynamic configuration for setuptools."""
+import os
 import setuptools
 
-import testinfra_bdd
+try:
+    import testinfra_bdd
+    version = testinfra_bdd.__version__
+except ModuleNotFoundError:
+    version = os.environ['VERSION']
 
 with open('README.md', 'r', encoding='utf-8') as fh:
     long_description = fh.read()
 
-version = testinfra_bdd.__version__
 
 install_requires = []
 
