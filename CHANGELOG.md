@@ -1,7 +1,32 @@
 # Changelog
 
 
-## 2.2.3
+## 2.2.4
+
+### New
+
+* Successfully tested compliance against pytest-testinfra 7. [Ben Dalling]
+
+### Fix
+
+* Requirements.txt to reduce vulnerabilities. [snyk-bot]
+
+  The following vulnerabilities are fixed by pinning transitive dependencies:
+  - https://snyk.io/vuln/SNYK-PYTHON-GITPYTHON-3113858
+
+* Correct issues identified by CodeQL. [Ben Dalling]
+
+* Requirements.txt to reduce vulnerabilities. [snyk-bot]
+
+  The following vulnerabilities are fixed by pinning transitive dependencies:
+  - https://snyk.io/vuln/SNYK-PYTHON-SETUPTOOLS-3113904
+
+### Other
+
+* Add CodeQL workflow for GitHub code scanning. [LGTM Migrator]
+
+
+## 2.2.3 (2022-11-11)
 
 ### Fix
 
