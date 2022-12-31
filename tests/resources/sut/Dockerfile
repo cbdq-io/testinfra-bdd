@@ -19,5 +19,6 @@ RUN apt-get clean \
 
 COPY issue21.txt /tmp
 COPY john-smith.json /tmp
+COPY install-dist-package.sh /usr/local/bin/install-dist-package.sh
 
 CMD ["sh", "-c", "service ntp start && sleep infinity"]
