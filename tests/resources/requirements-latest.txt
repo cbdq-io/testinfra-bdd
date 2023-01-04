@@ -46,3 +46,4 @@ tomli
 typing_extensions
 urllib3
 yamllint
+setuptools>=65.5.1 # not directly required, pinned by Snyk to avoid a vulnerability
