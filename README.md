@@ -1,8 +1,8 @@
 # testinfra-bdd
 
-[![CI](https://github.com/locp/testinfra-bdd/actions/workflows/ci.yml/badge.svg)](https://github.com/locp/testinfra-bdd/actions/workflows/ci.yml)
-[![Maintainability](https://api.codeclimate.com/v1/badges/5482c55d78b369a0a55e/maintainability)](https://codeclimate.com/github/locp/testinfra-bdd/maintainability)
-[![Test Coverage](https://api.codeclimate.com/v1/badges/5482c55d78b369a0a55e/test_coverage)](https://codeclimate.com/github/locp/testinfra-bdd/test_coverage)
+[![CI](https://github.com/cbdq-io/testinfra-bdd/actions/workflows/ci.yml/badge.svg)](https://github.com/cbdq-io/testinfra-bdd/actions/workflows/ci.yml)
+[![Maintainability](https://api.codeclimate.com/v1/badges/5482c55d78b369a0a55e/maintainability)](https://codeclimate.com/github/cbdq-io/testinfra-bdd/maintainability)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/5482c55d78b369a0a55e/test_coverage)](https://codeclimate.com/github/cbdq-io/testinfra-bdd/test_coverage)
 [![testinfra-bdd](https://snyk.io/advisor/python/testinfra-bdd/badge.svg)](https://snyk.io/advisor/python/testinfra-bdd)
 
 An interface between

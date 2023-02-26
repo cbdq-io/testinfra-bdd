@@ -2,7 +2,7 @@
 An interface between pytest-bdd and pytest-testinfra.
 
 For documentation and examples, please go to
-https://github.com/locp/testinfra-bdd
+https://github.com/cbdq-io/testinfra-bdd
 
 Please avoid already-imported warning: PYTEST_DONT_REWRITE.
 """
@@ -33,7 +33,7 @@ PYTEST_MODULES = [
 This is used by setuptools and by gitchangelog to identify the name of the name
 of the release.
 """
-__version__ = '2.2.4'
+__version__ = '2.2.5'
 
 
 def get_host_fixture(hostspec, timeout=0):
