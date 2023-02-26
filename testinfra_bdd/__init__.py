@@ -33,7 +33,7 @@ PYTEST_MODULES = [
 This is used by setuptools and by gitchangelog to identify the name of the name
 of the release.
 """
-__version__ = '2.2.4'
+__version__ = '2.2.5'
 
 
 def get_host_fixture(hostspec, timeout=0):
