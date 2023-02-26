@@ -1,7 +1,19 @@
 # Changelog
 
 
-## 2.2.4
+## 2.2.5
+
+### Fix
+
+* Migrate from League of Crafty Programmers to Cloud Based DQ. [Ben Dalling]
+
+* Tests/resources/requirements-latest.txt to reduce vulnerabilities. [snyk-bot]
+
+  The following vulnerabilities are fixed by pinning transitive dependencies:
+  - https://snyk.io/vuln/SNYK-PYTHON-SETUPTOOLS-3180412
+
+
+## 2.2.4 (2022-12-31)
 
 ### New
 
