@@ -2,7 +2,7 @@
 An interface between pytest-bdd and pytest-testinfra.
 
 For documentation and examples, please go to
-https://github.com/locp/testinfra-bdd
+https://github.com/cbdq-io/testinfra-bdd
 
 Please avoid already-imported warning: PYTEST_DONT_REWRITE.
 """

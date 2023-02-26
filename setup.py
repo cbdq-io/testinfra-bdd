@@ -26,16 +26,16 @@ for line in pyproject:
 setuptools.setup(
     name='testinfra-bdd',
     version=version,
-    author='League of Crafty Programmers Ltd.',
-    author_email='info@locp.co.uk',
+    author='Cloud Based DQ Ltd.',
+    author_email='info@cbdq.io',
     description='An interface between pytest-bdd and pytest-testinfra.',
     install_requires=install_requires,
     keywords='testinfra,bdd',
     long_description=long_description,
     long_description_content_type='text/markdown',
-    url='https://github.com/locp/testinfra-bdd',
+    url='https://github.com/cbdq-io/testinfra-bdd',
     project_urls={
-        'Bug Tracker': 'https://github.com/locp/testinfra-bdd/issues',
+        'Bug Tracker': 'https://github.com/cbdq-io/testinfra-bdd/issues',
     },
     classifiers=[
         'Programming Language :: Python :: 3',

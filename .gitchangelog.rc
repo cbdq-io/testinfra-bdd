@@ -178,7 +178,7 @@ else:
 
 if github_event_name == 'pull_request':
     http = urllib3.PoolManager()
-    r = http.request('GET', 'https://api.github.com/repos/locp/testinfra_bdd/tags')
+    r = http.request('GET', 'https://api.github.com/repos/cbdq-io/testinfra_bdd/tags')
     data = json.loads(r.data)
 
     for tag in data:

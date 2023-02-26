@@ -25,7 +25,7 @@ Things that will make your branch more likely to be pulled:
 
 Tests are run against a branch pushes and pull requests using GitHub
 Workflows for this project these are visible at
-<https://github.com/locp/testinfra-bdd/actions>
+<https://github.com/cbdq-io/testinfra-bdd/actions>
 
 ## Cutting a Release
 
@@ -69,7 +69,7 @@ git flow finish -m "v${RELEASE}" -p
 ```
 
 When all the CI jobs have completed, create the new release at
-<https://github.com/locp/testinfra-bdd/releases>
+<https://github.com/cbdq-io/testinfra-bdd/releases>
 
 ### Post Release Steps
 
