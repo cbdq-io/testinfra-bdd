@@ -25,15 +25,17 @@ jobs:
 
       - name: Requirements
         run: |
-          pip install -qr tests/resources/requirements-latest.txt
+          cut -d= -f1 requirements.txt > /tmp/requirements-latest.txt
+          pip install wheel
+          pip install -qr /tmp/requirements-latest.txt
           pip freeze
           pip check
 
       - name: Bandit
         run: bandit -r .
 
-      - name: Test
-        run: make test
-
       - name: Build
         run: make build
+
+      - name: Test
+        run: make test
