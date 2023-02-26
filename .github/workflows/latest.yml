@@ -26,6 +26,7 @@ jobs:
       - name: Requirements
         run: |
           cut -d= -f1 requirements.txt > /tmp/requirements-latest.txt
+          pip install wheel
           pip install -qr /tmp/requirements-latest.txt
           pip freeze
           pip check
