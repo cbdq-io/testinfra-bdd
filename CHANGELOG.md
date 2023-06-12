@@ -1,7 +1,14 @@
 # Changelog
 
 
-## 2.2.5
+## 2.2.6
+
+### Fix
+
+* Pytest-testinfra 8.* is available. [Ben Dalling]
+
+
+## 2.2.5 (2023-02-26)
 
 ### Fix
 
