@@ -1,10 +1,8 @@
 """Then service fixtures for testinfra-bdd."""
-from pytest_bdd import parsers
-from pytest_bdd import then
-from pytest_bdd import when
+from pytest_bdd import parsers, then, when
 
 
-@when(parsers.parse('the service is {service}'))
+@when(parsers.parse('the TestInfra service is {service}'))
 def the_service_is(service: str, testinfra_bdd_host):
     """
     Check the status of a service.
@@ -19,7 +17,7 @@ def the_service_is(service: str, testinfra_bdd_host):
     testinfra_bdd_host.service = testinfra_bdd_host.host.service(service.strip('"'))
 
 
-@then('the service is not enabled')
+@then('the TestInfra service is not enabled')
 def the_service_is_not_enabled(testinfra_bdd_host):
     """
     Check that the service is not enabled.
@@ -39,7 +37,7 @@ def the_service_is_not_enabled(testinfra_bdd_host):
     assert not service.is_enabled, message
 
 
-@then('the service is enabled')
+@then('the TestInfra service is enabled')
 def the_service_is_enabled(testinfra_bdd_host):
     """
     Check that the service is enabled.
@@ -59,7 +57,7 @@ def the_service_is_enabled(testinfra_bdd_host):
     assert service.is_enabled, message
 
 
-@then('the service is not running')
+@then('the TestInfra service is not running')
 def the_service_is_not_running(testinfra_bdd_host):
     """
     Check that the service is not running.
@@ -79,7 +77,7 @@ def the_service_is_not_running(testinfra_bdd_host):
     assert not service.is_running, message
 
 
-@then('the service is running')
+@then('the TestInfra service is running')
 def the_service_is_running(testinfra_bdd_host):
     """
     Check that the service is running.

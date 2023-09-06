@@ -5,12 +5,10 @@ Please avoid already-imported warning: PYTEST_DONT_REWRITE.
 """
 import re
 
-from pytest_bdd import parsers
-from pytest_bdd import then
-from pytest_bdd import when
+from pytest_bdd import parsers, then, when
 
 
-@when(parsers.parse('the command is {command}'))
+@when(parsers.parse('the TestInfra command is {command}'))
 def the_command_is(command: str, testinfra_bdd_host):
     """
     Execute and check the status of a command.
@@ -25,8 +23,8 @@ def the_command_is(command: str, testinfra_bdd_host):
     testinfra_bdd_host.command = testinfra_bdd_host.host.run(command.strip('"'))
 
 
-@then(parsers.parse('the command {command} exists in path'))
-@then(parsers.parse('the command "{command}" exists in path'))
+@then(parsers.parse('the TestInfra command {command} exists in path'))
+@then(parsers.parse('the TestInfra command "{command}" exists in path'))
 def check_command_exists_in_path(command, testinfra_bdd_host):
     """
     Assert that a specified command is present on the host path.
@@ -47,7 +45,7 @@ def check_command_exists_in_path(command, testinfra_bdd_host):
     assert testinfra_bdd_host.host.exists(command.strip('"')), message
 
 
-@then(parsers.parse('the command {stream_name} contains "{text}"'))
+@then(parsers.parse('the TestInfra command {stream_name} contains "{text}"'))
 def check_command_stream_contains(stream_name, text, testinfra_bdd_host):
     """
     Check that the stdout or stderr stream contains a string.
@@ -71,7 +69,7 @@ def check_command_stream_contains(stream_name, text, testinfra_bdd_host):
     assert text in stream, message
 
 
-@then(parsers.parse('the command {stream_name} contains the expected value'))
+@then(parsers.parse('the TestInfra command {stream_name} contains the expected value'))
 def the_command_stderr_contains_the_expected_value(stream_name, expected_value, testinfra_bdd_host):
     """
     Check that the stdout or stderr stream contains a pre-defined expected value.
@@ -95,7 +93,7 @@ def the_command_stderr_contains_the_expected_value(stream_name, expected_value, 
     assert expected_value in stream, message
 
 
-@then(parsers.parse('the command {stream_name} does not contain "{text}"'))
+@then(parsers.parse('the TestInfra command {stream_name} does not contain "{text}"'))
 def the_command_stdout_does_not_contain_foo(stream_name, text, testinfra_bdd_host):
     """
     Check that the stdout or stderr stream does not contain a string.
@@ -119,7 +117,7 @@ def the_command_stdout_does_not_contain_foo(stream_name, text, testinfra_bdd_hos
     assert text not in stream, message
 
 
-@then(parsers.parse('the command {stream_name} contains the regex "{pattern}"'))
+@then(parsers.parse('the TestInfra command {stream_name} contains the regex "{pattern}"'))
 def check_command_stream_contains_the_regex(stream_name, pattern, testinfra_bdd_host):
     """
     Check that the stdout or stderr stream matches a regular expression pattern.
@@ -148,7 +146,7 @@ def check_command_stream_contains_the_regex(stream_name, pattern, testinfra_bdd_
     assert prog.search(stream) is not None, message
 
 
-@then(parsers.parse('the command return code is {expected_return_code:d}'))
+@then(parsers.parse('the TestInfra command return code is {expected_return_code:d}'))
 def check_command_return_code(expected_return_code, testinfra_bdd_host):
     """
     Check that the expected return code from a command matches the actual return code.
@@ -171,7 +169,7 @@ def check_command_return_code(expected_return_code, testinfra_bdd_host):
     assert expected_return_code == actual_return_code, message
 
 
-@then(parsers.parse('the command {stream_name} is empty'))
+@then(parsers.parse('the TestInfra command {stream_name} is empty'))
 def command_stream_is_empty(stream_name, testinfra_bdd_host):
     """
     Check that the specified command stream is empty.

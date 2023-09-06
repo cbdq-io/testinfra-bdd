@@ -1,6 +1,7 @@
 """Examples of step definitions for Testinfra BDD feature tests."""
-import testinfra_bdd
 from pytest_bdd import given, scenarios
+
+import testinfra_bdd
 
 scenarios('../features/example.feature')
 
@@ -10,7 +11,7 @@ scenarios('../features/example.feature')
 pytest_plugins = testinfra_bdd.PYTEST_MODULES
 
 
-@given('the expected value is "foo"', target_fixture='expected_value')
+@given('the TestInfra expected value is "foo"', target_fixture='expected_value')
 def the_expected_value_is_foo():
     """
     The expected value is "foo".
