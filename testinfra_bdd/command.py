@@ -5,9 +5,7 @@ Please avoid already-imported warning: PYTEST_DONT_REWRITE.
 """
 import re
 
-from pytest_bdd import parsers
-from pytest_bdd import then
-from pytest_bdd import when
+from pytest_bdd import parsers, then, when
 
 
 @when(parsers.parse('the TestInfra command is {command}'))

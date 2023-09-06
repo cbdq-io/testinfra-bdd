@@ -1,9 +1,5 @@
 """Then file fixtures for testinfra-bdd."""
-from pytest_bdd import (
-    then,
-    parsers,
-    when
-)
+from pytest_bdd import parsers, then, when
 
 
 @when(parsers.parse('the TestInfra group is {groupname}'))

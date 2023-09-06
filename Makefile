@@ -19,6 +19,7 @@ lint:
 	yamllint -s .
 	flake8 --radon-max-cc 5
 	bandit -r .
+	isort .
 
 test:
 	docker compose -f tests/resources/docker-compose.yml up -d --build

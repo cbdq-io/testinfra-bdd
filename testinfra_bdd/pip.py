@@ -3,11 +3,7 @@ Then pip package fixtures for testinfra-bdd.
 
 Please avoid already-imported warning: PYTEST_DONT_REWRITE.
 """
-from pytest_bdd import (
-    then,
-    parsers,
-    when
-)
+from pytest_bdd import parsers, then, when
 
 from testinfra_bdd.exception_message import exception_message
 

@@ -1,7 +1,7 @@
 """Fix Issue 21 feature tests."""
-import testinfra_bdd
-
 from pytest_bdd import scenarios
+
+import testinfra_bdd
 
 scenarios('../features/issue21.feature')
 

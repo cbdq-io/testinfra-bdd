@@ -1,6 +1,7 @@
 """Examples of step definitions for Testinfra BDD feature tests."""
-import testinfra_bdd
 from pytest_bdd import given, scenarios
+
+import testinfra_bdd
 
 scenarios('../features/example.feature')
 

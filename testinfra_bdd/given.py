@@ -1,7 +1,7 @@
 """The given steps of testinfra-bdd."""
+from pytest_bdd import given, parsers
+
 import testinfra_bdd.fixture
-from pytest_bdd import given
-from pytest_bdd import parsers
 
 
 @given(parsers.parse('the TestInfra host with URL "{hostspec}" is ready'), target_fixture='testinfra_bdd_host')

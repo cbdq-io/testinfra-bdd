@@ -1,7 +1,5 @@
 """Then service fixtures for testinfra-bdd."""
-from pytest_bdd import parsers
-from pytest_bdd import then
-from pytest_bdd import when
+from pytest_bdd import parsers, then, when
 
 
 @when(parsers.parse('the TestInfra service is {service}'))

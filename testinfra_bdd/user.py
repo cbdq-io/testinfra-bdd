@@ -1,9 +1,5 @@
 """Then user fixtures for testinfra-bdd."""
-from pytest_bdd import (
-    then,
-    parsers,
-    when
-)
+from pytest_bdd import parsers, then, when
 
 
 @when(parsers.parse('the TestInfra user is {username}'))

@@ -1,16 +1,10 @@
 """Lines of Code feature tests."""
-import shutil
 import json
-import pytest
+import shutil
 import subprocess
 
-from pytest_bdd import (
-    given,
-    scenario,
-    then,
-    when,
-    parsers
-)
+import pytest
+from pytest_bdd import given, parsers, scenario, then, when
 
 radon_executable = shutil.which('radon')
 radon_command = [

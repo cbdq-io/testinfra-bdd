@@ -1,8 +1,8 @@
 """The when steps of testinfra-bdd."""
 import os
+
 import pytest
-from pytest_bdd import parsers
-from pytest_bdd import when
+from pytest_bdd import parsers, when
 
 
 @when(parsers.parse('the TestInfra system property {property_name} is not "{expected_value}" skip tests'))
