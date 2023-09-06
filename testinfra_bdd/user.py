@@ -79,3 +79,29 @@ def check_the_user_state(expected_state, testinfra_bdd_host):
         The test fixture.
     """
     the_user_property_is('state', expected_state, testinfra_bdd_host)
+
+
+@then(parsers.parse('the TestInfra user groups include "{expected_group}"'))
+def check_the_user_included_groups(expected_group: str, testinfra_bdd_host: object):
+    """
+    Check that the user is a member of the specified group.
+
+    Parameters
+    ----------
+    expected_group : str
+        The group to check the user is a member of.
+    testinfra_bdd_host : object
+        The test fixture.
+
+    Raises
+    ------
+    AssertError
+        If the group doesn't exist or the user is not a member of the group.
+    """
+    user = testinfra_bdd_host.user
+    assert user, 'User not set.  Have you missed a "When user is" step?'
+    group = testinfra_bdd_host.host.group(expected_group)
+    message = f'Expected group "{expected_group}" to exist.'
+    assert group.exists, message
+    message = f'Expected user "{user}" to be a member of group "{group.name}".'
+    assert user.name in group.members, message

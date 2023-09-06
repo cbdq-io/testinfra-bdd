@@ -79,6 +79,13 @@ Feature: Example of Testinfra BDD
     And the TestInfra group state is present
     And the TestInfra group gid is 101
 
+  Scenario: Group Membership
+    Given the TestInfra host with URL "docker://sut" is ready
+    When the TestInfra group is "sudo"
+    And the TestInfra user is "bar"
+    Then the TestInfra group contains the user "bar"
+    And the TestInfra user groups include "sudo"
+
   Scenario: Running Commands
     Given the TestInfra host with URL "docker://sut" is ready
     When the TestInfra command is "ntpq -np"

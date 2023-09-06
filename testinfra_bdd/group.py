@@ -21,6 +21,31 @@ def the_group_is(groupname: str, testinfra_bdd_host):
     testinfra_bdd_host.group = testinfra_bdd_host.host.group(groupname.strip('"'))
 
 
+@then(parsers.parse('the TestInfra group contains the user "{expected_user}"'))
+def _(expected_user: str, testinfra_bdd_host):
+    """
+    Check that the expected user is contained within a group.
+
+    Parameters
+    ----------
+    expected_user : str
+        _description_
+    testinfra_bdd_host : testinfra_bdd.fixture.TestinfraBDD
+        The test fixture.
+
+    Raises
+    ------
+    AssertError
+        If the group doesn't contain the expected user.
+    """
+    group = testinfra_bdd_host.group
+    assert group, 'Group not set.  Have you missed a "When group is" step?'
+    message = 'Expected group "{group.name}" to exist.'
+    assert group.exists, message
+    message = f'Expected the group "{group.name}" to contain the user "{expected_user}".'
+    assert expected_user in group.members
+
+
 @then(parsers.parse('the TestInfra group {property_name} is {expected_value}'))
 def the_group_property_is(property_name, expected_value, testinfra_bdd_host):
     """
