@@ -1,6 +1,38 @@
 # Changelog
 
 
+## 3.0.0
+
+### New
+
+* Add File Executable Checks. [Ben Dalling]
+
+* Add group membership tests to user and group. [Ben Dalling]
+
+### Changes
+
+* Breaking changes to the DSL. [Ben Dalling]
+
+* TestInfra 9. [Ben Dalling]
+
+* Drop support for EOL Python versions (3.6, 3.7 and 3.8). [Ben Dalling]
+
+### Other
+
+* Build(deps): bump gitpython from 3.1.31 to 3.1.32. [dependabot[bot]]
+
+  Bumps [gitpython](https://github.com/gitpython-developers/GitPython) from 3.1.31 to 3.1.32.
+  - [Release notes](https://github.com/gitpython-developers/GitPython/releases)
+  - [Changelog](https://github.com/gitpython-developers/GitPython/blob/main/CHANGES)
+  - [Commits](https://github.com/gitpython-developers/GitPython/compare/3.1.31...3.1.32)
+
+  ---
+  updated-dependencies:
+  - dependency-name: gitpython
+    dependency-type: direct:production
+  ...
+
+
 ## 2.2.6 (2023-06-12)
 
 ### Fix
