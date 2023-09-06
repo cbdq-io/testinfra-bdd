@@ -10,7 +10,7 @@ scenarios('../features/example.feature')
 pytest_plugins = testinfra_bdd.PYTEST_MODULES
 
 
-@given('the expected value is "foo"', target_fixture='expected_value')
+@given('the TestInfra expected value is "foo"', target_fixture='expected_value')
 def the_expected_value_is_foo():
     """
     The expected value is "foo".

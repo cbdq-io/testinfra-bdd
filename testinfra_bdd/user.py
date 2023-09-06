@@ -6,7 +6,7 @@ from pytest_bdd import (
 )
 
 
-@when(parsers.parse('the user is {username}'))
+@when(parsers.parse('the TestInfra user is {username}'))
 def the_user_is(username: str, testinfra_bdd_host):
     """
     Check the status of a user.
@@ -21,7 +21,7 @@ def the_user_is(username: str, testinfra_bdd_host):
     testinfra_bdd_host.user = testinfra_bdd_host.host.user(username.strip('"'))
 
 
-@then(parsers.parse('the user {property_name} is {expected_value}'))
+@then(parsers.parse('the TestInfra user {property_name} is {expected_value}'))
 def the_user_property_is(property_name, expected_value, testinfra_bdd_host):
     """
     Check the property of a user.
@@ -66,7 +66,7 @@ def the_user_property_is(property_name, expected_value, testinfra_bdd_host):
     assert actual_value == expected_value, message
 
 
-@then(parsers.parse('the user is {expected_state}'))
+@then(parsers.parse('the TestInfra user is {expected_state}'))
 def check_the_user_state(expected_state, testinfra_bdd_host):
     """
     Check that the actual state of a user matches the expected state.

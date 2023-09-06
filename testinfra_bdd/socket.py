@@ -6,7 +6,7 @@ from pytest_bdd import (
 )
 
 
-@when(parsers.parse('the socket is {socket}'))
+@when(parsers.parse('the TestInfra socket is {socket}'))
 def when_the_socket_is(socket, testinfra_bdd_host):
     """
     Check the status of a socket.
@@ -21,7 +21,7 @@ def when_the_socket_is(socket, testinfra_bdd_host):
     testinfra_bdd_host.socket = testinfra_bdd_host.host.socket(socket.strip('"'))
 
 
-@then(parsers.parse('the socket is {expected_state}'))
+@then(parsers.parse('the TestInfra socket is {expected_state}'))
 def the_socket_is(expected_state, testinfra_bdd_host):
     """
     Check the state of a socket.

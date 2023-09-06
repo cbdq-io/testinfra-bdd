@@ -12,7 +12,7 @@ from pytest_bdd import (
 from testinfra_bdd.parsers import parse_process_filters
 
 
-@when(parsers.parse('the process filter is {process_specification}'))
+@when(parsers.parse('the TestInfra process filter is {process_specification}'))
 def the_process_filter_is(process_specification, testinfra_bdd_host):
     """
     Check the status of processes.
@@ -30,7 +30,7 @@ def the_process_filter_is(process_specification, testinfra_bdd_host):
     testinfra_bdd_host.processes = host.process.filter(**parse_process_filters(process_specification))
 
 
-@then(parsers.parse('the process count is {expected_count:d}'))
+@then(parsers.parse('the TestInfra process count is {expected_count:d}'))
 def the_process_count_is(expected_count, testinfra_bdd_host):
     """
     Check that the process count matches the expected count.

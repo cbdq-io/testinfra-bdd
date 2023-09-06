@@ -12,7 +12,7 @@ from pytest_bdd import (
 from testinfra_bdd.parsers import parse_addr_and_port
 
 
-@when(parsers.parse('the address is {address}'))
+@when(parsers.parse('the TestInfra address is {address}'))
 def when_the_address_is(address: str, testinfra_bdd_host):
     """
     Check the status of a user.
@@ -27,7 +27,7 @@ def when_the_address_is(address: str, testinfra_bdd_host):
     testinfra_bdd_host.address = testinfra_bdd_host.host.addr(address.strip('"'))
 
 
-@when(parsers.parse('the address and port is {url}'))
+@when(parsers.parse('the TestInfra address and port is {url}'))
 def when_the_address_and_port_is(url, testinfra_bdd_host):
     """
     Check the status of an address and port.
@@ -46,7 +46,7 @@ def when_the_address_and_port_is(url, testinfra_bdd_host):
     ) = parse_addr_and_port(url.strip('"'), testinfra_bdd_host.host)
 
 
-@then(parsers.parse('the address is {expected_state}'))
+@then(parsers.parse('the TestInfra address is {expected_state}'))
 def the_address_is(expected_state, testinfra_bdd_host):
     """
     Check the actual state of an address against an expected state.
@@ -76,7 +76,7 @@ def the_address_is(expected_state, testinfra_bdd_host):
     assert properties[expected_state], message
 
 
-@then(parsers.parse('the port is {expected_state}'))
+@then(parsers.parse('the TestInfra port is {expected_state}'))
 def the_port_is(expected_state, testinfra_bdd_host):
     """
     Check the actual state of an address port against an expected state.

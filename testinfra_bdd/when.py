@@ -5,8 +5,8 @@ from pytest_bdd import parsers
 from pytest_bdd import when
 
 
-@when(parsers.parse('the system property {property_name} is not "{expected_value}" skip tests'))
-@when(parsers.parse('the system property {property_name} is not {expected_value} skip tests'))
+@when(parsers.parse('the TestInfra system property {property_name} is not "{expected_value}" skip tests'))
+@when(parsers.parse('the TestInfra system property {property_name} is not {expected_value} skip tests'))
 def skip_tests_if_system_info_does_not_match(property_name, expected_value, testinfra_bdd_host):
     """
     Skip tests if a system property does not patch the expected value.
@@ -23,7 +23,7 @@ def skip_tests_if_system_info_does_not_match(property_name, expected_value, test
         pytest.skip(f'System {property_name} is {actual_value} which is not {expected_value}.')
 
 
-@when(parsers.parse('the environment variable {key} is {value} skip tests'))
+@when(parsers.parse('the TestInfra environment variable {key} is {value} skip tests'))
 def skip_tests_if_env_key_is(key, value):
     """
     Skip tests if an environment variable is set to a particular value.

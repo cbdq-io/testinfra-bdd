@@ -12,7 +12,7 @@ from pytest_bdd import (
 from testinfra_bdd.exception_message import exception_message
 
 
-@when(parsers.parse('the file is {file_name}'))
+@when(parsers.parse('the TestInfra file is {file_name}'))
 def the_file_is(file_name: str, testinfra_bdd_host):
     """
     Check the status of a file.
@@ -27,7 +27,7 @@ def the_file_is(file_name: str, testinfra_bdd_host):
     testinfra_bdd_host.file = testinfra_bdd_host.host.file(file_name.strip('"'))
 
 
-@then(parsers.parse('the file contents contains "{text}"'))
+@then(parsers.parse('the TestInfra file contents contains "{text}"'))
 def the_file_contents_contains_text(text, testinfra_bdd_host):
     """
     Check if the file contains a string.
@@ -48,7 +48,7 @@ def the_file_contents_contains_text(text, testinfra_bdd_host):
     assert file.contains(text), f'The file {testinfra_bdd_host.hostname}:{file.path} does not contain "{text}".'
 
 
-@then(parsers.parse('the file contents contains the regex "{pattern}"'))
+@then(parsers.parse('the TestInfra file contents contains the regex "{pattern}"'))
 def the_file_contents_matches_the_regex(pattern, testinfra_bdd_host):
     """
     Check if the file contains matches a regex pattern.
@@ -73,7 +73,7 @@ def the_file_contents_matches_the_regex(pattern, testinfra_bdd_host):
     assert re.search(pattern, file.content_string) is not None, message
 
 
-@then(parsers.parse('the file is {expected_status}'))
+@then(parsers.parse('the TestInfra file is {expected_status}'))
 def the_file_status(expected_status, testinfra_bdd_host):
     """
     Check if the file is present or absent.
@@ -93,7 +93,7 @@ def the_file_status(expected_status, testinfra_bdd_host):
     the_file_property_is('state', expected_status, testinfra_bdd_host)
 
 
-@then(parsers.parse('the file {property_name} is {expected_value}'))
+@then(parsers.parse('the TestInfra file {property_name} is {expected_value}'))
 def the_file_property_is(property_name, expected_value, testinfra_bdd_host):
     """
     Check the property of a file.
@@ -120,7 +120,7 @@ def the_file_property_is(property_name, expected_value, testinfra_bdd_host):
     assert actual_value == expected_value, exception_message
 
 
-@then(parsers.parse('the JMESPath expression {expression} returns {expected_value}'))
+@then(parsers.parse('the TestInfra JMESPath expression {expression} returns {expected_value}'))
 def the_jmespath_expression_expression_returns_expected_value(expression, expected_value, testinfra_bdd_host):
     """
     Check the contents of a JSON file with JMESPath.

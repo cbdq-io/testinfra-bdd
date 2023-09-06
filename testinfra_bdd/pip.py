@@ -12,7 +12,7 @@ from pytest_bdd import (
 from testinfra_bdd.exception_message import exception_message
 
 
-@when(parsers.parse('the pip package is {package_name}'))
+@when(parsers.parse('the TestInfra pip package is {package_name}'))
 def the_pip_package_is(package_name: str, testinfra_bdd_host):
     """
     Check the status of a pip package.
@@ -108,7 +108,7 @@ def get_pip_package_actual_state(pip_package, expected_state, host):
     return actual_state, exception_message(f'Pip package {pip_package.name}', actual_state, expected_state)
 
 
-@then('the pip check is OK')
+@then('the TestInfra pip check is OK')
 def the_pip_check_is_ok(testinfra_bdd_host):
     """
     Verify installed packages have compatible dependencies.
@@ -129,8 +129,8 @@ def the_pip_check_is_ok(testinfra_bdd_host):
     assert cmd.rc == 0, message
 
 
-@then(parsers.parse('the pip package state is {expected_state}'))
-@then(parsers.parse('the pip package is {expected_state}'))
+@then(parsers.parse('the TestInfra pip package state is {expected_state}'))
+@then(parsers.parse('the TestInfra pip package is {expected_state}'))
 def the_pip_package_state_is(expected_state, testinfra_bdd_host):
     """
     Check the state of a Pip package.
@@ -155,7 +155,7 @@ def the_pip_package_state_is(expected_state, testinfra_bdd_host):
     assert actual_state == expected_state, message
 
 
-@then(parsers.parse('the pip package version is {expected_version}'))
+@then(parsers.parse('the TestInfra pip package version is {expected_version}'))
 def the_pip_package_version_is(expected_version, testinfra_bdd_host):
     """
     Check the version of a Pip package.
