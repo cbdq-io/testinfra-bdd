@@ -99,6 +99,12 @@ Feature: Example of Testinfra BDD
     # The expected mode must be specified as an octal.
     And the TestInfra file mode is 0o544
 
+  Scenario: File Executable Checks
+    Given the TestInfra host with URL "docker://sut" is ready
+    When the TestInfra file is /bin/ls
+    Then the TestInfra file is present
+    And the TestInfra file is executable
+
   Scenario: Group Checks
     Given the TestInfra host with URL "docker://sut" is ready
     When the TestInfra group is "ntp"
