@@ -1,10 +1,10 @@
 """The given steps of testinfra-bdd."""
+from pytest_bdd import given, parsers
+
 import testinfra_bdd.fixture
-from pytest_bdd import given
-from pytest_bdd import parsers
 
 
-@given(parsers.parse('the host with URL "{hostspec}" is ready'), target_fixture='testinfra_bdd_host')
+@given(parsers.parse('the TestInfra host with URL "{hostspec}" is ready'), target_fixture='testinfra_bdd_host')
 def the_host_is_ready(hostspec):
     """
     Ensure that the host is ready within the specified number of seconds.
@@ -27,7 +27,7 @@ def the_host_is_ready(hostspec):
     return testinfra_bdd.get_host_fixture(hostspec)
 
 
-@given(parsers.parse('the host with URL "{hostspec}" is ready within {seconds:d} seconds'),
+@given(parsers.parse('the TestInfra host with URL "{hostspec}" is ready within {seconds:d} seconds'),
        target_fixture='testinfra_bdd_host')
 def the_host_is_ready_with_a_number_of_seconds(hostspec, seconds):
     """

@@ -4,8 +4,7 @@ import pytest
 from testinfra_bdd import get_host_fixture
 from testinfra_bdd.address import when_the_address_and_port_is
 from testinfra_bdd.command import the_command_is
-from testinfra_bdd.pip import the_pip_package_is
-from testinfra_bdd.pip import the_pip_package_state_is
+from testinfra_bdd.pip import the_pip_package_is, the_pip_package_state_is
 from testinfra_bdd.process import the_process_filter_is
 
 
