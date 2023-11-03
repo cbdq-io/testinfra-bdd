@@ -47,5 +47,7 @@ def python_source_file_is_file(python_file, radon_stats):
 @then(parsers.parse('lines of code must not be greater than {max_lines_of_code:d}'))
 def lines_of_code_must_not_be_greater_than_max_lines_of_code(max_lines_of_code, radon_stats):
     """lines of code must not be greater than <max_lines_of_code>."""
-    message = f'{radon_stats["file_name"]} has {radon_stats["lines_of_code"]} which exceeds {max_lines_of_code}.'
-    assert radon_stats['lines_of_code'] <= max_lines_of_code, message
+    file_name = radon_stats['file_name']
+    lines_of_code = radon_stats['lines_of_code']
+    message = f'{file_name} has {lines_of_code} which exceeds {max_lines_of_code}.'
+    assert lines_of_code <= max_lines_of_code, message
