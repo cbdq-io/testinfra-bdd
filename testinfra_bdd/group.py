@@ -39,7 +39,7 @@ def _(expected_user: str, testinfra_bdd_host):
     message = 'Expected group "{group.name}" to exist.'
     assert group.exists, message
     message = f'Expected the group "{group.name}" to contain the user "{expected_user}".'
-    assert expected_user in group.members
+    assert expected_user in group.members, message
 
 
 @then(parsers.parse('the TestInfra group {property_name} is {expected_value}'))
