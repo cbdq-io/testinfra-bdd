@@ -1,7 +1,61 @@
 # Changelog
 
 
-## 3.0.0
+## 3.0.1
+
+### New
+
+* Test against pytest-testinfra 10. [Ben Dalling]
+
+* Test against pytest-bdd 8. [Ben Dalling]
+
+### Fix
+
+* Resolve CWE-563. [Ben Dalling]
+
+### Other
+
+* Build(deps): bump urllib3 from 2.0.5 to 2.0.7. [dependabot[bot]]
+
+  Bumps [urllib3](https://github.com/urllib3/urllib3) from 2.0.5 to 2.0.7.
+  - [Release notes](https://github.com/urllib3/urllib3/releases)
+  - [Changelog](https://github.com/urllib3/urllib3/blob/main/CHANGES.rst)
+  - [Commits](https://github.com/urllib3/urllib3/compare/v2.0.5...2.0.7)
+
+  ---
+  updated-dependencies:
+  - dependency-name: urllib3
+    dependency-type: direct:production
+  ...
+
+* Build(deps): bump gitpython from 3.1.34 to 3.1.35. [dependabot[bot]]
+
+  Bumps [gitpython](https://github.com/gitpython-developers/GitPython) from 3.1.34 to 3.1.35.
+  - [Release notes](https://github.com/gitpython-developers/GitPython/releases)
+  - [Changelog](https://github.com/gitpython-developers/GitPython/blob/main/CHANGES)
+  - [Commits](https://github.com/gitpython-developers/GitPython/compare/3.1.34...3.1.35)
+
+  ---
+  updated-dependencies:
+  - dependency-name: gitpython
+    dependency-type: direct:production
+  ...
+
+* Build(deps): bump urllib3 from 2.0.4 to 2.0.6. [dependabot[bot]]
+
+  Bumps [urllib3](https://github.com/urllib3/urllib3) from 2.0.4 to 2.0.6.
+  - [Release notes](https://github.com/urllib3/urllib3/releases)
+  - [Changelog](https://github.com/urllib3/urllib3/blob/main/CHANGES.rst)
+  - [Commits](https://github.com/urllib3/urllib3/compare/2.0.4...2.0.6)
+
+  ---
+  updated-dependencies:
+  - dependency-name: urllib3
+    dependency-type: direct:production
+  ...
+
+
+## 3.0.0 (2023-09-06)
 
 ### New
 
