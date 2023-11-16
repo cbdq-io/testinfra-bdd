@@ -1,7 +1,14 @@
 # Changelog
 
 
-## 3.0.1
+## 3.0.2
+
+### Fix
+
+* Correct expected version for release. [Ben Dalling]
+
+
+## 3.0.1 (2023-11-16)
 
 ### New
 
