@@ -1,7 +1,14 @@
 # Changelog
 
 
-## 3.0.2
+## 3.0.4
+
+### Fix
+
+* Fix release. [Ben Dalling]
+
+
+## 3.0.3 (2024-03-10)
 
 ### Fix
 
