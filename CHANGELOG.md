@@ -5,6 +5,28 @@
 
 ### Fix
 
+* Update licence. [Ben Dalling]
+
+### Other
+
+* Build(deps): bump gitpython from 3.1.37 to 3.1.41. [dependabot[bot]]
+
+  Bumps [gitpython](https://github.com/gitpython-developers/GitPython) from 3.1.37 to 3.1.41.
+  - [Release notes](https://github.com/gitpython-developers/GitPython/releases)
+  - [Changelog](https://github.com/gitpython-developers/GitPython/blob/main/CHANGES)
+  - [Commits](https://github.com/gitpython-developers/GitPython/compare/3.1.37...3.1.41)
+
+  ---
+  updated-dependencies:
+  - dependency-name: gitpython
+    dependency-type: direct:production
+  ...
+
+
+## 3.0.2 (2023-11-16)
+
+### Fix
+
 * Correct expected version for release. [Ben Dalling]
 
 
