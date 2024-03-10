@@ -3,6 +3,10 @@
 
 ## 3.0.2
 
+### Fix
+
+* Update licence. [Ben Dalling]
+
 ### Other
 
 * Build(deps): bump gitpython from 3.1.37 to 3.1.41. [dependabot[bot]]
