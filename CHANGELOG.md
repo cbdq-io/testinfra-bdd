@@ -1,7 +1,14 @@
 # Changelog
 
 
-## 3.0.4
+## 3.0.6
+
+### Fix
+
+* Correct bad release. [Ben Dalling]
+
+
+## 3.0.5 (2024-04-16)
 
 ### Fix
 
