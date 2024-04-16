@@ -5,6 +5,13 @@
 
 ### Fix
 
+* Correct version extraction after Python package updates. [Ben Dalling]
+
+
+## 3.0.4 (2024-03-10)
+
+### Fix
+
 * Fix release. [Ben Dalling]
 
 
