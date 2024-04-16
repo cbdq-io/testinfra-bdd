@@ -1,16 +1,11 @@
 # Changelog
 
 
-## 3.0.6
+## 3.0.5
 
 ### Fix
 
 * Correct bad release. [Ben Dalling]
-
-
-## 3.0.5 (2024-04-16)
-
-### Fix
 
 * Correct version extraction after Python package updates. [Ben Dalling]
 
