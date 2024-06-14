@@ -21,6 +21,9 @@ lint:
 	bandit -r .
 	isort .
 
+tag:
+	@grep __version_ testinfra_bdd/__init__.py | cut -d\' -f2
+
 test:
 	docker compose -f tests/resources/docker-compose.yml up -d --build
 	docker compose -f tests/resources/docker-compose.yml exec -T sut /usr/local/bin/install-dist-package.sh

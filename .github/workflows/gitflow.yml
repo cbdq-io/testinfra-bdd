@@ -1,0 +1,40 @@
+---
+name: Git Flow
+
+on:
+  # Run on any pull request, or any push of a branch (avoiding pushing of
+  # tags).
+  pull_request:
+    branches:
+      - '*'
+      - '**'
+  push:
+    branches:
+      - '*'
+      - '**'
+    tags:
+      - '!*'  # This excludes all tags
+
+jobs:
+  GitFlow:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Retrieve Release Candidate Name
+        id: version
+        run: echo "RELEASE_CANDIDATE_TAG=$( make tag )" >> $GITHUB_OUTPUT
+
+      - name: Git Flow Action
+        uses: cbdq-io/gitflow-action@v1
+        env:
+          # Setting this environment variable means we can debug by re-running
+          # workflows and ticking "Enable debug logging".
+          ACTIONS_RUNNER_DEBUG: ${{ runner.debug }}
+
+          GITHUB_TOKEN: ${{ secrets.BOT_TOKEN }}
+        with:
+          # Set the release candidate to be the output of the previous step.
+          release-candidate: ${{ steps.version.outputs.RELEASE_CANDIDATE_TAG }}
