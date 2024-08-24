@@ -1,6 +1,8 @@
 """Then system package fixtures for testinfra-bdd."""
 from pytest_bdd import parsers, then, when
 
+from testinfra_bdd import TestinfraBDD
+
 
 @when(parsers.parse('the TestInfra package is {package_name}'))
 def the_package_is(package_name: str, testinfra_bdd_host):
@@ -15,6 +17,29 @@ def the_package_is(package_name: str, testinfra_bdd_host):
         The test fixture.
     """
     testinfra_bdd_host.package = testinfra_bdd_host.host.package(package_name.strip('"'))
+
+
+@then(parsers.parse('the TestInfra package version will be greater than or equal to {expected_version}'))
+def _(expected_version: str, testinfra_bdd_host: TestinfraBDD):
+    """
+    Check that a system package is higher than the specified version.
+
+    Parameters
+    ----------
+    expected_version : str
+        The expected version of the package.
+    testinfra_bdd_host : TestinfraBDD
+        The details of the host that we're testing against.
+
+    Raises
+    ------
+    AssertionError
+        The actual version of the package doesn't meed expectations.
+    """
+    actual_version = testinfra_bdd_host.package.version
+    message = f'Expected {testinfra_bdd_host.package.name} to be >= "{expected_version}", '
+    message += f'but it is "{actual_version}".'
+    assert actual_version >= expected_version, message
 
 
 @then(parsers.parse('the TestInfra package state is {expected_status}'))

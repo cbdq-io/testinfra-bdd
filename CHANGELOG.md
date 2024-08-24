@@ -3,6 +3,10 @@
 
 ## 3.0.5
 
+### New
+
+* Add ability to check that Pip and system packages have been patched. [Ben Dalling]
+
 ### Other
 
 * Build(deps): bump urllib3 from 2.2.1 to 2.2.2. [dependabot[bot]]
