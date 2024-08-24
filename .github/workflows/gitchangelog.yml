@@ -1,0 +1,46 @@
+---
+name: Git Change Log
+
+on:
+  push:
+    branches:
+      - '*'
+      - '**'
+    tags:
+      - '!*'  # This excludes all tags
+
+jobs:
+  GitChangeLog:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+
+      - name: Set up Python 3
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.12
+
+      - name: Install Python Requirements
+        run: pip install -r requirements.txt
+
+      - name: Update Change Log
+        run: git pull && make changelog
+
+      - name: Configure Git
+        run: |
+          git config user.email "cbdq.leads@gmail.com"
+          git config user.name "CBDQ Bot Account"
+
+      - name: Git Add, Commit & Push
+        run: |
+          git status --porcelain
+          git status --porcelain CHANGELOG.md | grep -q '^.[MADRC]' || exit 0
+          git add CHANGELOG.md
+          git commit -m 'chg: dev: Update change log.'
+          git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.BOT_TOKEN }}

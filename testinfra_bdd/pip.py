@@ -5,11 +5,12 @@ Please avoid already-imported warning: PYTEST_DONT_REWRITE.
 """
 from pytest_bdd import parsers, then, when
 
+from testinfra_bdd import TestinfraBDD
 from testinfra_bdd.exception_message import exception_message
 
 
 @when(parsers.parse('the TestInfra pip package is {package_name}'))
-def the_pip_package_is(package_name: str, testinfra_bdd_host):
+def the_pip_package_is(package_name: str, testinfra_bdd_host: TestinfraBDD):
     """
     Check the status of a pip package.
 
@@ -102,6 +103,29 @@ def get_pip_package_actual_state(pip_package, expected_state, host):
         actual_state = 'latest'
 
     return actual_state, exception_message(f'Pip package {pip_package.name}', actual_state, expected_state)
+
+
+@then(parsers.parse('the TestInfra pip package version will be greater than or equal to {expected_version}'))
+def _(expected_version: str, testinfra_bdd_host: TestinfraBDD):
+    """
+    Check that a pip package is higher than the specified version.
+
+    Parameters
+    ----------
+    expected_version : str
+        The expected version of the package.
+    testinfra_bdd_host : TestinfraBDD
+        The details of the host that we're testing against.
+
+    Raises
+    ------
+    AssertionError
+        The actual version of the package doesn't meed expectations.
+    """
+    actual_version = testinfra_bdd_host.pip_package.version
+    message = f'Expected {testinfra_bdd_host.pip_package.name} to be >= "{expected_version}", '
+    message += f'but it is "{actual_version}".'
+    assert actual_version >= expected_version, message
 
 
 @then('the TestInfra pip check is OK')

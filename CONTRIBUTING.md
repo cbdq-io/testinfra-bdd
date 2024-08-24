@@ -48,27 +48,9 @@ git flow release start $RELEASE
 Now edit `testinfra_bdd/__init__.py` and ensure that the `__version__`
 variable is set to the same value as `$RELEASE`.
 
-Now update the `CHANGELOG.md` with:
+When all the CI jobs have completed, create a PR to main.
 
-```shell
-make changelog
-```
-
-Now commit these changes in a way that we don't have excessive messages
-in the changelog:
-
-```shell
-git add .
-git commit -m "chg: doc: Release ${RELEASE} \!minor"
-```
-
-Now finish the release in Git Flow:
-
-```shell
-git flow finish -m "v${RELEASE}" -p
-```
-
-When all the CI jobs have completed, create the new release at
+Finally create the new release at
 <https://github.com/cbdq-io/testinfra-bdd/releases>
 
 ### Post Release Steps
