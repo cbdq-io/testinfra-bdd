@@ -105,6 +105,7 @@ Feature: Example of Testinfra BDD
     When the TestInfra package is ntp
     # Can check if the package is absent, present or installed.
     Then the TestInfra package is installed
+    And the TestInfra package version will be greater than or equal to 1:4.2.8p15+dfsg-1
 
   Scenario: Python Package
     Given the TestInfra host with URL "docker://sut" is ready
@@ -112,6 +113,7 @@ Feature: Example of Testinfra BDD
     # Can check if the package is absent or present.
     Then the TestInfra pip package is present
     And the TestInfra pip package version is 3.0.5
+    And the TestInfra pip package version will be greater than or equal to 3.0.5
     # Check that installed packages have compatible dependencies.
     And the TestInfra pip check is OK
 
