@@ -1,13 +1,40 @@
 # Changelog
 
 
-## 3.0.5
+## 3.1.0 (2024-08-24)
 
 ### New
 
 * Add ability to check that Pip and system packages have been patched. [Ben Dalling]
 
 ### Other
+
+* Build(deps): bump paambaati/codeclimate-action from 8.0.0 to 9.0.0. [dependabot[bot]]
+
+  Bumps [paambaati/codeclimate-action](https://github.com/paambaati/codeclimate-action) from 8.0.0 to 9.0.0.
+  - [Release notes](https://github.com/paambaati/codeclimate-action/releases)
+  - [Changelog](https://github.com/paambaati/codeclimate-action/blob/main/CHANGELOG.md)
+  - [Commits](https://github.com/paambaati/codeclimate-action/compare/v8.0.0...v9.0.0)
+
+  ---
+  updated-dependencies:
+  - dependency-name: paambaati/codeclimate-action
+    dependency-type: direct:production
+    update-type: version-update:semver-major
+  ...
+
+* Build(deps): bump pypa/gh-action-pypi-publish from 1.4.2 to 1.9.0. [dependabot[bot]]
+
+  Bumps [pypa/gh-action-pypi-publish](https://github.com/pypa/gh-action-pypi-publish) from 1.4.2 to 1.9.0.
+  - [Release notes](https://github.com/pypa/gh-action-pypi-publish/releases)
+  - [Commits](https://github.com/pypa/gh-action-pypi-publish/compare/27b31702a0e7fc50959f5ad993c78deac1bdfc29...ec4db0b4ddc65acdf4bff5fa45ac92d78b56bdf0)
+
+  ---
+  updated-dependencies:
+  - dependency-name: pypa/gh-action-pypi-publish
+    dependency-type: direct:production
+    update-type: version-update:semver-minor
+  ...
 
 * Build(deps): bump urllib3 from 2.2.1 to 2.2.2. [dependabot[bot]]
 
