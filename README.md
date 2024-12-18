@@ -141,7 +141,7 @@ Feature: Example of Testinfra BDD
     When the TestInfra pip package is testinfra-bdd
     # Can check if the package is absent or present.
     Then the TestInfra pip package is present
-    And the TestInfra pip package version is 3.0.5
+    And the TestInfra pip package version is 3.1.1
     And the TestInfra pip package version will be greater than or equal to 3.0.5
     # Check that installed packages have compatible dependencies.
     And the TestInfra pip check is OK
