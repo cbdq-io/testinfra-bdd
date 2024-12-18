@@ -3,7 +3,24 @@
 
 ## 3.1.0
 
+### Fix
+
+* Successful testing against PyTest 8. [Ben Dalling]
+
 ### Other
+
+* Build(deps): bump pypa/gh-action-pypi-publish from 1.10.3 to 1.12.3. [dependabot[bot]]
+
+  Bumps [pypa/gh-action-pypi-publish](https://github.com/pypa/gh-action-pypi-publish) from 1.10.3 to 1.12.3.
+  - [Release notes](https://github.com/pypa/gh-action-pypi-publish/releases)
+  - [Commits](https://github.com/pypa/gh-action-pypi-publish/compare/f7600683efdcb7656dec5b29656edb7bc586e597...67339c736fd9354cd4f8cb0b744f2b82a74b5c70)
+
+  ---
+  updated-dependencies:
+  - dependency-name: pypa/gh-action-pypi-publish
+    dependency-type: direct:production
+    update-type: version-update:semver-minor
+  ...
 
 * Build(deps): bump pypa/gh-action-pypi-publish from 1.10.1 to 1.10.3. [dependabot[bot]]
 
