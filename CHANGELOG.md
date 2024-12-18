@@ -1,6 +1,54 @@
 # Changelog
 
 
+## 3.1.1
+
+### Fix
+
+* Successful testing against PyTest 8. [Ben Dalling]
+
+### Other
+
+* Build(deps): bump pypa/gh-action-pypi-publish from 1.10.3 to 1.12.3. [dependabot[bot]]
+
+  Bumps [pypa/gh-action-pypi-publish](https://github.com/pypa/gh-action-pypi-publish) from 1.10.3 to 1.12.3.
+  - [Release notes](https://github.com/pypa/gh-action-pypi-publish/releases)
+  - [Commits](https://github.com/pypa/gh-action-pypi-publish/compare/f7600683efdcb7656dec5b29656edb7bc586e597...67339c736fd9354cd4f8cb0b744f2b82a74b5c70)
+
+  ---
+  updated-dependencies:
+  - dependency-name: pypa/gh-action-pypi-publish
+    dependency-type: direct:production
+    update-type: version-update:semver-minor
+  ...
+
+* Build(deps): bump pypa/gh-action-pypi-publish from 1.10.1 to 1.10.3. [dependabot[bot]]
+
+  Bumps [pypa/gh-action-pypi-publish](https://github.com/pypa/gh-action-pypi-publish) from 1.10.1 to 1.10.3.
+  - [Release notes](https://github.com/pypa/gh-action-pypi-publish/releases)
+  - [Commits](https://github.com/pypa/gh-action-pypi-publish/compare/0ab0b79471669eb3a4d647e625009c62f9f3b241...f7600683efdcb7656dec5b29656edb7bc586e597)
+
+  ---
+  updated-dependencies:
+  - dependency-name: pypa/gh-action-pypi-publish
+    dependency-type: direct:production
+    update-type: version-update:semver-patch
+  ...
+
+* Build(deps): bump pypa/gh-action-pypi-publish from 1.9.0 to 1.10.1. [dependabot[bot]]
+
+  Bumps [pypa/gh-action-pypi-publish](https://github.com/pypa/gh-action-pypi-publish) from 1.9.0 to 1.10.1.
+  - [Release notes](https://github.com/pypa/gh-action-pypi-publish/releases)
+  - [Commits](https://github.com/pypa/gh-action-pypi-publish/compare/ec4db0b4ddc65acdf4bff5fa45ac92d78b56bdf0...0ab0b79471669eb3a4d647e625009c62f9f3b241)
+
+  ---
+  updated-dependencies:
+  - dependency-name: pypa/gh-action-pypi-publish
+    dependency-type: direct:production
+    update-type: version-update:semver-minor
+  ...
+
+
 ## 3.1.0 (2024-08-24)
 
 ### New
