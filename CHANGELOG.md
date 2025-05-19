@@ -1,6 +1,24 @@
 # Changelog
 
 
+## 3.1.1
+
+### Other
+
+* Build(deps): bump pypa/gh-action-pypi-publish from 1.12.3 to 1.12.4. [dependabot[bot]]
+
+  Bumps [pypa/gh-action-pypi-publish](https://github.com/pypa/gh-action-pypi-publish) from 1.12.3 to 1.12.4.
+  - [Release notes](https://github.com/pypa/gh-action-pypi-publish/releases)
+  - [Commits](https://github.com/pypa/gh-action-pypi-publish/compare/67339c736fd9354cd4f8cb0b744f2b82a74b5c70...76f52bc884231f62b9a034ebfe128415bbaabdfc)
+
+  ---
+  updated-dependencies:
+  - dependency-name: pypa/gh-action-pypi-publish
+    dependency-type: direct:production
+    update-type: version-update:semver-patch
+  ...
+
+
 ## 3.1.1 (2024-12-18)
 
 ### Fix
