@@ -3,6 +3,10 @@
 
 ## 3.1.1
 
+### Fix
+
+* Resolve CVE-2024-6345. [Ben Dalling]
+
 ### Other
 
 * Build(deps): bump pypa/gh-action-pypi-publish from 1.12.3 to 1.12.4. [dependabot[bot]]
