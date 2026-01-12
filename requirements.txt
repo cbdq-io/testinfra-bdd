@@ -45,6 +45,6 @@ snowballstemmer==3.0.1
 stevedore==5.4.1
 tomli==2.2.1
 typing_extensions==4.13.2
-urllib3==2.5.0
+urllib3==2.6.3
 wheel==0.45.1
 yamllint==1.37.1
