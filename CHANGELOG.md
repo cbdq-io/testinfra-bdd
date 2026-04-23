@@ -5,6 +5,10 @@
 
 ### Other
 
+* Build(ci): more refactoring of Python packages. [Ben Dalling]
+
+* Ci: remove the "latest" workflow. [Ben Dalling]
+
 * Build(deps): bump pypa/gh-action-pypi-publish from 1.13.0 to 1.14.0. [dependabot[bot]]
 
   Bumps [pypa/gh-action-pypi-publish](https://github.com/pypa/gh-action-pypi-publish) from 1.13.0 to 1.14.0.
