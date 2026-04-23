@@ -1,0 +1,23 @@
+-r requirements.txt
+
+bandit
+build
+coverage
+flake8
+flake8-docstrings
+flake8-pyproject
+flake8-quotes
+gitchangelog
+GitPython
+isort
+mccabe
+pydocstyle
+pyflakes
+pystache
+pytest
+pytest-cov
+radon
+rich
+setuptools
+wheel
+yamllint

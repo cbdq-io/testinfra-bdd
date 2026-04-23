@@ -1,7 +1,41 @@
 # Changelog
 
 
-## 3.1.2
+## 3.1.3
+
+### Other
+
+* Build(ci): more refactoring of Python packages. [Ben Dalling]
+
+* Ci: remove the "latest" workflow. [Ben Dalling]
+
+* Build(deps): bump pypa/gh-action-pypi-publish from 1.13.0 to 1.14.0. [dependabot[bot]]
+
+  Bumps [pypa/gh-action-pypi-publish](https://github.com/pypa/gh-action-pypi-publish) from 1.13.0 to 1.14.0.
+  - [Release notes](https://github.com/pypa/gh-action-pypi-publish/releases)
+  - [Commits](https://github.com/pypa/gh-action-pypi-publish/compare/ed0c53931b1dc9bd32cbe73a98c7f6766f8a527e...cef221092ed1bacb1cc03d23a2d87d1d172e277b)
+
+  ---
+  updated-dependencies:
+  - dependency-name: pypa/gh-action-pypi-publish
+    dependency-version: 1.14.0
+    dependency-type: direct:production
+    update-type: version-update:semver-minor
+  ...
+
+* Build: migrate to pyproject.toml, drop setup.py/setup.cfg. [Ben Dalling]
+
+  Modernise packaging to PEP 517:
+  - Replace setup.py with pyproject.toml
+  - Move flake8/pytest/coverage config into pyproject
+  - Remove VERSION env dependency and import-time version resolution
+  - Use dynamic version from package
+  - Update build/setuptools
+
+  Fixes isolated build failures with python -m build.
+
+
+## 3.1.2 (2026-01-12)
 
 ### Fix
 

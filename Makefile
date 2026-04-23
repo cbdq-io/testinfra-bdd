@@ -14,6 +14,9 @@ cleanall: clean
 	docker system prune --all --force
 	docker volume prune --all --force
 
+dev:
+	pip install -r requirements-dev.txt
+
 lint:
 	docker run --rm -i hadolint/hadolint < tests/resources/sut/Dockerfile
 	yamllint -s .
