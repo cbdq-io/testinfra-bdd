@@ -25,7 +25,7 @@ jobs:
       - name: Requirements
         run: |
           pip install wheel
-          pip install -qr requirements.txt
+          make dev
           pip freeze
           pip check
 
