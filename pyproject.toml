@@ -8,3 +8,55 @@ requires = [
     "wheel"
 ]
 build-backend = "setuptools.build_meta"
+
+[project]
+name = "testinfra-bdd"
+description = "An interface between pytest-bdd and pytest-testinfra."
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "BSD License" }
+authors = [
+  { name = "Cloud Based DQ Ltd.", email = "info@cbdq.io" }
+]
+
+keywords = ["testinfra", "bdd"]
+dynamic = ["version", "dependencies"]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "License :: OSI Approved :: BSD License",
+  "Operating System :: OS Independent"
+]
+
+[project.urls]
+Homepage = "https://github.com/cbdq-io/testinfra-bdd"
+"Bug Tracker" = "https://github.com/cbdq-io/testinfra-bdd/issues"
+
+
+[tool.setuptools]
+package-dir = { "" = "." }
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["testinfra_bdd*"]
+
+[tool.setuptools.dynamic]
+version = { attr = "testinfra_bdd.__version__" }
+dependencies = { file = ["requirements.txt"] }
+
+[tool.coverage.run]
+source = ["testinfra_bdd"]
+
+[tool.flake8]
+docstring-convention = "numpy"
+max-line-length = 120
+per-file-ignores = [
+  "tests/*:D104,D401,D403"
+]
+
+[tool.pytest.ini_options]
+addopts = "--color=no --cov --durations 3 --verbose"
+bdd_features_base_dir = "tests/features/"
+markers = [
+  "system_tests: Marks tests as system tests.",
+  "unit_tests: Marks tests as unit tests."
+]
