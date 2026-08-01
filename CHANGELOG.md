@@ -5,6 +5,18 @@
 
 ### Other
 
+* Build(deps): bump ghcr.io/devcontainers/features/docker-in-docker. [dependabot[bot]]
+
+  Bumps ghcr.io/devcontainers/features/docker-in-docker from 2.17.0 to 4.0.0.
+
+  ---
+  updated-dependencies:
+  - dependency-name: ghcr.io/devcontainers/features/docker-in-docker
+    dependency-version: 4.0.0
+    dependency-type: direct:production
+    update-type: version-update:semver-major
+  ...
+
 * Build(deps): bump actions/checkout from 6 to 7. [dependabot[bot]]
 
   Bumps [actions/checkout](https://github.com/actions/checkout) from 6 to 7.
