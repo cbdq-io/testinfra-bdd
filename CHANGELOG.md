@@ -5,6 +5,20 @@
 
 ### Other
 
+* Build(deps): bump pypa/gh-action-pypi-publish from 1.14.0 to 1.14.1. [dependabot[bot]]
+
+  Bumps [pypa/gh-action-pypi-publish](https://github.com/pypa/gh-action-pypi-publish) from 1.14.0 to 1.14.1.
+  - [Release notes](https://github.com/pypa/gh-action-pypi-publish/releases)
+  - [Commits](https://github.com/pypa/gh-action-pypi-publish/compare/cef221092ed1bacb1cc03d23a2d87d1d172e277b...ba38be9e461d3875417946c167d0b5f3d385a247)
+
+  ---
+  updated-dependencies:
+  - dependency-name: pypa/gh-action-pypi-publish
+    dependency-version: 1.14.1
+    dependency-type: direct:production
+    update-type: version-update:semver-patch
+  ...
+
 * Build(deps): bump ghcr.io/devcontainers/features/docker-in-docker. [dependabot[bot]]
 
   Bumps ghcr.io/devcontainers/features/docker-in-docker from 2.17.0 to 4.0.0.
