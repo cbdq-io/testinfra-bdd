@@ -5,6 +5,20 @@
 
 ### Other
 
+* Build(deps): bump pypa/gh-action-pypi-publish from 1.14.1 to 1.14.2. [dependabot[bot]]
+
+  Bumps [pypa/gh-action-pypi-publish](https://github.com/pypa/gh-action-pypi-publish) from 1.14.1 to 1.14.2.
+  - [Release notes](https://github.com/pypa/gh-action-pypi-publish/releases)
+  - [Commits](https://github.com/pypa/gh-action-pypi-publish/compare/ba38be9e461d3875417946c167d0b5f3d385a247...dc37677b2e1c63e2034f94d8a5b11f265b73ba33)
+
+  ---
+  updated-dependencies:
+  - dependency-name: pypa/gh-action-pypi-publish
+    dependency-version: 1.14.2
+    dependency-type: direct:production
+    update-type: version-update:semver-patch
+  ...
+
 * Build(deps): bump actions/setup-python from 6 to 7. [dependabot[bot]]
 
   Bumps [actions/setup-python](https://github.com/actions/setup-python) from 6 to 7.
