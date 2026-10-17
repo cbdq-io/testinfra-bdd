@@ -6,7 +6,7 @@
 An interface between
 [pytest-bdd](https://pytest-bdd.readthedocs.io/en/latest/)
 and
-[pytest-testinfra](https://testinfra.readthedocs.io/en/latest/index.html).
+[pytest-testinfra](https://pypi.org/project/pytest-testinfra/).
 
 ## Defining Scenarios
 
