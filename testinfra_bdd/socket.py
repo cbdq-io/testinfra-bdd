@@ -10,7 +10,7 @@ def when_the_socket_is(socket, testinfra_bdd_host):
     Parameters
     ----------
     socket : str
-        URL of the socket (e.g. "tpc://22").
+        URL of the socket (e.g. "tcp://22").
     testinfra_bdd_host : testinfra_bdd.fixture.TestinfraBDD
         The test fixture.
     """

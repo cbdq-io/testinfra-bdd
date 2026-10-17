@@ -29,5 +29,5 @@ tag:
 
 test:
 	docker compose -f tests/resources/docker-compose.yml up -d --build
-	docker compose -f tests/resources/docker-compose.yml exec -T sut /usr/local/bin/install-dist-package.sh
+	docker compose -f tests/resources/docker-compose.yml exec -T -e PIP_IGNORE_INSTALLED=1 -e PIP_BREAK_SYSTEM_PACKAGES=1 sut /usr/local/bin/install-dist-package.sh
 	PYTHONPATH=.:.. pytest

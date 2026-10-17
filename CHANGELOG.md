@@ -3,6 +3,12 @@
 
 ## 3.1.3
 
+### Fix
+
+* Bump the pytest-bdd version from 8 to 9. [Ben Dalling]
+
+* Bump SUT image from debian:11 to 13. [Ben Dalling]
+
 ### Other
 
 * Build(deps): bump pypa/gh-action-pypi-publish from 1.14.1 to 1.14.2. [dependabot[bot]]
