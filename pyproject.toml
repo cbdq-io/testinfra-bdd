@@ -1,7 +1,7 @@
 [build-system]
 requires = [
     "jmespath>=1.0.0,<2.0.0",
-    "pytest-bdd>=6.0.0,<9.0.0",
+    "pytest-bdd>=6.0.0,<10.0.0",
     "pytest-testinfra>=9.0.0,<11.0.0",
     "setuptools>=65.5.1",
     "urllib3>=1.26.0",
@@ -14,7 +14,7 @@ name = "testinfra-bdd"
 description = "An interface between pytest-bdd and pytest-testinfra."
 readme = "README.md"
 requires-python = ">=3.9"
-license = { text = "BSD License" }
+license = "BSD-3-Clause"
 authors = [
   { name = "Cloud Based DQ Ltd.", email = "info@cbdq.io" }
 ]
@@ -23,7 +23,6 @@ keywords = ["testinfra", "bdd"]
 dynamic = ["version", "dependencies"]
 classifiers = [
   "Programming Language :: Python :: 3",
-  "License :: OSI Approved :: BSD License",
   "Operating System :: OS Independent"
 ]
 
