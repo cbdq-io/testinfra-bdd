@@ -70,29 +70,29 @@ Feature: Example of Testinfra BDD
 
   Scenario: User Checks
     Given the TestInfra host with URL "docker://sut" is ready
-    When the TestInfra user is "ntp"
+    When the TestInfra user is "ntpd"
     Then the TestInfra user is present
     # Alternative method of checking the state of a resource.
     And the TestInfra user state is present
-    And the TestInfra user group is ntp
-    And the TestInfra user uid is 101
+    And the TestInfra user group is ntpd
+    And the TestInfra user uid is 100
     And the TestInfra user gid is 101
-    And the TestInfra user home is /nonexistent
+    And the TestInfra user home is /var/run/openntpd
     And the TestInfra user shell is /usr/sbin/nologin
 
   Scenario: File Checks
     Given the TestInfra host with URL "docker://sut" is ready
-    When the TestInfra file is /etc/ntp.conf
+    When the TestInfra file is /etc/openntpd/ntpd.conf
     # Expected state can be present or absent.
     Then the TestInfra file is present
     # Alternative method of checking the state of a resource.
     And the TestInfra file state is present
     # Valid types to check for are file, directory, pipe, socket or symlink.
     And the TestInfra file type is file
-    And the TestInfra file owner is ntp
-    And the TestInfra file group is ntp
+    And the TestInfra file owner is ntpd
+    And the TestInfra file group is ntpd
     And the TestInfra file contents contains "debian.pool.ntp"
-    And the TestInfra file contents contains the regex ".*pool [0-9].debian.pool.ntp.org iburst"
+    And the TestInfra file contents contains the regex ".*servers [0-4].debian.pool.ntp.org"
     # The expected mode must be specified as an octal.
     And the TestInfra file mode is 0o544
 
@@ -104,7 +104,7 @@ Feature: Example of Testinfra BDD
 
   Scenario: Group Checks
     Given the TestInfra host with URL "docker://sut" is ready
-    When the TestInfra group is "ntp"
+    When the TestInfra group is "ntpd"
     # Can check if the group is present or absent.
     Then the TestInfra group is present
     # Alternative method of checking the state of a resource.
@@ -120,25 +120,25 @@ Feature: Example of Testinfra BDD
 
   Scenario: Running Commands
     Given the TestInfra host with URL "docker://sut" is ready
-    When the TestInfra command is "ntpq -np"
+    When the TestInfra command is "ntpctl -s peers"
     Then the TestInfra command return code is 0
-    And the TestInfra command "ntpq" exists in path
-    And the TestInfra command stdout contains "remote"
+    And the TestInfra command "ntpctl" exists in path
+    And the TestInfra command stdout contains "jitter"
     And the TestInfra command stdout does not contain "foo"
 
   Scenario: System Package
     Given the TestInfra host with URL "docker://sut" is ready
-    When the TestInfra package is ntp
+    When the TestInfra package is openntpd
     # Can check if the package is absent, present or installed.
     Then the TestInfra package is installed
-    And the TestInfra package version will be greater than or equal to 1:4.2.8p15+dfsg-1
+    And the TestInfra package version will be greater than or equal to 1:6.2p3-4.2+b2
 
   Scenario: Python Package
     Given the TestInfra host with URL "docker://sut" is ready
     When the TestInfra pip package is testinfra-bdd
     # Can check if the package is absent or present.
     Then the TestInfra pip package is present
-    And the TestInfra pip package version is 3.1.1
+    And the TestInfra pip package version is 3.1.3
     And the TestInfra pip package version will be greater than or equal to 3.0.5
     # Check that installed packages have compatible dependencies.
     And the TestInfra pip check is OK
@@ -149,9 +149,9 @@ Feature: Example of Testinfra BDD
     Then the TestInfra service is <running_state>
     And the TestInfra service is <enabled_state>
     Examples:
-      | service | running_state | enabled_state |
-      | ntp     | running       | enabled       |
-      | named   | not running   | not enabled   |
+      | service  | running_state | enabled_state |
+      | openntpd | running       | enabled       |
+      | named    | not running   | not enabled   |
 
   Scenario: Test Running Processes
     Given the TestInfra host with URL "docker://sut" is ready
@@ -178,9 +178,9 @@ Feature: Example of Testinfra BDD
     When the TestInfra socket is <url>
     Then the TestInfra socket is <expected_state>
     Examples:
-      | url       | expected_state |
-      | udp://123 | listening      |
-      | tcp://22  | not listening  |
+      | url                 | expected_state |
+      | udp://127.0.0.1:123 | listening      |
+      | tcp://22            | not listening  |
 
   Scenario: Skip Tests Due to Environment Variable
     Given the TestInfra host with URL "docker://java11" is ready
