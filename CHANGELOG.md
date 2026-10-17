@@ -1,7 +1,87 @@
 # Changelog
 
 
-## 3.1.3
+## 3.1.4
+
+### Fix
+
+* Bump the pytest-bdd version from 8 to 9. [Ben Dalling]
+
+* Bump SUT image from debian:11 to 13. [Ben Dalling]
+
+### Other
+
+* Build(deps): bump pypa/gh-action-pypi-publish from 1.14.1 to 1.14.2. [dependabot[bot]]
+
+  Bumps [pypa/gh-action-pypi-publish](https://github.com/pypa/gh-action-pypi-publish) from 1.14.1 to 1.14.2.
+  - [Release notes](https://github.com/pypa/gh-action-pypi-publish/releases)
+  - [Commits](https://github.com/pypa/gh-action-pypi-publish/compare/ba38be9e461d3875417946c167d0b5f3d385a247...dc37677b2e1c63e2034f94d8a5b11f265b73ba33)
+
+  ---
+  updated-dependencies:
+  - dependency-name: pypa/gh-action-pypi-publish
+    dependency-version: 1.14.2
+    dependency-type: direct:production
+    update-type: version-update:semver-patch
+  ...
+
+* Build(deps): bump actions/setup-python from 6 to 7. [dependabot[bot]]
+
+  Bumps [actions/setup-python](https://github.com/actions/setup-python) from 6 to 7.
+  - [Release notes](https://github.com/actions/setup-python/releases)
+  - [Commits](https://github.com/actions/setup-python/compare/v6...v7)
+
+  ---
+  updated-dependencies:
+  - dependency-name: actions/setup-python
+    dependency-version: '7'
+    dependency-type: direct:production
+    update-type: version-update:semver-major
+  ...
+
+* Build(deps): bump pypa/gh-action-pypi-publish from 1.14.0 to 1.14.1. [dependabot[bot]]
+
+  Bumps [pypa/gh-action-pypi-publish](https://github.com/pypa/gh-action-pypi-publish) from 1.14.0 to 1.14.1.
+  - [Release notes](https://github.com/pypa/gh-action-pypi-publish/releases)
+  - [Commits](https://github.com/pypa/gh-action-pypi-publish/compare/cef221092ed1bacb1cc03d23a2d87d1d172e277b...ba38be9e461d3875417946c167d0b5f3d385a247)
+
+  ---
+  updated-dependencies:
+  - dependency-name: pypa/gh-action-pypi-publish
+    dependency-version: 1.14.1
+    dependency-type: direct:production
+    update-type: version-update:semver-patch
+  ...
+
+* Build(deps): bump ghcr.io/devcontainers/features/docker-in-docker. [dependabot[bot]]
+
+  Bumps ghcr.io/devcontainers/features/docker-in-docker from 2.17.0 to 4.0.0.
+
+  ---
+  updated-dependencies:
+  - dependency-name: ghcr.io/devcontainers/features/docker-in-docker
+    dependency-version: 4.0.0
+    dependency-type: direct:production
+    update-type: version-update:semver-major
+  ...
+
+* Build(deps): bump actions/checkout from 6 to 7. [dependabot[bot]]
+
+  Bumps [actions/checkout](https://github.com/actions/checkout) from 6 to 7.
+  - [Release notes](https://github.com/actions/checkout/releases)
+  - [Changelog](https://github.com/actions/checkout/blob/main/CHANGELOG.md)
+  - [Commits](https://github.com/actions/checkout/compare/v6...v7)
+
+  ---
+  updated-dependencies:
+  - dependency-name: actions/checkout
+    dependency-version: '7'
+    dependency-type: direct:production
+    update-type: version-update:semver-major
+  ...
+
+
+## 3.1.3 (2026-04-23)
 
 ### Other
 
