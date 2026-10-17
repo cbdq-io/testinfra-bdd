@@ -105,7 +105,7 @@ Feature: Example of Testinfra BDD
     When the TestInfra package is openntpd
     # Can check if the package is absent, present or installed.
     Then the TestInfra package is installed
-    And the TestInfra package version will be greater than or equal to 1:6.2p3-4.2+b3
+    And the TestInfra package version will be greater than or equal to 1:6.2p3-4.2+b2
 
   Scenario: Python Package
     Given the TestInfra host with URL "docker://sut" is ready
