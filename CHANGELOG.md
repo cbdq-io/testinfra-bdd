@@ -5,6 +5,10 @@
 
 ### Other
 
+* Fix(deps): bump the maximum version of pytest-testinfra from 9 to 10. [Ben Dalling]
+
+* Fix(build): bump the SUT build image from debian:11 to debian:13. [Ben Dalling]
+
 * Build(deps): bump pypa/gh-action-pypi-publish from 1.14.1 to 1.14.2. [dependabot[bot]]
 
   Bumps [pypa/gh-action-pypi-publish](https://github.com/pypa/gh-action-pypi-publish) from 1.14.1 to 1.14.2.
