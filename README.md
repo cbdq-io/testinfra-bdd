@@ -1,7 +1,6 @@
 # testinfra-bdd
 
 [![CI](https://github.com/cbdq-io/testinfra-bdd/actions/workflows/ci.yml/badge.svg)](https://github.com/cbdq-io/testinfra-bdd/actions/workflows/ci.yml)
-[![testinfra-bdd](https://snyk.io/advisor/python/testinfra-bdd/badge.svg)](https://snyk.io/advisor/python/testinfra-bdd)
 
 An interface between
 [pytest-bdd](https://pytest-bdd.readthedocs.io/en/latest/)
