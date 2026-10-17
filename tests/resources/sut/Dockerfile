@@ -11,7 +11,7 @@ RUN apt-get clean \
     iproute2 \
     iputils-ping \
     net-tools \
-    openntpd=1:6.2p3-4.2+b3 \
+    openntpd \
     python3-pip \
     procps \
     sudo \
