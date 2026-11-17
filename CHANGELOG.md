@@ -5,6 +5,20 @@
 
 ### Other
 
+* Build(deps): bump pypa/gh-action-pypi-publish from 1.14.2 to 1.14.3. [dependabot[bot]]
+
+  Bumps [pypa/gh-action-pypi-publish](https://github.com/pypa/gh-action-pypi-publish) from 1.14.2 to 1.14.3.
+  - [Release notes](https://github.com/pypa/gh-action-pypi-publish/releases)
+  - [Commits](https://github.com/pypa/gh-action-pypi-publish/compare/dc37677b2e1c63e2034f94d8a5b11f265b73ba33...7245906fb61fa33a13554f9d5fb856fe61758086)
+
+  ---
+  updated-dependencies:
+  - dependency-name: pypa/gh-action-pypi-publish
+    dependency-version: 1.14.3
+    dependency-type: direct:production
+    update-type: version-update:semver-patch
+  ...
+
 * Fix(ci): skip change log and gitflow workflows for dependabot. [Ben Dalling]
 
 
