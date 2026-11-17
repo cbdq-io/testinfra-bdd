@@ -1,6 +1,13 @@
 # Changelog
 
 
+## 3.1.4
+
+### Other
+
+* Fix(ci): skip change log and gitflow workflows for dependabot. [Ben Dalling]
+
+
 ## 3.1.4 (2026-10-17)
 
 ### Fix
